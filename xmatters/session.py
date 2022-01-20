@@ -1,5 +1,5 @@
-from xmatters.device import Device
-from xmatters.group import Group
+from xmatters.device import device_constructors
+from xmatters.groups import Group
 from xmatters.person import Person
 from xmatters.utils import ApiComponent
 
@@ -7,13 +7,13 @@ from xmatters.utils import ApiComponent
 class xMattersSession(ApiComponent):
     _endpoints = {'get_devices': '/devices',
                   'get_device_by_id': '/devices/{device_id}',
-                  'get_groups': '/groups',
-                  'get_group_by_ip': '/groups/{group_id}',
+                  'get_groups': '/groups?embed=supervisors,observers',
+                  'get_group_by_id': '/groups/{group_id}',
                   'get_person_by_id': '/people/{person_id}',
-                  'get_people': '/people'}
+                  'get_people': '/people?embed=roles,devices'}
 
     person_constructor = Person
-    device_constructor = Device
+    device_constructor = device_constructors
     group_constructor = Group
 
     def __init__(self, parent):
@@ -32,7 +32,6 @@ class xMattersSession(ApiComponent):
     def get_groups(self):
         url = self.build_url(self._endpoints.get('get_groups'))
         data = self.s.get(url).json()
-        print(data)
         return [self.group_constructor(self, group) for group in data.get('data')]
 
     def get_group_by_id(self, group_id):
