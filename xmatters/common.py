@@ -1,19 +1,29 @@
-from xmatters.utils import ApiComponent
+from .utils import ApiComponent
+
+
+class GroupReference(ApiComponent):
+    def __init__(self, parent, data):
+        super(GroupReference, self).__init__(parent, data)
+        self.id = data.get('id')
+        self.target_name = data.get('targetName')
+        self.recipient_type = data.get('recipientType')
+        self.links = SelfLink(data.get('links'))
 
 
 class PersonReference(ApiComponent):
     def __init__(self, parent, data):
+        super(PersonReference, self).__init__(parent, data)
         self.id = data.get('id')
         self.target_name = data.get('targetName')
         self.first_name = data.get('firstName')
         self.last_name = data.get('lastName')
         self.recipient_type = data.get('recipientType')
         self.links = SelfLink(data.get('links'))
-        super(PersonReference, self).__init__(parent, data)
 
 
 class Recipient(ApiComponent):
     def __init__(self, parent, data):
+        super(Recipient, self).__init__(parent, data)
         self.id = data.get('id')
         self.target_name = data.get('targetName')
         self.recipient_type = data.get('recipientType')
@@ -23,18 +33,17 @@ class Recipient(ApiComponent):
         self.status = data.get('status')
         self.links = SelfLink(data.get('links'))
 
-        super(Recipient, self).__init__(parent, data)
-
 
 class ReferenceById(object):
     def __init__(self, data):
         self.id = data.get('id')
 
 
-class ReferenceByIdAndSelfLink(object):
-    def __init__(self, data):
+class ReferenceByIdAndSelfLink(ApiComponent):
+    def __init__(self, parent, data):
+        super(ReferenceByIdAndSelfLink, self).__init__(parent, data)
         self.id = data.get('id')
-        self.links = SelfLink(data.get('links'))
+        self.links = SelfLink(data.get('links', {}))
 
 
 class SelfLink(object):

@@ -1,4 +1,4 @@
-from xmatters.common import PersonReference, ReferenceById, Recipient
+from .common import PersonReference, ReferenceById, Recipient
 
 
 class DeviceTimeframe(object):
@@ -30,8 +30,8 @@ class Device(Recipient):
     @property
     def timeframes(self):
         url = self.build_url(self._endpoints.get('timeframes'))
-        data = self.s.get(url).json()
-        return [DeviceTimeframe(timeframe) for timeframe in data.get('timeframes').get('data')]
+        data = self.con.get(url).json().get('data')
+        return [DeviceTimeframe(timeframe) for timeframe in data.get('timeframes')]
 
 
 class EmailDevice(Device):
@@ -95,12 +95,16 @@ class GenericDevice(Device):
         self.phone_number = data.get('pin')
 
 
-device_constructors = {'EMAIL': EmailDevice,
-                       'VOICE': VoiceDevice,
-                       'TEXT_PHONE': SMSDevice,
-                       'TEXT_PAGER': TextPagerDevice,
-                       'APPLE_PUSH': ApplePushDevice,
-                       'ANDROID_PUSH': AndroidPushDevice,
-                       'FAX': FaxDevice,
-                       'VOICE_IVR': PublicAddressDevice,
-                       'GENERIC': GenericDevice}
+_device_classes = {'EMAIL': EmailDevice,
+                   'VOICE': VoiceDevice,
+                   'TEXT_PHONE': SMSDevice,
+                   'TEXT_PAGER': TextPagerDevice,
+                   'APPLE_PUSH': ApplePushDevice,
+                   'ANDROID_PUSH': AndroidPushDevice,
+                   'FAX': FaxDevice,
+                   'VOICE_IVR': PublicAddressDevice,
+                   'GENERIC': GenericDevice}
+
+
+def device_constructor(data):
+    return _device_classes[data.get('deviceType')]

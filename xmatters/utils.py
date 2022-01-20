@@ -8,7 +8,7 @@ class ApiComponent(object):
         else:
             self.base_resource = parent.base_url
 
-        self.s = parent.s if hasattr(parent, 's') else parent
+        self.con = parent.con if hasattr(parent, 'con') else parent
 
     def build_url(self, endpoint):
         return '{}{}'.format(self.base_resource, endpoint)

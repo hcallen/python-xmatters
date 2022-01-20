@@ -1,11 +1,10 @@
-from xmatters.device import device_constructors
-from xmatters.common import Recipient, Role
+from .devices import device_constructor
+from .common import Recipient, Role
 
 
 class Person(Recipient):
     _endpoints = {'get_devices': '/devices',
                   'roles': '?embed=roles'}
-    device_constructor = device_constructors
 
     def __init__(self, parent, data):
         super(Person, self).__init__(parent, data)
@@ -25,8 +24,8 @@ class Person(Recipient):
     @property
     def roles(self):
         url = self.build_url(self._endpoints.get('roles'))
-        data = self.s.get(url).json()
-        return [Role(role) for role in data.get('roles').get('data')]
+        data = self.con.get(url).json().get('data')
+        return [Role(role) for role in data.get('roles')]
 
     @property
     def devices(self):
@@ -34,5 +33,5 @@ class Person(Recipient):
 
     def get_devices(self):
         url = self.build_url(self._endpoints.get('get_devices'))
-        data = self.s.get(url).json()
-        return [self.device_constructor[device.get('deviceType')](self, device) for device in data.get('data')]
+        data = self.con.get(url).json().get('data')
+        return [device_constructor(device)(self, device) for device in data]

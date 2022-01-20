@@ -1,22 +1,14 @@
-from xmatters.person import Person
-from xmatters.utils import ApiComponent
-from xmatters.common import Recipient, Role, SelfLink
-
-
-class GroupReference(ApiComponent):
-    def __init__(self, parent, data):
-        super(GroupReference, self).__init__(parent, data)
-        self.id = data.get('id')
-        self.target_name = data.get('targetName')
-        self.recipient_type = data.get('recipientType')
-        self.links = SelfLink(data.get('links'))
+from .oncall import OnCall
+from .people import Person
+from .common import Recipient, Role
+from .shifts import Shift
 
 
 class Group(Recipient):
     _endpoints = {'get_supervisors': '/supervisors',
+                  'get_oncall': '{base_url}/on-call?groups={group_id}',
                   'observers': '?embed=observers',
-                  'get_oncall': '?groups={group_id}'}
-    supervisor_constructor = Person
+                  'get_shifts': '/shifts'}
 
     def __init__(self, parent, data):
         super(Group, self).__init__(parent, data)
@@ -32,7 +24,7 @@ class Group(Recipient):
     @property
     def observers(self):
         url = self.build_url(self._endpoints.get('observers'))
-        data = self.s.get(url).json()
+        data = self.con.get(url).json()
         return [Role(role) for role in data.get('observers').get('data')]
 
     @property
@@ -41,9 +33,15 @@ class Group(Recipient):
 
     def get_supervisors(self):
         url = self.build_url(self._endpoints.get('get_supervisors'))
-        data = self.s.get(url).json()
-        return [self.supervisor_constructor(self, person) for person in data.get('data')]
+        data = self.con.get(url).json().get('data')
+        return [Person(self, person) for person in data]
 
     def get_oncall(self):
-        url = self.build_url(self._endpoints.get('get_oncall'))
-        data = self.s.get(url).json()
+        url = self._endpoints.get('get_oncall').format(base_url=self.base_url, group_id=self.id)
+        data = self.con.get(url).json().get('data')
+        return [OnCall(self, oncall) for oncall in data]
+
+    def get_shifts(self):
+        url = self.build_url(self._endpoints.get('get_shifts'))
+        data = self.con.get(url).json().get('data')
+        return [Shift(self, shift) for shift in data]
