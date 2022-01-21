@@ -30,8 +30,8 @@ class Device(Recipient):
     @property
     def timeframes(self):
         url = self.build_url(self._endpoints.get('timeframes'))
-        data = self.con.get(url).json().get('data')
-        return [DeviceTimeframe(timeframe) for timeframe in data.get('timeframes')]
+        data = self.con.get(url).get('timeframes', {}).get('data', [])
+        return [DeviceTimeframe(timeframe) for timeframe in data]
 
 
 class EmailDevice(Device):

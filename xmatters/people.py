@@ -24,8 +24,8 @@ class Person(Recipient):
     @property
     def roles(self):
         url = self.build_url(self._endpoints.get('roles'))
-        data = self.con.get(url).json().get('data')
-        return [Role(role) for role in data.get('roles')]
+        data = self.con.get(url).get('roles', {}).get('data', [])
+        return [Role(role) for role in data]
 
     @property
     def devices(self):
@@ -33,5 +33,5 @@ class Person(Recipient):
 
     def get_devices(self):
         url = self.build_url(self._endpoints.get('get_devices'))
-        data = self.con.get(url).json().get('data')
+        data = self.con.get(url).get('data')
         return [device_constructor(device)(self, device) for device in data]

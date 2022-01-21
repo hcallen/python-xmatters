@@ -24,8 +24,8 @@ class Group(Recipient):
     @property
     def observers(self):
         url = self.build_url(self._endpoints.get('observers'))
-        data = self.con.get(url).json()
-        return [Role(role) for role in data.get('observers').get('data')]
+        data = self.con.get(url).get('observers').get('data')
+        return [Role(role) for role in data]
 
     @property
     def supervisors(self):
@@ -33,15 +33,15 @@ class Group(Recipient):
 
     def get_supervisors(self):
         url = self.build_url(self._endpoints.get('get_supervisors'))
-        data = self.con.get(url).json().get('data')
+        data = self.con.get(url).get('data')
         return [Person(self, person) for person in data]
 
     def get_oncall(self):
         url = self._endpoints.get('get_oncall').format(base_url=self.base_url, group_id=self.id)
-        data = self.con.get(url).json().get('data')
+        data = self.con.get(url).get('data')
         return [OnCall(self, oncall) for oncall in data]
 
     def get_shifts(self):
         url = self.build_url(self._endpoints.get('get_shifts'))
-        data = self.con.get(url).json().get('data')
+        data = self.con.get(url).get('data')
         return [Shift(self, shift) for shift in data]
