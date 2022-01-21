@@ -1,8 +1,10 @@
+import functools
+
 from .devices import device_constructor
 from .groups import Group
 from .oncall import OnCall
 from .people import Person
-from .utils import ApiComponent
+from .utils import ApiComponent, DEFAULT_MAX_LIMIT
 
 
 class xMattersSession(ApiComponent):
@@ -14,9 +16,10 @@ class xMattersSession(ApiComponent):
                   'get_person_by_id': '/people/{person_id}',
                   'get_people': '/people'}
 
-    def __init__(self, auth):
+    def __init__(self, auth, timeout=3):
         self.base_url = auth.base_url
         self.con = auth
+        functools.partial(self.con.request, timeout=timeout)  # set request timeout
         super(xMattersSession, self).__init__(self)
 
     def get_devices(self):
@@ -44,7 +47,7 @@ class xMattersSession(ApiComponent):
         data = self.con.get(url)
         return Person(self, data)
 
-    def get_people(self):
+    def get_people(self, limit=None):
         url = self.build_url(self._endpoints.get('get_people'))
         data = self.con.get(url).get('data')
         return [Person(self, person) for person in data]
