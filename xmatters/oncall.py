@@ -1,5 +1,6 @@
-from .utils import ApiComponent
-from .common import Recipient, GroupReference, SelfLink
+from xmatters.common import Recipient, SelfLink
+from xmatters.utils import ApiComponent
+from xmatters.shifts import GroupReference
 
 
 class Replacer(ApiComponent):

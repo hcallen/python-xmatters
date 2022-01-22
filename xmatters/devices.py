@@ -1,14 +1,5 @@
-from .common import PersonReference, ReferenceById, Recipient
-
-
-class DeviceTimeframe(object):
-    def __init__(self, data):
-        self.days = data.get('days')
-        self.duration_in_minutes = data.get('durationInMinutes')
-        self.exclude_holidays = data.get('excludeHolidays')
-        self.name = data.get('name')
-        self.start_time = data.get('startTime')
-        self.timezone = data.get('timezone')
+from xmatters.common import Recipient, ReferenceById
+from xmatters.people import PersonReference
 
 
 class Device(Recipient):
@@ -32,6 +23,12 @@ class Device(Recipient):
         url = self.build_url(self._endpoints.get('timeframes'))
         data = self.con.get(url).get('timeframes', {}).get('data', [])
         return [DeviceTimeframe(timeframe) for timeframe in data]
+
+    def __repr__(self):
+        return '<Device {}>'.format(self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class EmailDevice(Device):
@@ -95,16 +92,20 @@ class GenericDevice(Device):
         self.phone_number = data.get('pin')
 
 
-_device_classes = {'EMAIL': EmailDevice,
-                   'VOICE': VoiceDevice,
-                   'TEXT_PHONE': SMSDevice,
-                   'TEXT_PAGER': TextPagerDevice,
-                   'APPLE_PUSH': ApplePushDevice,
-                   'ANDROID_PUSH': AndroidPushDevice,
-                   'FAX': FaxDevice,
-                   'VOICE_IVR': PublicAddressDevice,
-                   'GENERIC': GenericDevice}
+class DeviceTimeframe(object):
+    def __init__(self, data):
+        self.days = data.get('days')
+        self.duration_in_minutes = data.get('durationInMinutes')
+        self.exclude_holidays = data.get('excludeHolidays')
+        self.name = data.get('name')
+        self.start_time = data.get('startTime')
+        self.timezone = data.get('timezone')
+
+    def __repr__(self):
+        return '<DeviceTimeframe {}>'.format(self.name)
+
+    def __str__(self):
+        return self.__repr__()
 
 
-def device_constructor(data):
-    return _device_classes[data.get('deviceType')]
+

@@ -1,7 +1,9 @@
-from .oncall import OnCall
-from .people import Person
-from .common import Recipient, Role
-from .shifts import Shift
+from xmatters.common import Recipient, SelfLink
+from xmatters.oncall import OnCall
+from xmatters.people import Person
+from xmatters.roles import Role
+from xmatters.shifts import Shift
+from xmatters.utils import ApiComponent
 
 
 class Group(Recipient):
@@ -45,3 +47,6 @@ class Group(Recipient):
         url = self.build_url(self._endpoints.get('get_shifts'))
         data = self.con.get(url, params=params).get('data')
         return [Shift(self, shift) for shift in data]
+
+
+

@@ -1,13 +1,50 @@
 import requests
-from requests_oauthlib import OAuth2Session
 from oauthlib.oauth2 import LegacyApplicationClient
+from requests.adapters import HTTPAdapter
+from requests_oauthlib import OAuth2Session
+from urllib3.util.retry import Retry
+from xmatters.common import Error
 
-from .utils import Connection
+
+class Connection(object):
+    def __init__(self, parent):
+        self._max_retries = None
+        self.timeout = None
+        self.session = parent.session
+        self.base_url = parent.base_url
+
+    def get(self, url, params=None):
+        return self.request('GET', url, params)
+
+    def request(self, method, url, params):
+        r = self.session.request(method=method, url=url, params=params, timeout=self.timeout)
+        if not r.ok:
+            raise Exception(
+                '{status_code} - {reason} - {url}'.format(status_code=r.status_code, reason=r.reason, url=url))
+        data = r.json()
+        # if xMatters API error
+        if 'code' in data.keys():
+            raise Exception(Error(data))
+        else:
+            return data
+
+    @property
+    def max_retries(self):
+        return self._max_retries
+
+    @max_retries.setter
+    def max_retries(self, retries):
+        self._max_retries = retries
+        retry = Retry(total=retries,
+                      backoff_factor=0.1,
+                      status_forcelist=[500, 502, 503, 504])
+        retry_adapter = HTTPAdapter(max_retries=retry)
+        self.session.mount('https://', retry_adapter)
 
 
 class BasicAuth(Connection):
     def __init__(self, base_url, credentials):
-        self.base_url = base_url
+        self.base_url = base_url if not base_url.endswith('/') else base_url[:-1]
         self.session = requests.Session()
         if credentials and not isinstance(credentials, tuple):
             raise TypeError('credentials must be a tuple of (username, password)')
@@ -29,7 +66,7 @@ class OAuth2(Connection):
             raise TypeError('credentials must be a tuple of (username, password)')
         if token and not isinstance(token, dict):
             raise TypeError('token must be a dict')
-        self.base_url = base_url
+        self.base_url = base_url if not base_url.endswith('/') else base_url[:-1]
         self.client_id = client_id
         self.token_storage = token_storage
         self.credentials = credentials

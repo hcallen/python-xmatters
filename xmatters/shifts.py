@@ -1,5 +1,20 @@
-from .common import GroupReference, SelfLink, Recipient, ReferenceByIdAndSelfLink
-from .utils import ApiComponent
+from xmatters.common import Recipient, ReferenceByIdAndSelfLink, SelfLink
+from xmatters.utils import ApiComponent
+
+
+class GroupReference(ApiComponent):
+    def __init__(self, parent, data):
+        super(GroupReference, self).__init__(parent, data)
+        self.id = data.get('id')
+        self.target_name = data.get('targetName')
+        self.recipient_type = data.get('recipientType')
+        self.links = SelfLink(data.get('links'))
+
+    def __repr__(self):
+        return '<GroupReference {}>'.format(self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class End(object):
@@ -54,3 +69,9 @@ class Shift(ApiComponent):
         self.timezone = data.get('timezone')
         self.recurrence = ShiftRecurrence(data.get('recurrence'))
         self.members = [ShiftMember(self, m) for m in data.get('members', {})]
+
+    def __repr__(self):
+        return '<Shift {}>'.format(self.name)
+
+    def __str__(self):
+        return self.__repr__()
