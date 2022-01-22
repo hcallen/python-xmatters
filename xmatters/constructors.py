@@ -14,11 +14,15 @@ _device_objects = {'EMAIL': xmatters.devices.EmailDevice,
                    'GENERIC': xmatters.devices.GenericDevice}
 
 
-def device_constructor(parent, data):
+def device_factory(parent, data):
     return _device_objects[data.get('deviceType')](parent, data)
 
 
-_recipient_objects = {'GROUP': xmatters.groups.Group,
-                      'PERSON': xmatters.people.Person,
-                      'DEVICE': device_constructor,
-                      'DYNAMIC_TEAM': xmatters.dynamic_teams.DynamicTeam}
+_recipient_object = {'GROUP': xmatters.groups.Group,
+                     'PERSON': xmatters.people.Person,
+                     'DEVICE': device_factory,
+                     'DYNAMIC_TEAM': xmatters.dynamic_teams.DynamicTeam}
+
+
+def recipient_factory(parent, recipient_type, data):
+    return _recipient_object[recipient_type](parent, data)

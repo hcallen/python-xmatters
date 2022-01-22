@@ -1,10 +1,9 @@
-from xmatters.common import Recipient, SelfLink
+from xmatters.common import Recipient
 from xmatters.oncall import OnCall
 from xmatters.people import Person
 from xmatters.roles import Role
 from xmatters.shifts import Shift
-from xmatters.utils import ApiComponent
-
+from xmatters.common import Pagination
 
 class Group(Recipient):
     _endpoints = {'get_supervisors': '/supervisors',
@@ -45,8 +44,14 @@ class Group(Recipient):
 
     def get_shifts(self, params=None):
         url = self.build_url(self._endpoints.get('get_shifts'))
-        data = self.con.get(url, params=params).get('data')
-        return [Shift(self, shift) for shift in data]
+        data = self.con.get(url, params=params)
+        return Pagination(self, data, Shift)
+
+    def __repr__(self):
+        return '<Group {}>'.format(self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 

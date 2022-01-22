@@ -1,4 +1,6 @@
-from xmatters.common import Recipient, ReferenceByIdAndSelfLink, SelfLink
+import xmatters.groups
+from xmatters.common import ReferenceByIdAndSelfLink, SelfLink, Recipient
+
 from xmatters.utils import ApiComponent
 
 
@@ -9,6 +11,10 @@ class GroupReference(ApiComponent):
         self.target_name = data.get('targetName')
         self.recipient_type = data.get('recipientType')
         self.links = SelfLink(data.get('links'))
+
+    def get_self(self):
+        data = self.con.get(self.base_resource)
+        return xmatters.groups.Group(self, data)
 
     def __repr__(self):
         return '<GroupReference {}>'.format(self.target_name)
@@ -56,8 +62,16 @@ class ShiftMember(ApiComponent):
         self.recipient = Recipient(self, data.get('recipient'))
         self.shift = ReferenceByIdAndSelfLink(self, data.get('shift'))
 
+    def __repr__(self):
+        return '<ShiftMember {}>'.format(self.recipient.target_name)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class Shift(ApiComponent):
+    _endpoints = {'get_members': '/members'}
+
     def __init__(self, parent, data):
         super(Shift, self).__init__(parent, data)
         self.id = data.get('id')
@@ -68,7 +82,15 @@ class Shift(ApiComponent):
         self.end = data.get('end')
         self.timezone = data.get('timezone')
         self.recurrence = ShiftRecurrence(data.get('recurrence'))
-        self.members = [ShiftMember(self, m) for m in data.get('members', {})]
+
+    @property
+    def members(self):
+        return self.get_members()
+
+    def get_members(self):
+        url = self.build_url(self._endpoints.get('get_members'))
+        data = self.con.get(url).get('data')
+        return [ShiftMember(self, m) for m in data]
 
     def __repr__(self):
         return '<Shift {}>'.format(self.name)

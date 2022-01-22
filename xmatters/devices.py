@@ -108,4 +108,3 @@ class DeviceTimeframe(object):
         return self.__repr__()
 
 
-

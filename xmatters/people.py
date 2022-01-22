@@ -1,9 +1,7 @@
+import xmatters.constructors
 from xmatters.common import Recipient, SelfLink
 from xmatters.roles import Role
 from xmatters.utils import ApiComponent
-import xmatters.constructors
-
-
 
 
 class Person(Recipient):
@@ -38,7 +36,7 @@ class Person(Recipient):
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params).get('data')
-        return [xmatters.constructors.device_constructor(self, device) for device in data]
+        return [xmatters.constructors.device_factory(self, device) for device in data]
 
     def __repr__(self):
         return '<Person {}>'.format(self.target_name)
@@ -56,6 +54,10 @@ class PersonReference(ApiComponent):
         self.last_name = data.get('lastName')
         self.recipient_type = data.get('recipientType')
         self.links = SelfLink(data.get('links'))
+
+    def get_self(self):
+        data = self.con.get(self.base_resource)
+        return Person(self, data)
 
     def __repr__(self):
         return '<PersonReference {}>'.format(self.target_name)

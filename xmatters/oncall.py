@@ -1,3 +1,4 @@
+import xmatters.people
 from xmatters.common import Recipient, SelfLink
 from xmatters.utils import ApiComponent
 from xmatters.shifts import GroupReference
@@ -14,6 +15,16 @@ class Replacer(ApiComponent):
         self.last_name = data.get('lastName')
         self.status = data.get('status')
 
+    def get_self(self):
+        data = self.con.get(self.base_resource)
+        return xmatters.people.Person(self, data)
+
+    def __repr__(self):
+        return '<Replacer {}>'.format(self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class ShiftOccurrenceMember(ApiComponent):
     def __init__(self, parent, data):
@@ -24,6 +35,12 @@ class ShiftOccurrenceMember(ApiComponent):
         self.escalation_type = data.get('escalationType')
         self.replacements = [TemporaryReplacement(self, r) for r in data.get('replacements', {}).get('data', [])]
 
+    def __repr__(self):
+        return '<ShiftOccurrenceMember {}>'.format(self.member.target_name)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class ShiftReference(ApiComponent):
     def __init__(self, parent, data):
@@ -31,6 +48,12 @@ class ShiftReference(ApiComponent):
         self.id = data.get('id')
         self.links = SelfLink(data.get('links', {}))
         self.name = data.get('name')
+
+    def __repr__(self):
+        return '<ShiftReference {}>'.format(self.name)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class TemporaryReplacement(ApiComponent):

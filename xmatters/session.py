@@ -1,9 +1,10 @@
-from xmatters.common import Pagination
 import xmatters.constructors
+from xmatters.common import Pagination
 from xmatters.groups import Group
 from xmatters.oncall import OnCall
 from xmatters.people import Person
 from xmatters.utils import ApiComponent
+
 
 
 class xMattersSession(ApiComponent):
@@ -24,12 +25,12 @@ class xMattersSession(ApiComponent):
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params)
-        return Pagination(self, data, xmatters.constructors.device_constructor)
+        return Pagination(self, data, xmatters.constructors.device_factory)
 
     def get_device_by_id(self, device_id, params=None):
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
         data = self.con.get(url, params)
-        return xmatters.constructors.device_constructor(self, data)
+        return xmatters.constructors.device_factory(self, data)
 
     def get_groups(self, params=None):
         url = self.build_url(self._endpoints.get('get_groups'))

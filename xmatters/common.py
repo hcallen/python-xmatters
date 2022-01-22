@@ -1,3 +1,4 @@
+import xmatters.constructors
 from xmatters.utils import ApiComponent
 
 
@@ -81,6 +82,10 @@ class Recipient(ApiComponent):
         self.locked = data.get('locked')
         self.status = data.get('status')
         self.links = SelfLink(data.get('links'))
+
+    def get_self(self):
+        data = self.con.get(self.base_resource)
+        return xmatters.constructors.recipient_factory(self, self.recipient_type, data)
 
     def __repr__(self):
         return '<Recipient {}>'.format(self.recipient_type)
