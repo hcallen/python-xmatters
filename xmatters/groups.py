@@ -31,17 +31,17 @@ class Group(Recipient):
     def supervisors(self):
         return self.get_supervisors()
 
-    def get_supervisors(self):
+    def get_supervisors(self, params=None):
         url = self.build_url(self._endpoints.get('get_supervisors'))
-        data = self.con.get(url).get('data')
+        data = self.con.get(url, params=params).get('data')
         return [Person(self, person) for person in data]
 
-    def get_oncall(self):
+    def get_oncall(self, params=None):
         url = self._endpoints.get('get_oncall').format(base_url=self.base_url, group_id=self.id)
-        data = self.con.get(url).get('data')
+        data = self.con.get(url, params=params).get('data')
         return [OnCall(self, oncall) for oncall in data]
 
-    def get_shifts(self):
+    def get_shifts(self, params=None):
         url = self.build_url(self._endpoints.get('get_shifts'))
-        data = self.con.get(url).get('data')
+        data = self.con.get(url, params=params).get('data')
         return [Shift(self, shift) for shift in data]

@@ -31,7 +31,7 @@ class Person(Recipient):
     def devices(self):
         return self.get_devices()
 
-    def get_devices(self):
+    def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
-        data = self.con.get(url).get('data')
+        data = self.con.get(url, params=params).get('data')
         return [device_constructor(device)(self, device) for device in data]

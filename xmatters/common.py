@@ -1,7 +1,6 @@
 from .utils import ApiComponent
 
 
-
 class GroupReference(ApiComponent):
     def __init__(self, parent, data):
         super(GroupReference, self).__init__(parent, data)
