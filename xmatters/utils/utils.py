@@ -5,13 +5,17 @@ class ApiComponent(object):
     def __init__(self, parent, data=None):
         self.con = parent.con
         if data and 'links' in data.keys():
-            self_link = data.get('links').get('self').replace('/api/xm/1', '')
+            self_link = self._remove_api_prefix(data.get('links').get('self'))
             self.base_resource = '{}{}'.format(self.con.base_url, self_link)
         else:
             self.base_resource = self.con.base_url
 
     def build_url(self, endpoint):
+        endpoint = self._remove_api_prefix(endpoint)
         return '{base_resource}{endpoint}'.format(base_resource=self.base_resource, endpoint=endpoint)
+
+    def _remove_api_prefix(self, endpoint):
+        return endpoint if not endpoint.startswith(self.con.api_prefix) else endpoint.replace(self.con.api_prefix, '')
 
 
 class TokenFileStorage(object):

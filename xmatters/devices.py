@@ -25,7 +25,7 @@ class Device(Recipient):
         return [DeviceTimeframe(timeframe) for timeframe in data]
 
     def __repr__(self):
-        return '<Device {}>'.format(self.target_name)
+        return '<{} {}>'.format(self.__class__.__name__, self.target_name)
 
     def __str__(self):
         return self.__repr__()
@@ -36,11 +36,23 @@ class EmailDevice(Device):
         super(EmailDevice, self).__init__(parent, data)
         self.email_address = data.get('emailAddress')
 
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class VoiceDevice(Device):
     def __init__(self, parent, data):
         super(VoiceDevice, self).__init__(parent, data)
         self.phone_number = data.get('phoneNumber')
+
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class SMSDevice(Device):
@@ -48,12 +60,24 @@ class SMSDevice(Device):
         super(SMSDevice, self).__init__(parent, data)
         self.phone_number = data.get('phoneNumber')
 
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class TextPagerDevice(Device):
     def __init__(self, parent, data):
         super(TextPagerDevice, self).__init__(parent, data)
         self.pin = data.get('pin')
         self.two_way_device = data.get('twoWayDevice')
+
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class ApplePushDevice(Device):
@@ -65,6 +89,12 @@ class ApplePushDevice(Device):
         self.sound_status = data.get('soundStatus')
         self.sounds_threshold = data.get('soundThreshold')
 
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class AndroidPushDevice(Device):
     def __init__(self, parent, data):
@@ -72,6 +102,11 @@ class AndroidPushDevice(Device):
         self.account_id = data.get('accountId')
         self.registration_id = data.get('registrationId')
 
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
 
 class FaxDevice(Device):
     def __init__(self, parent, data):
@@ -79,17 +114,35 @@ class FaxDevice(Device):
         self.phone_number = data.get('phoneNumber')
         self.country = data.get('country')
 
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class PublicAddressDevice(Device):
     def __init__(self, parent, data):
         super(PublicAddressDevice, self).__init__(parent, data)
         self.phone_number = data.get('phoneNumber')
 
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class GenericDevice(Device):
     def __init__(self, parent, data):
         super(GenericDevice, self).__init__(parent, data)
         self.phone_number = data.get('pin')
+
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class DeviceTimeframe(object):
@@ -102,9 +155,47 @@ class DeviceTimeframe(object):
         self.timezone = data.get('timezone')
 
     def __repr__(self):
-        return '<DeviceTimeframe {}>'.format(self.name)
+        return '<{} {}>'.format(self.__class__.__name__, self.name)
 
     def __str__(self):
         return self.__repr__()
 
 
+class DeviceName(object):
+    def __init__(self, data):
+        self.device_type = data.get('deviceType')
+        self.name = data.get('name')
+        self.description = data.get('description')
+        self.domains = data.get('domains')
+
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.name)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class TargetDeviceNameSelector(object):
+    def __init__(self, data):
+        self.name = data.get('name')
+        self.selected = data.get('selected')
+        self.visible = data.get('visible')
+
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.name)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class DeviceTypes(object):
+    def __init__(self, data):
+        self.count = data.get('count')
+        self.total = data.get('total')
+        self.data = data.get('data', [])
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()

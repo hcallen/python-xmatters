@@ -12,6 +12,7 @@ class Connection(object):
         self.timeout = None
         self.session = parent.session
         self.base_url = parent.base_url
+        self.api_prefix = parent.base_url.split('.com')[1]
 
     def get(self, url, params=None):
         return self.request('GET', url, params)
@@ -23,7 +24,7 @@ class Connection(object):
                 '{status_code} - {reason} - {url}'.format(status_code=r.status_code, reason=r.reason, url=url))
         data = r.json()
         # if xMatters API error
-        if 'code' in data.keys():
+        if isinstance(data, dict) and 'code' in data.keys():
             raise Exception(Error(data))
         else:
             return data
