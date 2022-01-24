@@ -1,7 +1,7 @@
-import xmatters.constructors
+import xmatters.utils.constructors
 from xmatters.common import Recipient, SelfLink
 from xmatters.roles import Role
-from xmatters.utils.utils import ApiBridge
+from xmatters.utils.connection import ApiBridge
 
 
 class Person(Recipient):
@@ -36,7 +36,7 @@ class Person(Recipient):
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params).get('data')
-        return [xmatters.constructors.device_factory(self, device) for device in data]
+        return [xmatters.utils.constructors.device_factory(self, device) for device in data]
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)

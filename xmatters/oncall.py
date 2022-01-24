@@ -1,8 +1,8 @@
-import xmatters.constructors
+import xmatters.utils.constructors
 import xmatters.people
 from xmatters.common import Recipient, SelfLink
 from xmatters.people import PersonReference
-from xmatters.utils.utils import ApiBridge
+from xmatters.utils.connection import ApiBridge
 from xmatters.shifts import GroupReference
 
 
@@ -88,7 +88,7 @@ class OnCallSummary(ApiBridge):
         shift = data.get('shift')
         self.shift = ShiftReference(self, shift) if shift else None
         recipient = data.get('recipient')
-        self.recipient = xmatters.constructors.oncall_recipients_factory(self, recipient) if recipient else None
+        self.recipient = xmatters.utils.constructors.oncall_recipients_factory(self, recipient) if recipient else None
         absence = data.get('absence')
         self.absence = PersonReference(self, absence) if absence else None
         self.delay = data.get('delay')

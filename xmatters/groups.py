@@ -4,7 +4,7 @@ from xmatters.people import Person
 from xmatters.roles import Role
 from xmatters.shifts import Shift, GroupReference
 from xmatters.common import Pagination
-from xmatters.utils.utils import ApiBridge
+from xmatters.utils.connection import ApiBridge
 
 
 class GroupMembershipShiftReference(ApiBridge):

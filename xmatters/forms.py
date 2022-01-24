@@ -1,22 +1,9 @@
-import xmatters.constructors
-from xmatters.common import SelfLink, Pagination, Recipient
+import xmatters.utils.constructors
+from xmatters.common import SelfLink, Pagination, Recipient, PropertyDefinition
 from xmatters.device_names import TargetDeviceNameSelector
 from xmatters.events import VoicemailOptions, ResponseOption
 from xmatters.plans import PlanReference
-from xmatters.utils.utils import ApiBridge
-
-
-class PropertyDefinition(object):
-    def __init__(self, data):
-        self.id = data.get('id')
-        self.name = data.get('name')
-        self.description = data.get('description')
-        self.help_text = data.get('helpText')
-        self.default = data.get('default')
-        self.max_length = data.get('maxLength')
-        self.min_length = data.get('minLength')
-        self.pattern = data.get('pattern')
-        self.validate = data.get('validate')
+from xmatters.utils.connection import ApiBridge
 
 
 class FormReference(object):
@@ -92,6 +79,12 @@ class CustomSectionItems(FormSection):
         super(CustomSectionItems, self).__init__(parent, data)
         items = data.get('items')
         self.items = [CustomSection(i) for i in items] if items else []
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class CustomSection(object):
@@ -208,7 +201,7 @@ class Form(ApiBridge):
     @property
     def recipients(self):
         url = self.build_url(self._endpoints.get('recipients'))
-        recipients = self.con.get(url).get('recipients',{}).get('data')
+        recipients = self.con.get(url).get('recipients', {}).get('data')
         return [Recipient(self, r) for r in recipients] if recipients else []
 
     def get_response_options(self):
@@ -219,7 +212,7 @@ class Form(ApiBridge):
     def get_sections(self):
         url = self._endpoints.get('get_sections').format(base_url=self.con.base_url, form_id=self.id)
         s = self.con.get(url)
-        return Pagination(self, s, xmatters.constructors.sections_factory, 'type') if s.get('data') else []
+        return Pagination(self, s, xmatters.utils.constructors.sections_factory, 'type') if s.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

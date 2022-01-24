@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Optional, Union, List
-import xmatters.constructors
+import xmatters.utils.constructors
 from xmatters.audit import Audit
 from xmatters.common import Pagination
 from xmatters.device_types import DeviceTypes
@@ -12,7 +12,7 @@ from xmatters.groups import Group
 from xmatters.oncall import OnCall, OnCallSummary
 from xmatters.people import Person
 from xmatters.temporary_absences import TemporaryAbsence
-from xmatters.utils.utils import ApiBridge
+from xmatters.utils.connection import ApiBridge
 from xmatters.import_jobs import Import
 
 
@@ -47,12 +47,12 @@ class xMattersSession(ApiBridge):
     def get_devices(self, params: Optional[dict] = None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params)
-        return Pagination(self, data, xmatters.constructors.device_factory) if data.get('data') else []
+        return Pagination(self, data, xmatters.utils.constructors.device_factory) if data.get('data') else []
 
     def get_device_by_id(self, device_id, params: Optional[dict] = None):
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
         data = self.con.get(url, params)
-        return xmatters.constructors.device_factory(self, data) if data else None
+        return xmatters.utils.constructors.device_factory(self, data) if data else None
 
     def get_groups(self, params: Optional[dict] = None):
         url = self.build_url(self._endpoints.get('get_groups'))

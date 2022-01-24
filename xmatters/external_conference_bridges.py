@@ -1,5 +1,5 @@
 from xmatters.common import SelfLink
-from xmatters.utils.utils import ApiBridge
+from xmatters.utils.connection import ApiBridge
 
 
 class ConferenceBridge(ApiBridge):

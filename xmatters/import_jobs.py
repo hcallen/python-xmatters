@@ -1,4 +1,4 @@
-from xmatters.utils.utils import ApiBridge
+from xmatters.utils.connection import ApiBridge
 from xmatters.people import PersonReference
 from xmatters.common import SelfLink, Pagination
 

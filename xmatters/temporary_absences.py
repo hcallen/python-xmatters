@@ -1,6 +1,6 @@
 from xmatters.people import PersonReference
 from xmatters.shifts import GroupReference
-from xmatters.utils.utils import ApiBridge
+from xmatters.utils.connection import ApiBridge
 
 
 class TemporaryAbsence(ApiBridge):

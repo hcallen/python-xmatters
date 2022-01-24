@@ -1,7 +1,7 @@
 from xmatters.common import Recipient
 from xmatters.events import EventReference, ResponseOption
 from xmatters.people import PersonReference
-from xmatters.utils.utils import ApiBridge
+from xmatters.utils.connection import ApiBridge
 
 
 class Notification(ApiBridge):

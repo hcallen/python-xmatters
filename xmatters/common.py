@@ -1,5 +1,5 @@
 import inspect
-from xmatters.utils.utils import ApiBridge
+from xmatters.utils.connection import ApiBridge
 
 
 class Error(object):
@@ -36,7 +36,7 @@ class Pagination(ApiBridge):
         self.parent = parent
         self.cons = cons
         self.cons_identifier = cons_identifier
-        self.num_parameters = len(inspect.signature(self.cons).parameters)
+        self.params_count = len(inspect.signature(self.cons).parameters)
         self.state = 0  # count of items iterated
 
         # properties reset every page
@@ -73,10 +73,10 @@ class Pagination(ApiBridge):
         if self.index < self.count:
             item_data = self.data[self.index]
 
-            if self.num_parameters == 3:
+            if self.params_count == 3:
                 object_type = item_data.get(self.cons_identifier)
                 data_object = self.cons(self.parent, item_data, object_type)
-            elif self.num_parameters == 2:
+            elif self.params_count == 2:
                 data_object = self.cons(self.parent, item_data)
             else:
                 data_object = self.cons(item_data)
@@ -181,3 +181,14 @@ class ReferenceByIdAndSelfLink(ApiBridge):
         return self.__repr__()
 
 
+class PropertyDefinition(object):
+    def __init__(self, data):
+        self.id = data.get('id')
+        self.name = data.get('name')
+        self.description = data.get('description')
+        self.help_text = data.get('helpText')
+        self.default = data.get('default')
+        self.max_length = data.get('maxLength')
+        self.min_length = data.get('minLength')
+        self.pattern = data.get('pattern')
+        self.validate = data.get('validate')

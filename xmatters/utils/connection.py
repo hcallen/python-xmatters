@@ -3,8 +3,8 @@ from oauthlib.oauth2 import LegacyApplicationClient
 from requests.adapters import HTTPAdapter
 from requests_oauthlib import OAuth2Session
 from urllib3.util.retry import Retry
-from xmatters.common import Error
 from typing import Optional, Tuple
+from xmatters.utils.errors import ApiError
 
 
 class Connection(object):
@@ -26,8 +26,8 @@ class Connection(object):
                 '{status_code} - {reason} - {url}'.format(status_code=r.status_code, reason=r.reason, url=url))
         data = r.json()
         # if xMatters API error
-        if isinstance(data, dict) and 'code' in data.keys():
-            raise Exception(Error(data))
+        if len(data) == 3 and all(k in data.keys() for k in ('code', 'reason', 'message')):
+            raise ApiError(data)
         else:
             return data
 
@@ -44,15 +44,27 @@ class Connection(object):
         retry_adapter = HTTPAdapter(max_retries=retry)
         self.session.mount('https://', retry_adapter)
 
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class BasicAuth(Connection):
     def __init__(self, base_url: str, credentials: tuple[str, str]) -> None:
         self.base_url = base_url if not base_url.endswith('/') else base_url[:-1]
         self.session = requests.Session()
         if credentials and not isinstance(credentials, tuple):
-            raise TypeError('credentials must be a tuple of (username, password)')
+            raise TypeError('Credentials must be a tuple of (username, password)')
         self.session.auth = credentials
         super(BasicAuth, self).__init__(self)
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class OAuth2(Connection):
@@ -110,3 +122,63 @@ class OAuth2(Connection):
             raise TypeError('credentials must be a tuple of (username, password)')
         if token and not isinstance(token, dict):
             raise TypeError('token must be a dict')
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class ApiBridge(object):
+    """ Base for api objects who need to make api calls """
+
+    def __init__(self, parent, data=None):
+        self.con = parent.con  # pass connection from parent
+        self.resource_url = None
+        self.resources = None
+        self_link = self._get_self_link(data)
+        self._set_resource_url(self_link)
+        self._set_resources(self_link)
+
+    def build_url(self, endpoint: str) -> str:
+        # if endpoint already contains base url, don't do anything
+        if self.con.base_url in endpoint:
+            return endpoint
+        # if self link, use xmatters instance url as prefix
+        if endpoint.startswith(self.con.api_prefix):
+            prefix = self.con.xm_url
+        # use resource url as prefix
+        else:
+            prefix = self.resource_url
+        return '{}{}'.format(prefix, endpoint)
+
+    def _set_resource_url(self, self_link: Optional[str]) -> None:
+        if self_link:
+            self.resource_url = '{}{}'.format(self.con.xm_url, self_link)
+        else:
+            self.resource_url = self.con.base_url
+
+    def _set_resources(self, self_link: Optional[str]) -> None:
+        resource_endpoint = self.resource_url.replace(self.con.base_url, '')
+        if resource_endpoint:
+            self.resources = resource_endpoint.split('/')[1::2]
+        else:
+            self.resources = None
+
+    @staticmethod
+    def _get_self_link(data):
+        if data and 'links' in data.keys():
+            self_link = data.get('links').get('self')
+            self_link = self_link[:-1] if self_link.endswith('/') else self_link
+            return self_link
+        else:
+            return None
+
+    def _remove_api_prefix(self, url: str) -> str:
+        """
+        Remove api prefix ('/api/xm/1') from url.
+        :param url: resource endpoint
+        :return: url w/o api prefix prepended
+        """
+        return url if self.con.api_prefix not in url else url.replace(self.con.api_prefix, '')

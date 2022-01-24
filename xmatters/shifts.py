@@ -1,6 +1,6 @@
 from xmatters.common import ReferenceByIdAndSelfLink, SelfLink, Recipient
 
-from xmatters.utils.utils import ApiBridge
+from xmatters.utils.connection import ApiBridge
 
 
 class GroupReference(ApiBridge):
