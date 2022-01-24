@@ -4,10 +4,10 @@ from xmatters.people import Person
 from xmatters.roles import Role
 from xmatters.shifts import Shift, GroupReference
 from xmatters.common import Pagination
-from xmatters.utils.utils import ApiComponent
+from xmatters.utils.utils import ApiBridge
 
 
-class GroupMembershipShiftReference(ApiComponent):
+class GroupMembershipShiftReference(ApiBridge):
     """ Custom object for shift information embedded in a group membership response """
 
     def __int__(self, parent, data):
@@ -17,12 +17,7 @@ class GroupMembershipShiftReference(ApiComponent):
         self.group = GroupReference(self, group) if group else None
         self.name = data.get('name')
         links = data.get('links')
-        self.links = SelfLink(links) if links else None
-
-    def get_self(self):
-        data = self.con.get(self.base_resource)
-        return Shift(self, data) if data else None
-
+        self.links = SelfLink(self, links) if links else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -31,7 +26,7 @@ class GroupMembershipShiftReference(ApiComponent):
         return self.__repr__()
 
 
-class GroupMembership(ApiComponent):
+class GroupMembership(ApiBridge):
     _endpoints = {'shifts': '/groups/{group_id}/members?embed=shifts'}
 
     def __init__(self, parent, data):
@@ -100,6 +95,9 @@ class Group(Recipient):
         url = self.build_url(self._endpoints.get('get_members'))
         data = self.con.get(url, params)
         return Pagination(self, data, GroupMembership) if data.get('data') else []
+
+    def get_observers(self):
+        return self.observers
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)

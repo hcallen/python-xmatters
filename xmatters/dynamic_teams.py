@@ -1,11 +1,13 @@
-from xmatters.common import Recipient, Pagination
+from xmatters.common import Recipient, Pagination, SelfLink
 from xmatters.people import Person
 from xmatters.roles import Role
+from xmatters.subscriptions import SubscriptionCriteria
 
 
 class DynamicTeam(Recipient):
     _endpoints = {'supervisors': '?embed=supervisors',
-                  'observers': '?embed=observers'}
+                  'observers': '?embed=observers',
+                  'get_members': '/members'}
 
     def __init__(self, parent, data):
         super(DynamicTeam, self).__init__(parent, data)
@@ -13,7 +15,10 @@ class DynamicTeam(Recipient):
         self.response_count_threshold = data.get('responseCountThreshold')
         self.use_emergency_device = data.get('useEmergencyDevice')
         self.description = data.get('description')
-        criteria = data.get('criteria')  # TODO
+        criteria = data.get('criteria')
+        self.criteria = SubscriptionCriteria(criteria) if criteria else None
+        links = data.get('links')
+        self.links = SelfLink(self, links) if links else None
 
     @property
     def observers(self):
@@ -22,10 +27,15 @@ class DynamicTeam(Recipient):
         return [Role(role) for role in observers] if observers else []
 
     @property
-    def supervisors(self, params=None):
+    def supervisors(self):
         url = self.build_url(self._endpoints.get('supervisors'))
+        supervisors = self.con.get(url).get('supervisors', {})
+        return Pagination(self, supervisors, Person) if supervisors.get('data') else []
+
+    def get_members(self, params=None):
+        url = self.build_url(self._endpoints.get('get_members'))
         data = self.con.get(url, params)
-        return Pagination(self, data, Person) if data.get('data') else []
+        return Pagination(self, data, Person) if data.get('data') else None
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)

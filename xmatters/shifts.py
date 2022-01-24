@@ -1,10 +1,9 @@
-import xmatters.groups
-from xmatters.common import ReferenceByIdAndSelfLink, SelfLink, Recipient, ReferenceByIdAndRecipientType
+from xmatters.common import ReferenceByIdAndSelfLink, SelfLink, Recipient
 
-from xmatters.utils.utils import ApiComponent
+from xmatters.utils.utils import ApiBridge
 
 
-class GroupReference(ApiComponent):
+class GroupReference(ApiBridge):
     def __init__(self, parent, data):
         super(GroupReference, self).__init__(parent, data)
         self.id = data.get('id')
@@ -12,11 +11,7 @@ class GroupReference(ApiComponent):
         self.recipient_type = data.get('recipientType')
         self.group_type = data.get('groupType')
         links = data.get('links')
-        self.links = SelfLink(links) if links else None
-
-    def get_self(self):
-        data = self.con.get(self.base_resource)
-        return xmatters.groups.Group(self, data) if data else None
+        self.links = SelfLink(self, links) if links else None
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -72,7 +67,7 @@ class ShiftRecurrence(object):
         return self.__repr__()
 
 
-class ShiftMember(ApiComponent):
+class ShiftMember(ApiBridge):
     def __init__(self, parent, data):
         super(ShiftMember, self).__init__(parent, data)
         self.position = data.get('position')
@@ -80,7 +75,7 @@ class ShiftMember(ApiComponent):
         self.escalation_type = data.get('escalationType')
         self.in_rotation = data.get('inRotation')
         recipient = data.get('recipient')
-        self.recipient = ReferenceByIdAndRecipientType(self, recipient) if recipient else None
+        self.recipient = Recipient(self, recipient) if recipient else None
         shift = data.get('shift')
         self.shift = ReferenceByIdAndSelfLink(self, shift) if shift else None
 
@@ -91,7 +86,7 @@ class ShiftMember(ApiComponent):
         return self.__repr__()
 
 
-class Shift(ApiComponent):
+class Shift(ApiBridge):
     _endpoints = {'get_members': '/members'}
 
     def __init__(self, parent, data):
@@ -100,7 +95,7 @@ class Shift(ApiComponent):
         group = data.get('group')
         self.group = GroupReference(self, group) if group else None
         links = data.get('links')
-        self.links = SelfLink(links) if links else None
+        self.links = SelfLink(self, links) if links else None
         self.name = data.get('name')
         self.start = data.get('start')
         self.end = data.get('end')

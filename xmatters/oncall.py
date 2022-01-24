@@ -1,26 +1,22 @@
 import xmatters.constructors
 import xmatters.people
-from xmatters.common import Recipient, SelfLink, ReferenceByIdAndTargetName, ReferenceByIdAndName
+from xmatters.common import Recipient, SelfLink
 from xmatters.people import PersonReference
-from xmatters.utils.utils import ApiComponent
-from xmatters.shifts import GroupReference, Shift
+from xmatters.utils.utils import ApiBridge
+from xmatters.shifts import GroupReference
 
 
-class Replacer(ApiComponent):
+class Replacer(ApiBridge):
     def __init__(self, parent, data):
         super(Replacer, self).__init__(parent, data)
         self.id = data.get('id')
         self.target_name = data.get('targetName')
         self.recipient_type = data.get('recipientType')
         links = data.get('links')
-        self.links = SelfLink(links) if links else None
+        self.links = SelfLink(self, links) if links else None
         self.first_name = data.get('firstName')
         self.last_name = data.get('lastName')
         self.status = data.get('status')
-
-    def get_self(self):
-        data = self.con.get(self.base_resource)
-        return xmatters.people.Person(self, data) if data else None
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -29,7 +25,7 @@ class Replacer(ApiComponent):
         return self.__repr__()
 
 
-class ShiftOccurrenceMember(ApiComponent):
+class ShiftOccurrenceMember(ApiBridge):
     def __init__(self, parent, data):
         super(ShiftOccurrenceMember, self).__init__(parent, data)
         self.member = Recipient(self, data.get('member'))
@@ -45,12 +41,12 @@ class ShiftOccurrenceMember(ApiComponent):
         return self.__repr__()
 
 
-class ShiftReference(ApiComponent):
+class ShiftReference(ApiBridge):
     def __init__(self, parent, data):
         super(ShiftReference, self).__init__(parent, data)
         self.id = data.get('id')
         links = data.get('links')
-        self.links = SelfLink(links) if links else None
+        self.links = SelfLink(self, links) if links else None
         self.name = data.get('name')
 
     def __repr__(self):
@@ -60,7 +56,7 @@ class ShiftReference(ApiComponent):
         return self.__repr__()
 
 
-class TemporaryReplacement(ApiComponent):
+class TemporaryReplacement(ApiBridge):
     def __init__(self, parent, data):
         super(TemporaryReplacement, self).__init__(parent, data)
         self.start = data.get('start')
@@ -68,7 +64,7 @@ class TemporaryReplacement(ApiComponent):
         self.replacement = TemporaryReplacement(self, data.get('replacement'))
 
 
-class OnCall(ApiComponent):
+class OnCall(ApiBridge):
     def __init__(self, parent, data):
         super(OnCall, self).__init__(parent)
         self.group = GroupReference(parent, data.get('group'))
@@ -84,17 +80,17 @@ class OnCall(ApiComponent):
         return self.__repr__()
 
 
-class OnCallSummary(ApiComponent):
+class OnCallSummary(ApiBridge):
     def __init__(self, parent, data):
         super(OnCallSummary, self).__init__(parent, data)
         group = data.get('group')
-        self.group = ReferenceByIdAndName(self, group) if group else None
+        self.group = GroupReference(self, group) if group else None
         shift = data.get('shift')
-        self.shift = ReferenceByIdAndName(self, shift) if shift else None
+        self.shift = ShiftReference(self, shift) if shift else None
         recipient = data.get('recipient')
-        self.recipient = ReferenceByIdAndTargetName(self, recipient) if recipient else None
+        self.recipient = xmatters.constructors.oncall_recipients_factory(self, recipient) if recipient else None
         absence = data.get('absence')
-        self.absence = ReferenceByIdAndTargetName(self, absence) if absence else None
+        self.absence = PersonReference(self, absence) if absence else None
         self.delay = data.get('delay')
         self.escalation_level = data.get('escalationLevel')
 

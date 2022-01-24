@@ -1,9 +1,9 @@
 import xmatters.constructors
-from xmatters.common import Recipient, Pagination, ReferenceByIdAndSelfLink
+from xmatters.common import Recipient, Pagination, SelfLink
 from xmatters.event_supressions import EventSuppression
 from xmatters.people import PersonReference
 from xmatters.plans import PlanReference
-from xmatters.utils.utils import ApiComponent
+from xmatters.utils.utils import ApiBridge
 
 
 class Message(object):
@@ -133,14 +133,13 @@ class ConferencePointer(object):
         return self.__repr__()
 
 
-class EventReference(ReferenceByIdAndSelfLink):
+class EventReference(ApiBridge):
     def __init__(self, parent, data):
         super(EventReference, self).__init__(parent, data)
+        self.id = data.get('id')
         self.event_id = data.get('eventId')
-
-    def get_self(self):
-        data = self.con.get(self.base_resource)
-        return Event(self, data) if data else None
+        links = data.get('links')
+        self.links = SelfLink(self, links) if links else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -149,7 +148,7 @@ class EventReference(ReferenceByIdAndSelfLink):
         return self.__repr__()
 
 
-class Notification(ApiComponent):
+class Notification(ApiBridge):
     def __init__(self, parent, data):
         super(Notification, self).__init__(parent, data)
         self.id = data.get('id')
@@ -167,7 +166,7 @@ class Notification(ApiComponent):
         return self.__repr__()
 
 
-class UserDeliveryData(ApiComponent):
+class UserDeliveryData(ApiBridge):
     def __init__(self, parent, data):
         super(UserDeliveryData, self).__init__(parent, data)
         self.event = EventReference(self, data.get('event'))
@@ -181,7 +180,7 @@ class UserDeliveryData(ApiComponent):
         return self.__repr__()
 
 
-class Annotation(ApiComponent):
+class Annotation(ApiBridge):
     def __init__(self, parent, data):
         super(Annotation, self).__init__(parent, data)
         self.id = data.get('id')
@@ -197,7 +196,7 @@ class Annotation(ApiComponent):
         return self.__repr__()
 
 
-class Event(ApiComponent):
+class Event(ApiBridge):
     _endpoints = {'messages': '?embed=messages',
                   'annotations': '?embed=annotations',
                   'properties': '?embed=properties',

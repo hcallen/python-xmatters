@@ -1,6 +1,6 @@
 from xmatters.common import SelfLink
 import xmatters.events
-from xmatters.utils.utils import ApiComponent
+from xmatters.utils.utils import ApiBridge
 
 
 class EventFloodFilter(object):
@@ -15,13 +15,13 @@ class EventFloodFilter(object):
         return self.__repr__()
 
 
-class SuppressionMatch(ApiComponent):
+class SuppressionMatch(ApiBridge):
     def __init__(self, parent, data):
         super(SuppressionMatch, self).__init__(parent, data)
         self.id = data.get('id')
         self.event_id = data.get('eventId')
         links = data.get('links')
-        self.links = SelfLink(links) if links else None
+        self.links = SelfLink(self, links) if links else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -30,7 +30,7 @@ class SuppressionMatch(ApiComponent):
         return self.__repr__()
 
 
-class EventSuppression(ApiComponent):
+class EventSuppression(ApiBridge):
     def __init__(self, parent, data):
         super(EventSuppression, self).__init__(parent, data)
         event = data.get('event')
@@ -40,7 +40,7 @@ class EventSuppression(ApiComponent):
         self.at = data.get('at')
         filters = data.get('filters', [])
         self.filter = [EventFloodFilter(f) for f in filters]
-        self.links = SelfLink(data.get('links'))
+        self.links = SelfLink(self, data.get('links'))
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

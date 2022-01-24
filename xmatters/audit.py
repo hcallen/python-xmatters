@@ -1,16 +1,16 @@
-from xmatters.common import ReferenceByIdAndTargetName
+from xmatters.common import Recipient
 from xmatters.events import EventReference, ResponseOption
 from xmatters.people import PersonReference
-from xmatters.utils.utils import ApiComponent
+from xmatters.utils.utils import ApiBridge
 
 
-class Notification(ApiComponent):
+class Notification(ApiBridge):
     def __init__(self, parent, data):
         super(Notification, self).__init__(parent, data)
         self.id = data.get('id')
         self.category = data.get('category')
         recipient = data.get('recipient')
-        self.recipient = ReferenceByIdAndTargetName(parent, recipient) if recipient else None
+        self.recipient = Recipient(parent, recipient) if recipient else None
         self.delivery_status = data.get('deliveryStatus')
         self.created = data.get('created')
         self.delivery_attempted = data.get('deliveryAttempted')
@@ -24,7 +24,7 @@ class Notification(ApiComponent):
         return self.__repr__()
 
 
-class Response(ApiComponent):
+class Response(ApiBridge):
     def __init__(self, parent, data):
         super(Response, self).__init__(parent, data)
         self.comment = data.get('comment')
@@ -43,7 +43,7 @@ class Response(ApiComponent):
         return self.__repr__()
 
 
-class AuditAnnotation(ApiComponent):
+class AuditAnnotation(ApiBridge):
     def __init__(self, parent, data):
         super(AuditAnnotation, self).__init__(parent, data)
         event = data.get('event')
@@ -59,7 +59,7 @@ class AuditAnnotation(ApiComponent):
         return self.__repr__()
 
 
-class Audit(ApiComponent):
+class Audit(ApiBridge):
     def __init__(self, parent, data):
         super(Audit, self).__init__(parent, data)
         self.type = data.get('type')

@@ -1,9 +1,9 @@
 from xmatters.people import PersonReference
 from xmatters.shifts import GroupReference
-from xmatters.utils.utils import ApiComponent
+from xmatters.utils.utils import ApiBridge
 
 
-class TemporaryAbsence(ApiComponent):
+class TemporaryAbsence(ApiBridge):
     def __init__(self, parent, data):
         super(TemporaryAbsence, self).__init__(parent, data)
         self.id = data.get('id')

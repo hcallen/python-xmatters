@@ -1,6 +1,9 @@
 from xmatters.common import Recipient, ReferenceById
 from xmatters.people import PersonReference
 
+class Provider(object):
+    def __init__(self, data):
+        self.id = data.get('id')
 
 class Device(Recipient):
     _endpoints = {'timeframes': '?embed=timeframes'}
@@ -12,9 +15,11 @@ class Device(Recipient):
         self.description = data.get('description')
         self.device_type = data.get('deviceType')
         self.name = data.get('name')
-        self.owner = PersonReference(self, data.get('owner'))
+        owner = data.get('owner')
+        self.owner = PersonReference(self, owner) if owner else None
         self.priority_threshold = data.get('priorityThreshold')
-        self.provider = ReferenceById(data.get('provider'))
+        provider = data.get('provider')
+        self.provider = ReferenceById(provider) if provider else None
         self.sequence = data.get('sequence')
         self.test_status = data.get('testStatus')
 
@@ -161,41 +166,3 @@ class DeviceTimeframe(object):
         return self.__repr__()
 
 
-class DeviceName(object):
-    def __init__(self, data):
-        self.device_type = data.get('deviceType')
-        self.name = data.get('name')
-        self.description = data.get('description')
-        self.domains = data.get('domains')
-
-    def __repr__(self):
-        return '<{} {}>'.format(self.__class__.__name__, self.name)
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class TargetDeviceNameSelector(object):
-    def __init__(self, data):
-        self.name = data.get('name')
-        self.selected = data.get('selected')
-        self.visible = data.get('visible')
-
-    def __repr__(self):
-        return '<{} {}>'.format(self.__class__.__name__, self.name)
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class DeviceTypes(object):
-    def __init__(self, data):
-        self.count = data.get('count')
-        self.total = data.get('total')
-        self.data = data.get('data', [])
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()
