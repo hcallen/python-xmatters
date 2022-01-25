@@ -4,7 +4,7 @@ from requests.adapters import HTTPAdapter
 from requests_oauthlib import OAuth2Session
 from urllib3.util.retry import Retry
 from typing import Optional, Tuple
-from xmatters.utils.errors import ApiError
+from xmatters.utils.errors import xMattersApiError
 
 
 class Connection(object):
@@ -27,7 +27,7 @@ class Connection(object):
         data = r.json()
         # if xMatters API error
         if len(data) == 3 and all(k in data.keys() for k in ('code', 'reason', 'message')):
-            raise ApiError(data)
+            raise xMattersApiError(data)
         else:
             return data
 
@@ -96,6 +96,7 @@ class OAuth2(Connection):
         return self.session.fetch_token(token_url=self.token_url, username=self.credentials[0],
                                         password=self.credentials[1], include_client_id=True, timeout=3)
 
+
     def _get_token(self):
         if self.credentials:
             return self.fetch_token()
@@ -116,7 +117,7 @@ class OAuth2(Connection):
         if credentials and token:
             raise ValueError('Provide a token or credentials, not both')
         if not credentials and not token and token_storage and token_storage.read_token() is None:
-            raise ValueError('Must provide credentials to fetch token')
+            raise ValueError('Token storage is empty')
         if credentials is None and token is None and token_storage is None:
             raise ValueError('You must provide at least one token retrieval method')
         if credentials and not isinstance(credentials, tuple):

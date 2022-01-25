@@ -38,12 +38,13 @@ class Pagination(ApiBridge):
         self.cons_identifier = cons_identifier
         self.params_count = len(inspect.signature(self.cons).parameters)
         self.state = 0  # count of items iterated
+        self.total = None
 
-        # properties reset every page
+
+        # properties change every page
         self.count = None
         self.data = None
         self.links = None
-        self.total = None
         self.index = None
         self._set_pagination_properties(data)
 
@@ -64,6 +65,7 @@ class Pagination(ApiBridge):
         return self
 
     def __next__(self):
+
         if self.state == self.total:
             raise StopIteration()
 
