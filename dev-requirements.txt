@@ -1,6 +1,7 @@
 atomicwrites==1.4.0
 attrs==21.4.0
 betamax==0.8.1
+betamax-serializers==0.2.1
 certifi==2021.10.8
 charset-normalizer==2.0.10
 colorama==0.4.4

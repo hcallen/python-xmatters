@@ -2,3 +2,4 @@
 /tests/settings/
 /tests/.pytest_cache/
 /tests/cassettes/
+/scratch.py
