@@ -1,8 +1,8 @@
+import xmatters.events
 import xmatters.utils.constructors
+import xmatters.plans
 from xmatters.common import SelfLink, Pagination, Recipient, PropertyDefinition
 from xmatters.device_names import TargetDeviceNameSelector
-from xmatters.events import VoicemailOptions, ResponseOption
-from xmatters.plans import PlanReference
 from xmatters.utils.connection import ApiBridge
 
 
@@ -138,7 +138,7 @@ class HandlingSection(FormSection):
         require_phone_password = data.get('requirePhonePassword')
         self.require_phone_password = SectionValue(require_phone_password) if require_phone_password else None
         voicemail_options = data.get('voicemailOptions')
-        self.voicemail_options = VoicemailOptions(data) if voicemail_options else None
+        self.voicemail_options = xmatters.events.VoicemailOptions(data) if voicemail_options else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -190,7 +190,7 @@ class Form(ApiBridge):
         sender_overrides = data.get('senderOverrides')
         self.sender_overrides = SenderOverrides(sender_overrides) if sender_overrides else None
         plan = data.get('plan')
-        self.plan = PlanReference(plan) if plan else None
+        self.plan = xmatters.plans.PlanReference(plan) if plan else None
         links = data.get('links')
         self.links = SelfLink(self, data) if links else None
 
@@ -206,8 +206,8 @@ class Form(ApiBridge):
 
     def get_response_options(self):
         url = self.build_url(self._endpoints.get('get_response_options'))
-        response_options = self.con.get(url)
-        return Pagination(self, response_options, ResponseOption) if response_options.get('data') else []
+        options = self.con.get(url)
+        return Pagination(self, options, xmatters.events.ResponseOption) if options.get('data') else []
 
     def get_sections(self):
         url = self._endpoints.get('get_sections').format(base_url=self.con.base_url, form_id=self.id)

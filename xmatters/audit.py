@@ -1,8 +1,8 @@
+import xmatters.events
 from xmatters.common import Recipient
-from xmatters.events import EventReference, ResponseOption
+
 from xmatters.people import PersonReference
 from xmatters.utils.connection import ApiBridge
-
 
 class Notification(ApiBridge):
     def __init__(self, parent, data):
@@ -15,7 +15,7 @@ class Notification(ApiBridge):
         self.created = data.get('created')
         self.delivery_attempted = data.get('deliveryAttempted')
         event = data.get('event')
-        self.event = EventReference(parent, data) if event else None
+        self.event = xmatters.events.EventReference(parent, data) if event else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -31,7 +31,7 @@ class Response(ApiBridge):
         notification = data.get('notification')
         self.notification = Notification(self, notification) if notification else None
         options = data.get('options', {}).get('data')
-        self.options = [ResponseOption(r) for r in options] if options else None
+        self.options = [xmatters.events.ResponseOption(r) for r in options] if options else None
         self.source = data.get('source')
         self.received = data.get('received')
         self.response = data.get('response')
@@ -47,7 +47,7 @@ class AuditAnnotation(ApiBridge):
     def __init__(self, parent, data):
         super(AuditAnnotation, self).__init__(parent, data)
         event = data.get('event')
-        self.event = EventReference(parent, data) if event else None
+        self.event = xmatters.events.EventReference(parent, data) if event else None
         author = data.get('author')
         self.author = PersonReference(parent, author) if author else None
         self.comment = data.get('comment')
@@ -64,7 +64,7 @@ class Audit(ApiBridge):
         super(Audit, self).__init__(parent, data)
         self.type = data.get('type')
         event = data.get('event')
-        self.event = EventReference(parent, data) if event else None
+        self.event = xmatters.events.EventReference(parent, data) if event else None
         self.order_id = data.get('orderId')
         self.at = data.get('at')
 

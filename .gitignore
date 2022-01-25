@@ -1,2 +1,4 @@
 /venv/
 /tests/settings/
+/tests/.pytest_cache/
+/tests/cassettes/

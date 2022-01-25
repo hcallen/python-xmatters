@@ -52,7 +52,7 @@ class Connection(object):
 
 
 class BasicAuth(Connection):
-    def __init__(self, base_url: str, credentials: tuple[str, str]) -> None:
+    def __init__(self, base_url: str, credentials: Tuple[str, str]) -> None:
         self.base_url = base_url if not base_url.endswith('/') else base_url[:-1]
         self.session = requests.Session()
         if credentials and not isinstance(credentials, tuple):
@@ -85,6 +85,7 @@ class OAuth2(Connection):
         self.session.token = self.token
 
         # update storage token if differs from self.token
+
         if self.token_storage and token_storage.read_token() != self.token:
             self.token_storage.write_token(self.token)
         super(OAuth2, self).__init__(self)
