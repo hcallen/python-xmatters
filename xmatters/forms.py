@@ -1,5 +1,5 @@
 import xmatters.events
-import xmatters.utils.constructors
+import xmatters.utils.factories
 import xmatters.plans
 from xmatters.common import SelfLink, Pagination, Recipient, PropertyDefinition
 from xmatters.device_names import TargetDeviceNameSelector
@@ -212,7 +212,7 @@ class Form(ApiBridge):
     def get_sections(self):
         url = self._endpoints.get('get_sections').format(base_url=self.con.base_url, form_id=self.id)
         s = self.con.get(url)
-        return Pagination(self, s, xmatters.utils.constructors.sections_factory, 'type') if s.get('data') else []
+        return Pagination(self, s, xmatters.utils.factories.sections_factory, 'type') if s.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

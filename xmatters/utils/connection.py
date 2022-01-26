@@ -4,7 +4,7 @@ from requests.adapters import HTTPAdapter
 from requests_oauthlib import OAuth2Session
 from urllib3.util.retry import Retry
 from typing import Optional, Tuple
-from xmatters.utils.errors import xMattersApiError
+from xmatters.utils.errors import ApiError
 
 
 class Connection(object):
@@ -27,7 +27,7 @@ class Connection(object):
         data = r.json()
         # if xMatters API error
         if len(data) == 3 and all(k in data.keys() for k in ('code', 'reason', 'message')):
-            raise xMattersApiError(data)
+            raise ApiError(data)
         else:
             return data
 

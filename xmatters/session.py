@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Optional, Union, List
-import xmatters.utils.constructors
+import xmatters.utils.factories
 from xmatters.audit import Audit
 from xmatters.common import Pagination
 from xmatters.device_types import DeviceTypes
@@ -11,6 +11,7 @@ from xmatters.forms import Form
 from xmatters.groups import Group
 from xmatters.oncall import OnCall, OnCallSummary
 from xmatters.people import Person
+from xmatters.plans import Plan
 from xmatters.temporary_absences import TemporaryAbsence
 from xmatters.utils.connection import ApiBridge
 from xmatters.import_jobs import Import
@@ -36,7 +37,8 @@ class xMattersSession(ApiBridge):
                   'get_dynamic_teams': '/dynamic-teams',
                   'get_dynamic_team_by_id': '/dynamic-teams/{dynamic_team_id}',
                   'get_forms': '/forms',
-                  'get_import_jobs': '/imports'}
+                  'get_import_jobs': '/imports',
+                  'get_plans': '/plans'}
 
     def __init__(self, auth, timeout=3, retries=3):
         self.con = auth
@@ -47,12 +49,12 @@ class xMattersSession(ApiBridge):
     def get_devices(self, params: Optional[dict] = None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params)
-        return Pagination(self, data, xmatters.utils.constructors.device_factory) if data.get('data') else []
+        return Pagination(self, data, xmatters.utils.factories.device_factory) if data.get('data') else []
 
     def get_device_by_id(self, device_id, params: Optional[dict] = None):
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
         data = self.con.get(url, params)
-        return xmatters.utils.constructors.device_factory(self, data) if data else None
+        return xmatters.utils.factories.device_factory(self, data) if data else None
 
     def get_groups(self, params: Optional[dict] = None):
         url = self.build_url(self._endpoints.get('get_groups'))
@@ -131,7 +133,7 @@ class xMattersSession(ApiBridge):
         data = self.con.get(url, params)
         return Pagination(self, data, ConferenceBridge) if data.get('data') else []
 
-    def get_conference_bridge_by_id(self, bridge_id: str, params: Optional[dict] = None) -> ConferenceBridge:
+    def get_conference_bridge_by_id(self, bridge_id: str, params: Optional[dict] = None) -> Optional[ConferenceBridge]:
         url = self.build_url(self._endpoints.get('get_conference_bridge_by_id').format(bridge_id=bridge_id))
         data = self.con.get(url, params)
         return ConferenceBridge(self, data) if data else None
@@ -141,10 +143,15 @@ class xMattersSession(ApiBridge):
         data = self.con.get(url, params)
         return Pagination(self, data, Form) if data.get('data') else []
 
-    def get_import_jobs(self, params: Optional[dict] = None):
+    def get_import_jobs(self, params: Optional[dict] = None) -> Union[List[Import], List[str]]:
         url = self.build_url(self._endpoints.get('get_import_jobs'))
         data = self.con.get(url, params).get('data')
         return [Import(self, job) for job in data] if data else []
+
+    def get_plans(self, params: Optional[dict] = None) -> Union[Pagination, List[str]]:
+        url = self.build_url(self._endpoints.get('get_plans'))
+        data = self.con.get(url, params)
+        return Pagination(self, data, Plan) if data.get('data') else []
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.con.xm_url)

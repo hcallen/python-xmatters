@@ -1,4 +1,4 @@
-import xmatters.utils.constructors
+import xmatters.utils.factories
 from xmatters.common import Recipient, Pagination, SelfLink
 from xmatters.event_supressions import EventSuppression
 from xmatters.people import PersonReference
@@ -239,7 +239,7 @@ class Event(ApiBridge):
         url = self._endpoints.get('get_audit').format(base_url=self.con.base_url, event_id=self.event_id,
                                                       audit_types=audit_types)
         data = self.con.get(url, params)
-        return Pagination(self, data, xmatters.utils.constructors.audit_factory) if data.get('data') else []
+        return Pagination(self, data, xmatters.utils.factories.audit_factory) if data.get('data') else []
 
     @property
     def annotations(self):

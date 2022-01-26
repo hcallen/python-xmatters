@@ -1,5 +1,6 @@
-from xmatters.common import ReferenceById
+from xmatters.common import ReferenceById, Pagination
 from xmatters.people import PersonReference
+from xmatters.plan_endpoints import Endpoint
 from xmatters.plans import PlanReference
 from xmatters.utils.connection import ApiBridge
 
@@ -21,11 +22,12 @@ class IntegrationLog(ApiBridge):
     def __init__(self, parent, data):
         super(IntegrationLog, self).__init__(parent, data)
         self.id = data.get('id')
-        integration = data.get('integration')  # TODO
+        integration = data.get('integration')
+        self.integration = IntegrationReference(integration) if integration else None
         self.completed = data.get('completed')
         self.request_method = data.get('requestMethod')
-        request_headers = data.get('requestHeaders')  # TODO
-        request_parameters = data.get('requestParameters')
+        self.request_headers = data.get('requestHeaders')
+        self.request_parameters = data.get('requestParameters')
         self.request_body = data.get('requestBody')
         self.remote_address = data.get('remoteAddress')
         self.request_id = data.get('requestId')
@@ -41,7 +43,7 @@ class IntegrationLog(ApiBridge):
 
 
 class Integration(ApiBridge):
-    _endpoints = {'get_logs': 'logs'}
+    _endpoints = {'get_logs': '/logs'}
 
     def __init__(self, parent, data):
         super(Integration, self).__init__(parent, data)
@@ -56,14 +58,15 @@ class Integration(ApiBridge):
         self.triggered_by = data.get('triggeredBy')
         self.created_by = data.get('createdBy')
         self.authentication_type = data.get('authenticationType')
-        endpoint = data.get('endpoint')  # TODO
+        endpoint = data.get('endpoint')
+        self.endpoint = Endpoint(self, endpoint)
         self.deployed = data.get('deployed')
         self.script = data.get('script')
-        logs = data.get('logs')  # TODO
 
     def get_logs(self, params=None):
-        # TODO
-        return None
+        url = self.build_url(self._endpoints.get('get_logs'))
+        logs = self.con.get(url, params)
+        return Pagination(self, logs, IntegrationLog) if logs.get('data') else []
 
     @property
     def logs(self):

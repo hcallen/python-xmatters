@@ -4,6 +4,8 @@ import xmatters.people
 import xmatters.dynamic_teams
 import xmatters.audit
 import xmatters.forms
+from xmatters.plan_endpoints import BasicAuthentication, OAuth2Authentication
+from xmatters.plan_properties import Boolean, Hierarchy, MultLinkSelectList, SingleSelectList, Number, Password, Text
 
 _devices = {'EMAIL': xmatters.devices.EmailDevice,
             'VOICE': xmatters.devices.VoiceDevice,
@@ -76,3 +78,31 @@ def sections_factory(parent, data, section_type):
     """ For use with form sections """
     o = _form_sections.get(section_type)
     return o(parent, data) if o else None
+
+
+_auth_types = {'NO_AUTH': None,
+               'BASIC': BasicAuthentication,
+               'OAUTH2': OAuth2Authentication,
+               'OAUTH2_FORCE': OAuth2Authentication,
+               'OAUTH_SLACK': OAuth2Authentication}
+
+
+def auth_factory(data, auth_type):
+    """ For use with plan endpoints """
+    o = _auth_types.get(auth_type)
+    return o(data) if o else None
+
+
+_properties = {'BOOLEAN': Boolean,
+               'HIERARCHY': Hierarchy,
+               'LIST_TEXT_MULTI_SELECT': MultLinkSelectList,
+               'LIST_TEXT_SINGLE_SELECT': SingleSelectList,
+               'NUMBER': Number,
+               'PASSWORD': Password,
+               'TEXT': Text}
+
+
+def prop_factory(data, prop_type):
+    """ For use with plan properties """
+    o = _properties.get(prop_type)
+    return o(data) if o else None

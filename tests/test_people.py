@@ -1,8 +1,13 @@
 import pytest
+from .conftest import my_vcr
+from xmatters.common import Pagination
 
-@pytest.mark.skip()
-@pytest.mark.usefixtures('people')
-def test_get_people_devices(people):
-    for person in people:
-        devices = person.get_devices()
-        return isinstance(devices, list)
+
+@my_vcr.use_cassette('test_people')
+@pytest.mark.usefixtures('xm_session')
+def test_get_people(xm_session):
+    for person in xm_session.get_people():
+        assert person.id is not None
+        assert isinstance(person.properties, dict)
+        assert isinstance(person.supervisors, Pagination) or isinstance(person.supervisors, list)
+

@@ -1,12 +1,13 @@
-import xmatters.utils.constructors
-from xmatters.common import Recipient, SelfLink
+import xmatters.utils.factories
+from xmatters.common import Recipient, SelfLink, Pagination
 from xmatters.roles import Role
 from xmatters.utils.connection import ApiBridge
 
 
 class Person(Recipient):
     _endpoints = {'get_devices': '/devices',
-                  'roles': '?embed=roles'}
+                  'roles': '?embed=roles',
+                  'get_supervisors': '/supervisors'}
 
     def __init__(self, parent, data):
         super(Person, self).__init__(parent, data)
@@ -21,7 +22,7 @@ class Person(Recipient):
         self.when_updated = data.get('whenUpdated')
         self.phone_login = data.get('phoneLogin')
         self.phone_pin = data.get('phonePin')
-        self.properties = data.get('properties')
+        self.properties = data.get('properties', {})
 
     @property
     def roles(self):
@@ -33,10 +34,19 @@ class Person(Recipient):
     def devices(self):
         return self.get_devices()
 
+    @property
+    def supervisors(self):
+        return self.get_supervisors()
+
+    def get_supervisors(self, params=None):
+        url = self.build_url(self._endpoints.get('get_supervisors'))
+        s = self.con.get(url, params)
+        return Pagination(self, s, Person) if s.get('data') else []
+
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params).get('data')
-        return [xmatters.utils.constructors.device_factory(self, device) for device in data]
+        return [xmatters.utils.factories.device_factory(self, device) for device in data]
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
