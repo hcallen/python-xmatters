@@ -4,6 +4,7 @@ from xmatters.common import Recipient
 from xmatters.people import PersonReference
 from xmatters.utils.connection import ApiBridge
 
+
 class Notification(ApiBridge):
     def __init__(self, parent, data):
         super(Notification, self).__init__(parent, data)

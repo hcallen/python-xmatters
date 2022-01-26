@@ -22,8 +22,8 @@ class Connection(object):
     def request(self, method, url, params):
         r = self.session.request(method=method, url=url, params=params, timeout=self.timeout)
         if not r.ok:
-            raise Exception(
-                '{status_code} - {reason} - {url}'.format(status_code=r.status_code, reason=r.reason, url=url))
+            err_msg = '{status_code} - {reason} - {url}'.format(status_code=r.status_code, reason=r.reason, url=url)
+            raise Exception(err_msg)
         data = r.json()
         # if xMatters API error
         if len(data) == 3 and all(k in data.keys() for k in ('code', 'reason', 'message')):
@@ -55,8 +55,6 @@ class BasicAuth(Connection):
     def __init__(self, base_url: str, credentials: Tuple[str, str]) -> None:
         self.base_url = base_url if not base_url.endswith('/') else base_url[:-1]
         self.session = requests.Session()
-        if credentials and not isinstance(credentials, tuple):
-            raise TypeError('Credentials must be a tuple of (username, password)')
         self.session.auth = credentials
         super(BasicAuth, self).__init__(self)
 
@@ -70,10 +68,13 @@ class BasicAuth(Connection):
 class OAuth2(Connection):
     _endpoints = {'token': '/oauth2/token'}
 
-    def __init__(self, base_url: str, client_id: str, credentials: Optional[Tuple[str, str]] = None,
+    def __init__(self, base_url: str,
+                 client_id: str,
+                 credentials: Optional[Tuple[str, str]] = None,
                  token: Optional[dict] = None,
                  token_storage=None) -> None:
-        self._check_input(credentials, token, token_storage)
+        if credentials is None and token is None and (token_storage is None or token_storage.read_token() is None):
+            raise ValueError('You must provide at least one token retrieval method')
         self.base_url = base_url if not base_url.endswith('/') else base_url[:-1]
         self.client_id = client_id
         self.token_storage = token_storage
@@ -85,21 +86,17 @@ class OAuth2(Connection):
         self.session.token = self.token
 
         # update storage token if differs from self.token
-
         if self.token_storage and token_storage.read_token() != self.token:
             self.token_storage.write_token(self.token)
         super(OAuth2, self).__init__(self)
 
-    def fetch_token(self):
-        if self.credentials is None:
-            raise ValueError('Must provide credentials in-order to fetch token')
+    def _fetch_token(self):
         return self.session.fetch_token(token_url=self.token_url, username=self.credentials[0],
                                         password=self.credentials[1], include_client_id=True, timeout=3)
 
-
     def _get_token(self):
         if self.credentials:
-            return self.fetch_token()
+            return self._fetch_token()
         elif self.token_storage:
             return self.token_storage.read_token()
         else:
@@ -111,19 +108,6 @@ class OAuth2(Connection):
         return OAuth2Session(client=client, auto_refresh_url=self.token_url,
                              auto_refresh_kwargs=auto_refresh_kwargs,
                              token_updater=self.token_updater)
-
-    @staticmethod
-    def _check_input(credentials, token, token_storage):
-        if credentials and token:
-            raise ValueError('Provide a token or credentials, not both')
-        if not credentials and not token and token_storage and token_storage.read_token() is None:
-            raise ValueError('Token storage is empty')
-        if credentials is None and token is None and token_storage is None:
-            raise ValueError('You must provide at least one token retrieval method')
-        if credentials and not isinstance(credentials, tuple):
-            raise TypeError('credentials must be a tuple of (username, password)')
-        if token and not isinstance(token, dict):
-            raise TypeError('token must be a dict')
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

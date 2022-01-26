@@ -11,19 +11,19 @@ from xmatters.utils.utils import TokenFileStorage
 
 def skip_token_calls(interaction, current_cassette):
     if interaction.data['request']['uri'].endswith('/oauth2/token'):
-        current_cassette.ignore()
+        interaction.ignore()
 
 
 Betamax.register_serializer(pretty_json.PrettyJSONSerializer)
 with Betamax.configure() as config:
-    config.cassette_library_dir = './tests/cassettes'
+    config.cassette_library_dir = '../tests/cassettes'
     config.default_cassette_options['serialize_with'] = 'prettyjson'
     config.before_record(callback=skip_token_calls)
-
+    config.before_playback(callback=skip_token_calls)
 
 @pytest.fixture(scope='session')
 def settings():
-    with open('./tests/settings/settings.json', 'r') as f:
+    with open('../tests/settings/settings.json', 'r') as f:
         return json.load(f)
 
 
@@ -41,20 +41,19 @@ def xm_session(settings):
 def pagination_factory():
     def _pagination(api_object, method_name):
         page_index = 0
-
         recorder = Betamax(api_object.con.session)
         recorder.use_cassette('{}_page_{}'.format(method_name, page_index))
         recorder.start()
         method = getattr(api_object, method_name)
         pagination = method()
         recorder.stop()
-        p_recorder = Betamax(pagination.con.session)
+        recorder.session = pagination.con.session
         for _ in pagination:
             if pagination.index == (pagination.count - 1):
-                p_recorder.stop()
+                recorder.stop()
             if pagination.index == pagination.count and pagination.links and pagination.links.next:
                 page_index += 1
-                p_recorder.use_cassette('{}_page_{}'.format(method_name, page_index))
-                p_recorder.start()
+                recorder.use_cassette('{}_page_{}'.format(method_name, page_index))
+                recorder.start()
 
     return _pagination
