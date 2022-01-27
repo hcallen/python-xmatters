@@ -77,9 +77,9 @@ class Pagination(ApiBridge):
 
             if self.params_count == 3:
                 object_type = item_data.get(self.cons_identifier)
-                data_object = self.cons(self.parent, item_data, object_type)
+                data_object = self.cons(self, item_data, object_type)
             elif self.params_count == 2:
-                data_object = self.cons(self.parent, item_data)
+                data_object = self.cons(self, item_data)
             else:
                 data_object = self.cons(item_data)
 

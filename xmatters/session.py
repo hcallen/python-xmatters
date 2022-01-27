@@ -15,6 +15,7 @@ from xmatters.plans import Plan
 from xmatters.temporary_absences import TemporaryAbsence
 from xmatters.utils.connection import ApiBridge
 from xmatters.import_jobs import Import
+import urllib.parse
 
 
 class xMattersSession(ApiBridge):
@@ -40,10 +41,12 @@ class xMattersSession(ApiBridge):
                   'get_import_jobs': '/imports',
                   'get_plans': '/plans'}
 
-    def __init__(self, auth, timeout=3, retries=3):
+    def __init__(self, base_url, auth, timeout=3, max_retries=3):
+        p_url = urllib.parse.urlparse(base_url)
+        instance_url = 'https://{}'.format(p_url.netloc)
+        base_url = '{}/api/xm/1'.format(instance_url)
         self.con = auth
-        self.con.timeout = timeout
-        self.con.retries = retries
+        self.con.init_session(base_url, timeout, max_retries)
         super(xMattersSession, self).__init__(self)
 
     def get_devices(self, params: Optional[dict] = None):
@@ -153,8 +156,24 @@ class xMattersSession(ApiBridge):
         data = self.con.get(url, params)
         return Pagination(self, data, Plan) if data.get('data') else []
 
+    @property
+    def base_url(self):
+        return self.con.base_url
+
+    @property
+    def instance_url(self):
+        return self.con.instance_url
+
+    @property
+    def timeout(self):
+        return self.con.timeout
+
+    @property
+    def max_retries(self):
+        return self.con.max_retries
+
     def __repr__(self):
-        return '<{} {}>'.format(self.__class__.__name__, self.con.xm_url)
+        return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()

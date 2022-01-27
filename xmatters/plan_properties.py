@@ -17,11 +17,13 @@ class Boolean(Property):
     def __init__(self, data):
         super(Boolean, self).__init__(data)
         self.default = data.get('default')
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
+
 
 class Hierarchy(Property):
     def __init__(self, data):
@@ -30,31 +32,37 @@ class Hierarchy(Property):
         self.delimiter = data.get('delimiter')
         self.categories = data.get('categories', [])
         self.paths = data.get('paths', [])
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
+
 
 class MultLinkSelectList(Property):
     def __init__(self, data):
         super(MultLinkSelectList, self).__init__(data)
         self.items = data.get('items', [])
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
+
 
 class SingleSelectList(Property):
     def __init__(self, data):
         super(SingleSelectList, self).__init__(data)
         self.items = data.get('items', [])
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
+
 
 class Number(Property):
     def __init__(self, data):
@@ -63,11 +71,13 @@ class Number(Property):
         self.max_length = data.get('maxLength')
         self.min_length = data.get('minLength')
         self.units = data.get('units')
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
+
 
 class Password(Property):
     def __init__(self, data):
@@ -76,11 +86,13 @@ class Password(Property):
         self.min_length = data.get('minLength')
         self.pattern = data.get('pattern')
         self.validate = data.get('validate')
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
+
 
 class Text(Property):
     def __init__(self, data):
@@ -89,6 +101,7 @@ class Text(Property):
         self.min_length = data.get('minLength')
         self.pattern = data.get('pattern')
         self.validate = data.get('validate')
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 

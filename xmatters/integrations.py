@@ -1,7 +1,7 @@
 from xmatters.common import ReferenceById, Pagination
 from xmatters.people import PersonReference
 from xmatters.plan_endpoints import Endpoint
-from xmatters.plans import PlanReference
+import xmatters.plans
 from xmatters.utils.connection import ApiBridge
 
 
@@ -9,7 +9,7 @@ class IntegrationReference(object):
     def __init__(self, data):
         self.id = data.get('id')
         plan = data.get('plan')
-        self.plan = PlanReference(plan) if plan else None
+        self.plan = xmatters.plans.PlanReference(plan) if plan else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -43,7 +43,7 @@ class IntegrationLog(ApiBridge):
 
 
 class Integration(ApiBridge):
-    _endpoints = {'get_logs': '/logs'}
+    _endpoints = {'get_logs': '{base_url}/plans/{plan_id}/integrations/{int_id}/logs'}
 
     def __init__(self, parent, data):
         super(Integration, self).__init__(parent, data)
@@ -59,12 +59,13 @@ class Integration(ApiBridge):
         self.created_by = data.get('createdBy')
         self.authentication_type = data.get('authenticationType')
         endpoint = data.get('endpoint')
-        self.endpoint = Endpoint(self, endpoint)
+        self.endpoint = Endpoint(self, endpoint) if endpoint else None
         self.deployed = data.get('deployed')
         self.script = data.get('script')
 
     def get_logs(self, params=None):
-        url = self.build_url(self._endpoints.get('get_logs'))
+        endpoint = self._endpoints.get('get_logs').format(base_url=self.con.base_url, plan_id=self.plan.id, int_id=self.id)
+        url = self.build_url(endpoint)
         logs = self.con.get(url, params)
         return Pagination(self, logs, IntegrationLog) if logs.get('data') else []
 
@@ -73,7 +74,7 @@ class Integration(ApiBridge):
         return self.get_logs()
 
     def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
+        return '<{} {}>'.format(self.__class__.__name__, self.name)
 
     def __str__(self):
         return self.__repr__()

@@ -2,7 +2,7 @@ import pytest
 from .conftest import my_vcr
 
 
-@my_vcr.use_cassette('test_people')
+@my_vcr.use_cassette('test_get_people')
 @pytest.mark.usefixtures('xm_session')
 def test_get_people(xm_session):
     for person in xm_session.get_people():

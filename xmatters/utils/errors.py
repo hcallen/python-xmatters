@@ -5,6 +5,10 @@ class Error(Exception):
     pass
 
 
+class xMattersError(Error):
+    def __init__(self, msg):
+        super(xMattersError, self).__init__(msg)
+
 
 class ApiError(Error):
     def __init__(self, data):
@@ -17,5 +21,3 @@ class ApiError(Error):
 
     def __str__(self):
         return self.__repr__()
-
-

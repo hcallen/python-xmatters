@@ -1,6 +1,7 @@
 import xmatters.utils.factories
 from xmatters.common import Pagination, SelfLink
 from xmatters.forms import Form
+from xmatters.integrations import Integration
 from xmatters.people import Person
 from xmatters.plan_constants import PlanConstant
 from xmatters.plan_endpoints import Endpoint
@@ -70,12 +71,12 @@ class Plan(ApiBridge):
     def get_integrations(self, params=None):
         url = self.build_url(self._endpoints.get('get_integrations'))
         ints = self.con.get(url, params)
-        return Pagination(self, ints, Form) if ints.get('data') else []
+        return Pagination(self, ints, Integration) if ints.get('data') else []
 
     def get_properties(self, params=None):
         url = self.build_url(self._endpoints.get('get_properties'))
         props = self.con.get(url, params)
-        return Pagination(self, props, xmatters.utils.factories.prop_factory, 'propertyType') if props.get(
+        return Pagination(self, props, xmatters.utils.factories.prop_factory) if props.get(
             'data') else []
 
     def get_libraries(self, params=None):

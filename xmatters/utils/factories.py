@@ -102,7 +102,8 @@ _properties = {'BOOLEAN': Boolean,
                'TEXT': Text}
 
 
-def prop_factory(data, prop_type):
+def prop_factory(data):
     """ For use with plan properties """
+    prop_type = data.get('propertyType')
     o = _properties.get(prop_type)
     return o(data) if o else None
