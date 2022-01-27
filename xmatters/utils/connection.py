@@ -60,16 +60,16 @@ class Connection(object):
         return self.__repr__()
 
 
-class xBasicAuthSession(Connection):
+class BasicAuthxMSession(Connection):
     def __init__(self, username: str, password: str, *args, **kwargs) -> None:
-        super(xBasicAuthSession, self).__init__()
+        super(BasicAuthxMSession, self).__init__()
         self.username = username
         self.password = password
 
     def init_session(self, base_url, timeout, max_retries):
         self.session.auth = (self.username, self.password)
         self.session = requests.Session()
-        super(xBasicAuthSession, self).init_session(base_url, timeout, max_retries)
+        super(BasicAuthxMSession, self).init_session(base_url, timeout, max_retries)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -78,12 +78,12 @@ class xBasicAuthSession(Connection):
         return self.__repr__()
 
 
-class xOAuth2Session(Connection):
+class OAuth2xMSession(Connection):
     _endpoints = {'token': '/oauth2/token'}
 
     def __init__(self, client_id: str, username: Optional[str] = None, password: Optional[str] = None,
                  token: Optional[dict] = None, token_storage=None, *args, **kwargs) -> None:
-        super(xOAuth2Session, self).__init__()
+        super(OAuth2xMSession, self).__init__()
         self.token_url = None
         self.client_id = client_id
         self.token_storage = token_storage
@@ -102,7 +102,7 @@ class xOAuth2Session(Connection):
         if self.token_storage and self.token_storage.read_token() != self.token:
             self.token_storage.write_token(self.token)
 
-        super(xOAuth2Session, self).init_session(base_url, timeout, max_retries)
+        super(OAuth2xMSession, self).init_session(base_url, timeout, max_retries)
 
     def _fetch_token(self):
         return self.session.fetch_token(token_url=self.token_url, username=self.username,

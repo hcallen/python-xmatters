@@ -62,6 +62,9 @@ class Integration(ApiBridge):
         self.endpoint = Endpoint(self, endpoint) if endpoint else None
         self.deployed = data.get('deployed')
         self.script = data.get('script')
+        self.migrated_outbound_trigger = data.get('migratedOutboundTrigger')
+        self.origin_type = data.get('originType')
+        self.is_run_by_service_owner = data.get('isRunByServiceOwner')
 
     def get_logs(self, params=None):
         endpoint = self._endpoints.get('get_logs').format(base_url=self.con.base_url, plan_id=self.plan.id, int_id=self.id)
