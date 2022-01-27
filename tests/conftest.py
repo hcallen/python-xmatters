@@ -42,10 +42,8 @@ def xm_session(settings):
 @pytest.fixture(scope='function')
 def pagination_factory():
     def _pagination(api_object, method_name):
-        with my_vcr.use_cassette('{}.json'.format(method_name)) as f:
-            method = getattr(api_object, method_name)
-            pagination = method()
-            for _ in pagination:
-                pass
-
+        method = getattr(api_object, method_name)
+        pagination = method()
+        for _ in pagination:
+            pass
     return _pagination

@@ -3,6 +3,7 @@ from oauthlib.oauth2 import LegacyApplicationClient
 from requests.adapters import HTTPAdapter
 from requests_oauthlib import OAuth2Session
 from urllib3.util.retry import Retry
+from urllib import parse
 from typing import Optional, Tuple
 from xmatters.utils.errors import ApiError
 
@@ -13,8 +14,9 @@ class Connection(object):
         self.timeout = None
         self.session = parent.session
         self.base_url = parent.base_url
-        self.api_prefix = parent.base_url.split('.com')[1]  # prefix = '/api/xm/1'
-        self.xm_url = self.base_url.replace(self.api_prefix, '')
+        parsed_url = parse.urlparse(self.base_url)
+        self.api_prefix = parsed_url.path
+        self.xm_url = parsed_url.netloc
 
     def get(self, url, params=None):
         return self.request('GET', url, params)

@@ -34,14 +34,15 @@ class Person(Recipient):
     def devices(self):
         return self.get_devices()
 
-    @property
-    def supervisors(self):
-        return self.get_supervisors()
+    # Does the '/supervisors' endpoint work?
+    # @property
+    # def supervisors(self):
+    #     return self.get_supervisors()
 
-    def get_supervisors(self, params=None):
-        url = self.build_url(self._endpoints.get('get_supervisors'))
-        s = self.con.get(url, params)
-        return Pagination(self, s, Person) if s.get('data') else []
+    # def get_supervisors(self, params=None):
+    #     url = self.build_url(self._endpoints.get('get_supervisors'))
+    #     s = self.con.get(url, params)
+    #     return Pagination(self, s, Person) if s.get('data') else []
 
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
