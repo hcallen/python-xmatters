@@ -3,7 +3,7 @@ import json
 import pytest
 import vcr
 from xmatters.session import xMattersSession
-from xmatters.utils.connection import OAuth2xMSession
+from xmatters.utils.connection import OAuth2Authentication
 from xmatters.utils.utils import TokenFileStorage
 
 
@@ -35,7 +35,7 @@ def xm_session(settings):
     client_id = settings.get('client_id')
     token_filepath = settings.get('token_filepath')
     token_store = TokenFileStorage(token_filepath)
-    auth = OAuth2xMSession(base_url=base_url, client_id=client_id, token_storage=token_store)
+    auth = OAuth2Authentication(base_url=base_url, client_id=client_id, token_storage=token_store)
     return xMattersSession(base_url, auth=auth)
 
 

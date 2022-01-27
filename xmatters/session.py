@@ -49,109 +49,109 @@ class xMattersSession(ApiBridge):
         self.con.init_session(base_url, timeout, max_retries)
         super(xMattersSession, self).__init__(self)
 
-    def get_devices(self, params: Optional[dict] = None):
+    def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params)
         return Pagination(self, data, xmatters.utils.factories.device_factory) if data.get('data') else []
 
-    def get_device_by_id(self, device_id, params: Optional[dict] = None):
+    def get_device_by_id(self, device_id, params=None):
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
         data = self.con.get(url, params)
         return xmatters.utils.factories.device_factory(self, data) if data else None
 
-    def get_groups(self, params: Optional[dict] = None):
+    def get_groups(self, params=None):
         url = self.build_url(self._endpoints.get('get_groups'))
         data = self.con.get(url, params)
         return Pagination(self, data, Group) if data.get('data') else []
 
-    def get_group_by_id(self, group_id, params: Optional[dict] = None):
+    def get_group_by_id(self, group_id, params=None):
         url = self.build_url(self._endpoints.get('get_group_by_id').format(group_id=group_id))
         data = self.con.get(url, params)
         return Group(self, data) if data else None
 
-    def get_person_by_id(self, person_id, params: Optional[dict] = None):
+    def get_person_by_id(self, person_id, params=None):
         url = self.build_url(self._endpoints.get('get_person_by_id').format(person_id=person_id))
         data = self.con.get(url, params)
         return Person(self, data) if data else None
 
-    def get_people(self, params: Optional[dict] = None):
+    def get_people(self, params=None):
         url = self.build_url(self._endpoints.get('get_people'))
         data = self.con.get(url, params)
         return Pagination(self, data, Person) if data.get('data') else []
 
-    def get_oncall(self, group_ids, params: Optional[dict] = None):
+    def get_oncall(self, group_ids, params=None):
         group_ids = ','.join(group_ids) if isinstance(group_ids, list) else group_ids
         url = self.build_url(self._endpoints.get('get_oncall').format(group_ids=group_ids))
         data = self.con.get(url, params)
         return Pagination(self, data, OnCall) if data.get('data') else []
 
-    def get_oncall_summary(self, group_ids, params: Optional[dict] = None):
+    def get_oncall_summary(self, group_ids, params=None):
         group_ids = ','.join(group_ids) if isinstance(group_ids, list) else group_ids
         url = self.build_url(self._endpoints.get('get_oncall_summary').format(group_ids=group_ids))
         data = self.con.get(url, params)
         return [OnCallSummary(self, summary) for summary in data] if data else None
 
-    def get_events(self, params: Optional[dict] = None):
+    def get_events(self, params=None):
         url = self.build_url(self._endpoints.get('get_events'))
         data = self.con.get(url, params)
         return Pagination(self, data, Event) if data.get('data') else []
 
-    def get_event_by_id(self, event_id, params: Optional[dict] = None):
+    def get_event_by_id(self, event_id, params=None):
         url = self.build_url(self._endpoints.get('get_event_by_id').format(event_id=event_id))
         data = self.con.get(url, params)
         return Event(self, data) if data else None
 
-    def get_temporary_absences(self, params: Optional[dict] = None):
+    def get_temporary_absences(self, params=None):
         url = self.build_url(self._endpoints.get('get_temporary_absences'))
         data = self.con.get(url, params)
         return Pagination(self, data, TemporaryAbsence) if data.get('data') else []
 
-    def get_audit(self, params):
+    def get_audit(self, params=None):
         url = self.build_url(self._endpoints.get('get_audit'))
         data = self.con.get(url, params)
         return Pagination(self, data, Audit) if data.get('data') else []
 
-    def get_device_names(self, params: Optional[dict] = None):
+    def get_device_names(self, params=None):
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.get(url, params)
         return Pagination(self, data, DeviceName) if data.get('data') else []
 
-    def get_device_types(self, params: Optional[dict] = None):
+    def get_device_types(self, params=None):
         url = self.build_url(self._endpoints.get('get_device_types'))
         data = self.con.get(url, params)
         return DeviceTypes(data) if data else None
 
-    def get_dynamic_teams(self, params: Optional[dict] = None) -> Union[Pagination, List[str]]:
+    def get_dynamic_teams(self, params=None):
         url = self.build_url(self._endpoints.get('get_dynamic_teams'))
         data = self.con.get(url, params)
         return Pagination(self, data, DynamicTeam) if data.get('data') else []
 
-    def get_dynamic_team_by_id(self, dynamic_team_id: str, params: Optional[dict] = None) -> Union[DynamicTeam, None]:
+    def get_dynamic_team_by_id(self, dynamic_team_id, params=None) -> Union[DynamicTeam, None]:
         url = self.build_url(self._endpoints.get('get_dynamic_team_by_id').format(dynamic_team_id=dynamic_team_id))
         data = self.con.get(url, params)
         return DynamicTeam(self, data) if data else None
 
-    def get_conference_bridges(self, params: Optional[dict] = None) -> Union[Pagination, List[str]]:
+    def get_conference_bridges(self, params=None):
         url = self.build_url(self._endpoints.get('get_conference_bridges'))
         data = self.con.get(url, params)
         return Pagination(self, data, ConferenceBridge) if data.get('data') else []
 
-    def get_conference_bridge_by_id(self, bridge_id: str, params: Optional[dict] = None) -> Optional[ConferenceBridge]:
+    def get_conference_bridge_by_id(self, bridge_id, params=None):
         url = self.build_url(self._endpoints.get('get_conference_bridge_by_id').format(bridge_id=bridge_id))
         data = self.con.get(url, params)
         return ConferenceBridge(self, data) if data else None
 
-    def get_forms(self, params: Optional[dict] = None) -> Union[Pagination, List[str]]:
+    def get_forms(self, params=None):
         url = self.build_url(self._endpoints.get('get_forms'))
         data = self.con.get(url, params)
         return Pagination(self, data, Form) if data.get('data') else []
 
-    def get_import_jobs(self, params: Optional[dict] = None) -> Union[List[Import], List[str]]:
+    def get_import_jobs(self, params=None):
         url = self.build_url(self._endpoints.get('get_import_jobs'))
         data = self.con.get(url, params).get('data')
         return [Import(self, job) for job in data] if data else []
 
-    def get_plans(self, params: Optional[dict] = None) -> Union[Pagination, List[str]]:
+    def get_plans(self, params=None) -> Union[Pagination, List[str]]:
         url = self.build_url(self._endpoints.get('get_plans'))
         data = self.con.get(url, params)
         return Pagination(self, data, Plan) if data.get('data') else []

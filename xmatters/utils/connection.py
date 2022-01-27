@@ -60,16 +60,16 @@ class Connection(object):
         return self.__repr__()
 
 
-class BasicAuthxMSession(Connection):
-    def __init__(self, username: str, password: str, *args, **kwargs) -> None:
-        super(BasicAuthxMSession, self).__init__()
+class BasicAuthentication(Connection):
+    def __init__(self, username, password):
+        super(BasicAuthentication, self).__init__()
         self.username = username
         self.password = password
 
     def init_session(self, base_url, timeout, max_retries):
         self.session.auth = (self.username, self.password)
         self.session = requests.Session()
-        super(BasicAuthxMSession, self).init_session(base_url, timeout, max_retries)
+        super(BasicAuthentication, self).init_session(base_url, timeout, max_retries)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -78,12 +78,11 @@ class BasicAuthxMSession(Connection):
         return self.__repr__()
 
 
-class OAuth2xMSession(Connection):
+class OAuth2Authentication(Connection):
     _endpoints = {'token': '/oauth2/token'}
 
-    def __init__(self, client_id: str, username: Optional[str] = None, password: Optional[str] = None,
-                 token: Optional[dict] = None, token_storage=None, *args, **kwargs) -> None:
-        super(OAuth2xMSession, self).__init__()
+    def __init__(self, client_id, username=None, password=None, token=None, token_storage=None):
+        super(OAuth2Authentication, self).__init__()
         self.token_url = None
         self.client_id = client_id
         self.token_storage = token_storage
@@ -102,7 +101,7 @@ class OAuth2xMSession(Connection):
         if self.token_storage and self.token_storage.read_token() != self.token:
             self.token_storage.write_token(self.token)
 
-        super(OAuth2xMSession, self).init_session(base_url, timeout, max_retries)
+        super(OAuth2Authentication, self).init_session(base_url, timeout, max_retries)
 
     def _fetch_token(self):
         return self.session.fetch_token(token_url=self.token_url, username=self.username,
@@ -143,7 +142,7 @@ class ApiBridge(object):
         else:
             self.self_url = None
 
-    def build_url(self, endpoint: str) -> str:
+    def build_url(self, endpoint):
         if self.con.base_url in endpoint:
             return endpoint
         # if already has api path, use xmatters instance url as prefix
