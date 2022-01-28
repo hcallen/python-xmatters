@@ -1,7 +1,6 @@
 import pytest
-
-from xmatters.people import Person
 from .conftest import my_vcr
+
 
 @my_vcr.use_cassette('test_get_plans.json')
 @pytest.mark.usefixtures('xm_session')
@@ -18,4 +17,3 @@ def test_get_plans(xm_session):
             pass
         for _ in plan.get_libraries():
             pass
-        assert isinstance(plan.creator, Person)

@@ -1,5 +1,3 @@
-from __future__ import annotations
-from typing import Optional, Union, List
 import xmatters.utils.factories
 from xmatters.audit import Audit
 from xmatters.common import Pagination
@@ -126,7 +124,7 @@ class xMattersSession(ApiBridge):
         data = self.con.get(url, params)
         return Pagination(self, data, DynamicTeam) if data.get('data') else []
 
-    def get_dynamic_team_by_id(self, dynamic_team_id, params=None) -> Union[DynamicTeam, None]:
+    def get_dynamic_team_by_id(self, dynamic_team_id, params=None):
         url = self.build_url(self._endpoints.get('get_dynamic_team_by_id').format(dynamic_team_id=dynamic_team_id))
         data = self.con.get(url, params)
         return DynamicTeam(self, data) if data else None
@@ -151,7 +149,7 @@ class xMattersSession(ApiBridge):
         data = self.con.get(url, params).get('data')
         return [Import(self, job) for job in data] if data else []
 
-    def get_plans(self, params=None) -> Union[Pagination, List[str]]:
+    def get_plans(self, params=None):
         url = self.build_url(self._endpoints.get('get_plans'))
         data = self.con.get(url, params)
         return Pagination(self, data, Plan) if data.get('data') else []

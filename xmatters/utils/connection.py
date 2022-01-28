@@ -4,8 +4,7 @@ from requests.adapters import HTTPAdapter
 from requests_oauthlib import OAuth2Session
 from urllib3.util.retry import Retry
 from urllib import parse
-from typing import Optional
-from xmatters.utils.errors import ApiError
+from xmatters.utils.errors import ApiError, xMattersError
 
 
 class Connection(object):
@@ -60,16 +59,16 @@ class Connection(object):
         return self.__repr__()
 
 
-class BasicAuthentication(Connection):
+class BasicAuth(Connection):
     def __init__(self, username, password):
-        super(BasicAuthentication, self).__init__()
+        super(BasicAuth, self).__init__()
         self.username = username
         self.password = password
 
     def init_session(self, base_url, timeout, max_retries):
         self.session.auth = (self.username, self.password)
         self.session = requests.Session()
-        super(BasicAuthentication, self).init_session(base_url, timeout, max_retries)
+        super(BasicAuth, self).init_session(base_url, timeout, max_retries)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -78,50 +77,58 @@ class BasicAuthentication(Connection):
         return self.__repr__()
 
 
-class OAuth2Authentication(Connection):
+class OAuth2Auth(Connection):
     _endpoints = {'token': '/oauth2/token'}
 
     def __init__(self, client_id, username=None, password=None, token=None, token_storage=None):
-        super(OAuth2Authentication, self).__init__()
-        self.token_url = None
+        super(OAuth2Auth, self).__init__()
         self.client_id = client_id
         self.token_storage = token_storage
         self.username = username
         self.password = password
-        self.token = token
-        self.token_updater = self.token_storage.write_token if self.token_storage else None
+        self._token = token
+        self.session = None
 
     def init_session(self, base_url, timeout, max_retries):
-        self.token_url = '{}{}'.format(base_url, self._endpoints.get('token'))
-        self.token = self.token if self.token else self._get_token()
-        self.session = self._get_session()
-        self.session.token = self.token
+        token_url = '{}{}'.format(base_url, self._endpoints.get('token'))
+        client = LegacyApplicationClient(client_id=self.client_id)
+        auto_refresh_kwargs = {'client_id': self.client_id}
+        token_updater = self.token_storage.write_token if self.token_storage else None
+        self.session = OAuth2Session(client=client, auto_refresh_url=token_url,
+                                     auto_refresh_kwargs=auto_refresh_kwargs,
+                                     token_updater=token_updater)
+        self.session.token = self._get_token()
 
         # update storage token if differs from self.token
         if self.token_storage and self.token_storage.read_token() != self.token:
             self.token_storage.write_token(self.token)
 
-        super(OAuth2Authentication, self).init_session(base_url, timeout, max_retries)
-
-    def _fetch_token(self):
-        return self.session.fetch_token(token_url=self.token_url, username=self.username,
-                                        password=self.password, include_client_id=True, timeout=3)
+        super(OAuth2Auth, self).init_session(base_url, timeout, max_retries)
 
     def _get_token(self):
-        # TODO: account for passing only a refresh token
-        if None not in (self.username, self.password):
-            return self._fetch_token()
+        if self._token and isinstance(self._token, dict):
+            return self._token
+        elif self._token and isinstance(self._token, str):
+            return self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=self._token, timeout=3,
+                                              kwargs=self.session.auto_refresh_kwargs)
+        elif None not in (self.username, self.password):
+            return self.session.fetch_token(token_url=self.session.auto_refresh_url, username=self.username,
+                                            password=self.password, include_client_id=True, timeout=3)
         elif self.token_storage:
             return self.token_storage.read_token()
         else:
-            return None
+            raise xMattersError('Unable to obtain token with provided arguments')
 
-    def _get_session(self):
-        client = LegacyApplicationClient(client_id=self.client_id)
-        auto_refresh_kwargs = {'client_id': self.client_id}
-        return OAuth2Session(client=client, auto_refresh_url=self.token_url,
-                             auto_refresh_kwargs=auto_refresh_kwargs,
-                             token_updater=self.token_updater)
+    @property
+    def token(self):
+        return self.session.token if self.session else self._token
+
+    @token.setter
+    def token(self, token):
+        if self.session:
+            self.session.token = token
+        else:
+            self._token = token
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
