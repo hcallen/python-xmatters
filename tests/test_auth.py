@@ -7,7 +7,7 @@ from .conftest import my_vcr
 
 class TestSession:
 
-    @my_vcr.use_cassette('test_session.json')
+    @my_vcr.use_cassette('test_auth.json')
     def test_oauth_token_dict(self, settings):
         base_url = settings.get('base_url')
         client_id = settings.get('client_id')
@@ -20,7 +20,7 @@ class TestSession:
         groups = xm_session.get_groups()
         assert isinstance(groups, Pagination) or isinstance(groups, list)
 
-    @my_vcr.use_cassette('test_session.json')
+    @my_vcr.use_cassette('test_auth.json')
     def test_oauth_token_str(self, settings):
         base_url = settings.get('base_url')
         refresh_token = settings.get('refresh_token')
@@ -31,7 +31,7 @@ class TestSession:
         groups = xm_session.get_groups()
         assert isinstance(groups, Pagination) or isinstance(groups, list)
 
-    @my_vcr.use_cassette('test_session.json')
+    @my_vcr.use_cassette('test_auth.json')
     def test_oauth_username_and_password(self, settings):
         base_url = settings.get('base_url')
         username = settings.get('username')
@@ -43,7 +43,7 @@ class TestSession:
         groups = xm_session.get_groups()
         assert isinstance(groups, Pagination) or isinstance(groups, list)
 
-    @my_vcr.use_cassette('test_session.json')
+    @my_vcr.use_cassette('test_auth.json')
     def test_oauth_token_storage(self, settings):
         base_url = settings.get('base_url')
         client_id = settings.get('client_id')
