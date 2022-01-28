@@ -1,4 +1,5 @@
 import xmatters.utils.factories
+import xmatters.utils.utils
 from xmatters.common import Recipient, SelfLink, Pagination
 from xmatters.roles import Role
 from xmatters.utils.connection import ApiBridge
@@ -7,7 +8,8 @@ from xmatters.utils.connection import ApiBridge
 class Person(Recipient):
     _endpoints = {'get_devices': '/devices',
                   'roles': '?embed=roles',
-                  'get_supervisors': '/supervisors'}
+                  'get_supervisors': '/supervisors',
+                  'supervisors': '?embed=supervisors'}
 
     def __init__(self, parent, data):
         super(Person, self).__init__(parent, data)
@@ -17,28 +19,36 @@ class Person(Recipient):
         self.language = data.get('language')
         self.timezone = data.get('timezone')
         self.web_login = data.get('webLogin')
-        self.last_login = data.get('lastLogin')
-        self.when_created = data.get('whenCreated')
-        self.when_updated = data.get('whenUpdated')
         self.phone_login = data.get('phoneLogin')
         self.phone_pin = data.get('phonePin')
         self.properties = data.get('properties', {})
+        last_login = data.get('lastLogin')
+        when_created = data.get('whenCreated')
+        when_updated = data.get('whenUpdated')
+        self.last_login = xmatters.utils.utils.TimeAttribute(last_login) if last_login else None
+        self.when_created = xmatters.utils.utils.TimeAttribute(when_created) if when_created else None
+        self.when_updated = xmatters.utils.utils.TimeAttribute(when_updated) if when_updated else None
 
     @property
     def roles(self):
         url = self.build_url(self._endpoints.get('roles'))
-        data = self.con.get(url).get('roles', {}).get('data', [])
-        return [Role(role) for role in data]
+        data = self.con.get(url).get('roles', {})
+        return Pagination(self, data, Role) if data.get('data') else []
 
     @property
     def devices(self):
         return self.get_devices()
 
-    # Does the '/supervisors' endpoint work?
-    # @property
-    # def supervisors(self):
-    #     return self.get_supervisors()
+    @property
+    def supervisors(self):
+        url = self.build_url(self._endpoints.get('supervisors'))
+        data = self.con.get(url).get('supervisors', {})
+        return Pagination(self, data, Person) if data.get('data') else []
 
+    def get_supervisors(self):
+        return self.supervisors
+
+    # Does the '/supervisors' endpoint work?
     # def get_supervisors(self, params=None):
     #     url = self.build_url(self._endpoints.get('get_supervisors'))
     #     s = self.con.get(url, params)

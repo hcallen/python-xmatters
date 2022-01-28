@@ -1,5 +1,17 @@
 import json
 import pathlib
+from dateutil import tz, parser
+
+
+class TimeAttribute(str):
+    def to_dt(self):
+        return parser.isoparse(self)
+
+    def to_local_dt(self):
+        return self.to_dt().astimezone(tz.tzlocal())
+
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self)
 
 
 class TokenFileStorage(object):
@@ -27,7 +39,7 @@ class TokenFileStorage(object):
         self.write_token(token)
 
     def __repr__(self):
-        return '<TokenFileStorage - {}>'.format(self.token_filepath)
+        return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()

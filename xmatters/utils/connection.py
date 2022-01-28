@@ -1,10 +1,12 @@
+from urllib import parse
+
 import requests
 from oauthlib.oauth2 import LegacyApplicationClient
 from requests.adapters import HTTPAdapter
 from requests_oauthlib import OAuth2Session
 from urllib3.util.retry import Retry
-from urllib import parse
-from xmatters.utils.errors import ApiError, xMattersError
+
+from xmatters.utils.errors import xMattersError, AuthorizationError
 
 
 class Connection(object):
@@ -29,13 +31,9 @@ class Connection(object):
 
     def request(self, method, url, params):
         r = self.session.request(method=method, url=url, params=params, timeout=self.timeout)
-        if not r.ok:
-            err_msg = '{status_code} - {reason} - {url}'.format(status_code=r.status_code, reason=r.reason, url=url)
-            raise Exception(err_msg)
         data = r.json()
-        # if xMatters API error
-        if len(data) == 3 and all(k in data.keys() for k in ('code', 'reason', 'message')):
-            raise ApiError(data)
+        if r.status_code == 401:
+            raise AuthorizationError(data)
         else:
             return data
 
@@ -109,7 +107,8 @@ class OAuth2Auth(Connection):
         if self._token and isinstance(self._token, dict):
             return self._token
         elif self._token and isinstance(self._token, str):
-            return self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=self._token, timeout=3,
+            return self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=self._token,
+                                              timeout=3,
                                               kwargs=self.session.auto_refresh_kwargs)
         elif None not in (self.username, self.password):
             return self.session.fetch_token(token_url=self.session.auto_refresh_url, username=self.username,

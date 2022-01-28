@@ -199,20 +199,24 @@ class Form(ApiBridge):
         return self.get_response_options()
 
     @property
-    def recipients(self):
+    def recipients(self, params=None):
         url = self.build_url(self._endpoints.get('recipients'))
-        recipients = self.con.get(url).get('recipients', {}).get('data')
+        recipients = self.con.get(url, params).get('recipients', {}).get('data')
         return [Recipient(self, r) for r in recipients] if recipients else []
 
-    def get_response_options(self):
+    def get_response_options(self, params=None):
         url = self.build_url(self._endpoints.get('get_response_options'))
-        options = self.con.get(url)
+        options = self.con.get(url, params)
         return Pagination(self, options, xmatters.events.ResponseOption) if options.get('data') else []
 
-    def get_sections(self):
+    def get_sections(self, params=None):
         url = self._endpoints.get('get_sections').format(base_url=self.con.base_url, form_id=self.id)
-        s = self.con.get(url)
+        s = self.con.get(url, params)
         return Pagination(self, s, xmatters.utils.factories.sections_factory, 'type') if s.get('data') else []
+
+    # TODO
+    def get_scenarios(self, params=None):
+        pass
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

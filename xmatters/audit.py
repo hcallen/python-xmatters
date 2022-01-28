@@ -1,6 +1,6 @@
 import xmatters.events
+import xmatters.utils.utils
 from xmatters.common import Recipient
-
 from xmatters.people import PersonReference
 from xmatters.utils.connection import ApiBridge
 
@@ -13,8 +13,10 @@ class Notification(ApiBridge):
         recipient = data.get('recipient')
         self.recipient = Recipient(parent, recipient) if recipient else None
         self.delivery_status = data.get('deliveryStatus')
-        self.created = data.get('created')
-        self.delivery_attempted = data.get('deliveryAttempted')
+        created = data.get('created')
+        self.created = xmatters.utils.utils.TimeAttribute(created) if created else None
+        delivery_attempted = data.get('deliveryAttempted')
+        self.delivery_attempted = xmatters.utils.utils.TimeAttribute(delivery_attempted) if delivery_attempted else None
         event = data.get('event')
         self.event = xmatters.events.EventReference(parent, data) if event else None
 
@@ -34,7 +36,8 @@ class Response(ApiBridge):
         options = data.get('options', {}).get('data')
         self.options = [xmatters.events.ResponseOption(r) for r in options] if options else None
         self.source = data.get('source')
-        self.received = data.get('received')
+        received = data.get('received')
+        self.received = xmatters.utils.utils.TimeAttribute(received) if received else None
         self.response = data.get('response')
 
     def __repr__(self):
@@ -67,7 +70,8 @@ class Audit(ApiBridge):
         event = data.get('event')
         self.event = xmatters.events.EventReference(parent, data) if event else None
         self.order_id = data.get('orderId')
-        self.at = data.get('at')
+        at = data.get('at')
+        self.at = xmatters.utils.utils.TimeAttribute(at) if at else None
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.type)

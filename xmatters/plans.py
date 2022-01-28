@@ -89,6 +89,10 @@ class Plan(ApiBridge):
         endpoints = self.con.get(url, params)
         return Pagination(self, endpoints, Endpoint) if endpoints.get('data') else []
 
+    # TODO
+    def get_subscription_forms(self, params=None):
+        pass
+
     @property
     def creator(self):
         url = self.build_url(self._endpoints.get('creator'))
