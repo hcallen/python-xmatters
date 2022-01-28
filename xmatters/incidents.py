@@ -4,6 +4,7 @@ from xmatters.utils.connection import ApiBridge
 
 
 class IncidentProperty(object):
+
     def __init__(self, data):
         self.name = data.get('name')
         self.level = data.get('level')

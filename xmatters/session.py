@@ -39,7 +39,8 @@ class xMattersSession(ApiBridge):
                   'get_forms': '/forms',
                   'get_import_jobs': '/imports',
                   'get_plans': '/plans',
-                  'get_incidents': '/incidents'}
+                  'get_incidents': '/incidents',
+                  'get_plan_by_id': '/plans/{plan_id}'}
 
     def __init__(self, base_url, auth, timeout=3, max_retries=3):
         p_url = urllib.parse.urlparse(base_url)
@@ -156,9 +157,10 @@ class xMattersSession(ApiBridge):
         data = self.con.get(url, params)
         return Pagination(self, data, Plan) if data.get('data') else []
 
-    # TODO
     def get_plan_by_id(self, plan_id):
-        pass
+        url = self.build_url(self._endpoints.get('get_plan_by_id').format(person_id=plan_id))
+        data = self.con.get(url)
+        return Plan(self, data) if data else None
 
     # TODO
     def get_roles(self, params=None):
