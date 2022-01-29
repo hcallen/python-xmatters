@@ -1,5 +1,5 @@
-import xmatters.factories
-import xmatters.endpoints.forms
+import xmatters.factories as factory
+import xmatters.endpoints.forms as forms
 from xmatters.endpoints.common import Pagination, SelfLink
 from xmatters.endpoints.integrations import Integration
 from xmatters.endpoints.people import Person
@@ -62,8 +62,8 @@ class Plan(ApiBridge):
 
     def get_forms(self, params=None):
         url = self.build_url(self._endpoints.get('get_forms'))
-        forms = self.con.get(url, params)
-        return Pagination(self, forms, xmatters.endpoints.forms) if forms.get('data') else []
+        fs = self.con.get(url, params)
+        return Pagination(self, fs, forms.Form) if fs.get('data') else []
 
     def get_constants(self, params=None):
         url = self.build_url(self._endpoints.get('get_constants'))
@@ -78,8 +78,7 @@ class Plan(ApiBridge):
     def get_properties(self, params=None):
         url = self.build_url(self._endpoints.get('get_properties'))
         props = self.con.get(url, params)
-        return Pagination(self, props, xmatters.factories.prop_factory) if props.get(
-            'data') else []
+        return Pagination(self, props, factory.plan_property) if props.get('data') else []
 
     def get_libraries(self, params=None):
         url = self.build_url(self._endpoints.get('get_libraries'))

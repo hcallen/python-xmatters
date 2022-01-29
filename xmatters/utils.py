@@ -2,13 +2,16 @@ import json
 import pathlib
 from dateutil import tz, parser
 
+AUDIT_TYPES = ['EVENT_ANNOTATED', 'EVENT_CREATED', 'EVENT_SUSPENDED', 'EVENT_RESUMED', 'EVENT_COMPLETED',
+               'EVENT_TERMINATED', 'RESPONSE_RECEIVED']
+
 
 class TimeAttribute(str):
-    def to_dt(self):
+    def datetime(self):
         return parser.isoparse(self)
 
-    def to_local_dt(self):
-        return self.to_dt().astimezone(tz.tzlocal())
+    def local_datetime(self):
+        return self.datetime().astimezone(tz.tzlocal())
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self)

@@ -1,4 +1,4 @@
-import xmatters.utils
+import xmatters.utils as util
 from xmatters.connection import ApiBridge
 from xmatters.endpoints.people import PersonReference
 from xmatters.endpoints.common import SelfLink
@@ -29,14 +29,14 @@ class Import(ApiBridge):
         self.transform = data.get('transform')
         self.status = data.get('status')
         started = data.get('started')
-        self.started = xmatters.utils.TimeAttribute(started) if started else None
+        self.started = util.TimeAttribute(started) if started else None
         self.last_updated_at = data.get('lastUpdatedAt')
         by = data.get('by')
         self.by = PersonReference(parent, by) if by else None
         self.total_count = data.get('totalCount')
         self.processed_count = data.get('processedCount')
         finished_at = data.get('finishedAt')
-        self.finished_at = xmatters.utils.TimeAttribute(finished_at) if finished_at else None
+        self.finished_at = util.TimeAttribute(finished_at) if finished_at else None
         links = data.get('links')
         self.links = SelfLink(parent, links)
 

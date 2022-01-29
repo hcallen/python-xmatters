@@ -1,6 +1,6 @@
-import xmatters.utils
-import xmatters.factories
-import xmatters.endpoints.forms
+import xmatters.utils as utils
+import xmatters.factories as factory
+import xmatters.endpoints.forms as forms
 import xmatters.endpoints.plans as plans
 from xmatters.connection import ApiBridge
 from xmatters.endpoints.common import Pagination, SelfLink
@@ -8,6 +8,7 @@ from xmatters.endpoints.common import Pagination, SelfLink
 from xmatters.endpoints.roles import Role
 
 
+# noinspection SpellCheckingInspection
 class SubscriptionForm(ApiBridge):
     _endpoints = {'target_device_names': '?embed=deviceNames',
                   'visible_target_device_names': '?embed=deviceNames',
@@ -23,9 +24,9 @@ class SubscriptionForm(ApiBridge):
         self.plan = plans.PlanReference(data) if plan else None
         self.scope = data.get('scope')
         form = data.get('form')
-        self.form = xmatters.endpoints.forms.FormReference(form) if form else None
+        self.form = forms.FormReference(form) if form else None
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None
+        self.created = utils.TimeAttribute(created) if created else None
         self.one_way = data.get('oneWay')
         self.subscribe_others = data.get('subscribeOthers')
         self.notification_delay = data.get('notificationDelay')
@@ -37,21 +38,21 @@ class SubscriptionForm(ApiBridge):
         url = self.build_url(self._endpoints.get('target_device_names'))
         data = self.con.get(url)
         tdns = data.get('targetDeviceNames', {})
-        return Pagination(self, tdns, xmatters.factories.device_name_factory) if tdns.get('data') else []
+        return Pagination(self, tdns, factory.device_name) if tdns.get('data') else []
 
     @property
     def visible_target_device_names(self):
         url = self.build_url(self._endpoints.get('visible_target_device_names'))
         data = self.con.get(url)
         vtdns = data.get('visibleTargetDeviceNames', {})
-        return Pagination(self, vtdns, xmatters.factories.device_name_factory) if vtdns.get('data') else []
+        return Pagination(self, vtdns, factory.device_name) if vtdns.get('data') else []
 
     @property
     def property_definitions(self):
         url = self.build_url(self._endpoints.get('property_definitions'))
         data = self.con.get(url)
         ps = data.get('propertyDefinitions', {})
-        return Pagination(self, ps, xmatters.factories.prop_factory) if ps.get('data') else []
+        return Pagination(self, ps, factory.plan_property) if ps.get('data') else []
 
     @property
     def roles(self):
@@ -61,7 +62,7 @@ class SubscriptionForm(ApiBridge):
         return Pagination(self, roles, Role) if roles else []
 
     def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
+        return '<{} {}>'.format(self.__class__.__name__, self.name)
 
     def __str__(self):
         return self.__repr__()

@@ -1,5 +1,5 @@
-import xmatters.factories
-import xmatters.utils
+import xmatters.factories as factory
+import xmatters.utils as util
 from xmatters.endpoints.common import Recipient, Pagination, SelfLink
 from xmatters.endpoints.event_supressions import EventSuppression
 from xmatters.endpoints.forms import FormReference
@@ -27,13 +27,14 @@ class UserDeliveryResponse(object):
         self.text = data.get('text')
         self.notification = data.get('notification')
         received = data.get('received')
-        self.received = xmatters.utils.TimeAttribute(received) if received else None
+        self.received = util.TimeAttribute(received) if received else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
+
 
 class Conference(object):
     def __init__(self, data):
@@ -133,11 +134,11 @@ class Notification(ApiBridge):
         self.id = data.get('id')
         self.recipient = Recipient(self, data.get('recipient'))
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None
+        self.created = util.TimeAttribute(created) if created else None
         delivered = data.get('delivered')
-        self.delivered = xmatters.utils.TimeAttribute(delivered) if delivered else None
+        self.delivered = util.TimeAttribute(delivered) if delivered else None
         responded = data.get('responded')
-        self.responded = xmatters.utils.TimeAttribute(responded) if responded else None
+        self.responded = util.TimeAttribute(responded) if responded else None
         self.delivery_status = data.get('deliveryStatus')
         self.responses = data.get('responses', [])
 
@@ -174,7 +175,7 @@ class Annotation(ApiBridge):
         self.author = PersonReference(self, author)
         self.comment = data.get('comment')
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None
+        self.created = util.TimeAttribute(created) if created else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -190,13 +191,13 @@ class Event(ApiBridge):
                   'recipients': '?embed=recipients',
                   'response_options': '?embed=responseOptions',
                   'get_user_deliveries': '/events/{event_id}/user-deliveries',
-                  'get_audit': '{base_url}/audits?eventId={event_id}&auditType={audit_types}'}
+                  'get_audit': '{base_url}/audits'}
 
     def __init__(self, parent, data):
         super(Event, self).__init__(parent, data)
         self.bypass_phone_intro = data.get('bypassPhoneIntro')
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None
+        self.created = util.TimeAttribute(created) if created else None
         self.conference = Conference(data.get('conference')) if data.get('conference') else None
         self.escalation_override = data.get('escalationOverride')
         self.event_id = data.get('eventId')
@@ -219,16 +220,21 @@ class Event(ApiBridge):
         suppressions = data.get('suppressions', {}).get('data', [])
         self.suppressions = [EventSuppression(self, s) for s in suppressions]
         terminated = data.get('terminated')
-        self.terminated = xmatters.utils.TimeAttribute(terminated) if terminated else None
+        self.terminated = util.TimeAttribute(terminated) if terminated else None
         voicemail_options = data.get('voicemailOptions')
         self.voicemail_options = VoicemailOptions(voicemail_options) if voicemail_options else None
 
-    def get_audit(self, audit_types, params=None):
-        audit_types = ','.join(audit_types) if isinstance(audit_types, list) else audit_types
-        url = self._endpoints.get('get_audit').format(base_url=self.con.base_url, event_id=self.event_id,
-                                                      audit_types=audit_types)
+    def get_audit(self, audit_types=util.AUDIT_TYPES, params=None):
+        params = params if params else {}
+        params['eventId'] = self.event_id
+        if audit_types and 'auditType' not in params.keys():
+            if isinstance(audit_types, str):
+                params['auditType'] = audit_types.upper()
+            elif isinstance(audit_types, list):
+                params['auditType'] = ','.join(audit_types).upper()
+        url = self._endpoints.get('get_audit').format(base_url=self.con.base_url)
         data = self.con.get(url, params)
-        return Pagination(self, data, xmatters.factories.audit_factory) if data.get('data') else []
+        return Pagination(self, data, factory.audit) if data.get('data') else []
 
     @property
     def annotations(self):
@@ -248,7 +254,7 @@ class Event(ApiBridge):
     def properties(self):
         url = self.build_url(self._endpoints.get('properties'))
         data = self.con.get(url)
-        return data.get('properties')
+        return data.get('properties', {})
 
     @property
     def recipients(self):
@@ -262,7 +268,7 @@ class Event(ApiBridge):
         url = self.build_url(self._endpoints.get('response_options'))
         data = self.con.get(url)
         response_options = data.get('responseOptions', {}).get('data')
-        return [ResponseOption(r) for r in response_options] if response_options else None
+        return [ResponseOption(r) for r in response_options] if response_options else []
 
     def __repr__(self):
         return '<{} Created: {} Type: {}>'.format(self.__class__.__name__, self.created, self.event_type)

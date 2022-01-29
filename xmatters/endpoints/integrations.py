@@ -67,7 +67,8 @@ class Integration(ApiBridge):
         self.is_run_by_service_owner = data.get('isRunByServiceOwner')
 
     def get_logs(self, params=None):
-        endpoint = self._endpoints.get('get_logs').format(base_url=self.con.base_url, plan_id=self.plan.id, int_id=self.id)
+        endpoint = self._endpoints.get('get_logs').format(base_url=self.con.base_url,
+                                                          plan_id=self.plan.id, int_id=self.id)
         url = self.build_url(endpoint)
         logs = self.con.get(url, params)
         return Pagination(self, logs, IntegrationLog) if logs.get('data') else []

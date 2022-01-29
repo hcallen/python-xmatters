@@ -1,7 +1,6 @@
 import json
 
 from xmatters import xMattersSession, OAuth2Auth, TokenFileStorage
-from xmatters.endpoints.common import Pagination
 from .conftest import my_vcr
 
 
@@ -17,8 +16,7 @@ class TestSession:
         auth = OAuth2Auth(client_id=client_id, token=token)
         xm_session = xMattersSession(base_url, auth)
         assert isinstance(xm_session.con.token, dict)
-        groups = xm_session.get_groups()
-        assert isinstance(groups, Pagination) or isinstance(groups, list)
+        assert iter(xm_session.get_groups())
 
     @my_vcr.use_cassette('test_auth.json')
     def test_oauth_token_str(self, settings):
@@ -28,8 +26,7 @@ class TestSession:
         auth = OAuth2Auth(client_id=client_id, token=refresh_token)
         xm_session = xMattersSession(base_url, auth)
         assert isinstance(xm_session.con.token, dict)
-        groups = xm_session.get_groups()
-        assert isinstance(groups, Pagination) or isinstance(groups, list)
+        assert iter(xm_session.get_groups())
 
     @my_vcr.use_cassette('test_auth.json')
     def test_oauth_username_and_password(self, settings):
@@ -40,8 +37,7 @@ class TestSession:
         auth = OAuth2Auth(client_id=client_id, username=username, password=password)
         xm_session = xMattersSession(base_url, auth)
         assert isinstance(xm_session.con.token, dict)
-        groups = xm_session.get_groups()
-        assert isinstance(groups, Pagination) or isinstance(groups, list)
+        assert iter(xm_session.get_groups())
 
     @my_vcr.use_cassette('test_auth.json')
     def test_oauth_token_storage(self, settings):
@@ -52,8 +48,7 @@ class TestSession:
         auth = OAuth2Auth(client_id=client_id, token_storage=token_storage)
         xm_session = xMattersSession(base_url, auth)
         assert isinstance(xm_session.con.token, dict)
-        groups = xm_session.get_groups()
-        assert isinstance(groups, Pagination) or isinstance(groups, list)
+        assert iter(xm_session.get_groups())
 
     def test_token_set(self):
         auth = OAuth2Auth(client_id='some_client_id', token='12345')

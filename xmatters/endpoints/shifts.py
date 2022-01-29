@@ -1,4 +1,4 @@
-import xmatters.utils
+import xmatters.utils as util
 from xmatters.connection import ApiBridge
 from xmatters.endpoints.common import ReferenceByIdAndSelfLink, SelfLink, Recipient
 
@@ -24,7 +24,7 @@ class End(object):
     def __init__(self, data):
         self.end_by = data.get('endBy')
         date = data.get('date')
-        self.date = xmatters.utils.TimeAttribute(date) if date else None
+        self.date = util.TimeAttribute(date) if date else None
         self.repetitions = data.get('repetitions')
 
     def __repr__(self):
@@ -41,7 +41,7 @@ class Rotation(object):
         self.interval = data.get('interval')
         self.interval_unit = data.get('intervalUnit')
         next_rotation_time = data.get('nextRotationTime')
-        self.next_rotation_time = xmatters.utils.TimeAttribute(next_rotation_time) if next_rotation_time else None
+        self.next_rotation_time = util.TimeAttribute(next_rotation_time) if next_rotation_time else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -101,9 +101,9 @@ class Shift(ApiBridge):
         self.links = SelfLink(self, links) if links else None
         self.name = data.get('name')
         start = data.get('start')
-        self.start = xmatters.utils.TimeAttribute(start) if start else None
+        self.start = util.TimeAttribute(start) if start else None
         end = data.get('end')
-        self.end = xmatters.utils.TimeAttribute(end) if end else None
+        self.end = util.TimeAttribute(end) if end else None
         self.timezone = data.get('timezone')
         recurrence = data.get('recurrence')
         self.recurrence = ShiftRecurrence(recurrence) if recurrence else None

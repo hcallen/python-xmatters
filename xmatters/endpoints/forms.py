@@ -20,7 +20,6 @@ class FormReference(object):
 
 
 class SectionValue(object):
-    """ Custom """
 
     def __init__(self, data):
         self.id = data.get('id')
@@ -74,7 +73,6 @@ class ConferenceBridgeSection(FormSection):
 
 
 class CustomSectionItems(FormSection):
-    """ custom """
 
     def __init__(self, parent, data):
         super(CustomSectionItems, self).__init__(parent, data)
@@ -204,7 +202,7 @@ class Form(ApiBridge):
     def recipients(self, params=None):
         url = self.build_url(self._endpoints.get('recipients'))
         recipients = self.con.get(url, params).get('recipients', {})
-        return Pagination(self, recipients, factory.recipient_factory) if recipients.get('data') else []
+        return Pagination(self, recipients, factory.recipient) if recipients.get('data') else []
 
     def get_response_options(self, params=None):
         url = self.build_url(self._endpoints.get('get_response_options'))
@@ -214,7 +212,7 @@ class Form(ApiBridge):
     def get_sections(self, params=None):
         url = self._endpoints.get('get_sections').format(base_url=self.con.base_url, form_id=self.id)
         s = self.con.get(url, params)
-        return Pagination(self, s, factory.sections_factory, 'type') if s.get('data') else []
+        return Pagination(self, s, factory.section, 'type') if s.get('data') else []
 
     def get_scenarios(self, params=None):
         url = self._endpoints.get('get_scenarios').format(base_url=self.con.base_url, plan_id=self.plan.id,

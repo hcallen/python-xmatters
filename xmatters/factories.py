@@ -1,6 +1,6 @@
 import xmatters.endpoints.devices
 import xmatters.endpoints.groups
-import xmatters.endpoints.audit
+import xmatters.endpoints.audits as audits
 import xmatters.endpoints.people
 import xmatters.endpoints.forms
 import xmatters.endpoints.dynamic_teams
@@ -21,7 +21,7 @@ _devices = {'EMAIL': xmatters.endpoints.devices.EmailDevice,
             'GENERIC': xmatters.endpoints.devices.GenericDevice}
 
 
-def device_factory(parent, data):
+def device(parent, data):
     device_type = data.get('deviceType')
     o = _devices.get(device_type)
     return o(parent, data) if o else None
@@ -33,22 +33,22 @@ _recipients = {'GROUP': xmatters.endpoints.groups.Group,
                'DYNAMIC_TEAM': xmatters.endpoints.dynamic_teams.DynamicTeam}
 
 
-def recipient_factory(parent, data, recipient_type=None):
+def recipient(parent, data, recipient_type=None):
     recipient_type = data.get('recipientType') if recipient_type is None else recipient_type
     o = _recipients.get(recipient_type)
     return o(parent, data) if o else None
 
 
-_audit_types = {'EVENT_ANNOTATED': xmatters.endpoints.audit.AuditAnnotation,
-                'EVENT_CREATED': xmatters.endpoints.audit.Audit,
-                'EVENT_SUSPENDED': xmatters.endpoints.audit.Audit,
-                'EVENT_RESUMED': xmatters.endpoints.audit.Audit,
-                'EVENT_COMPLETED': xmatters.endpoints.audit.Audit,
-                'EVENT_TERMINATED': xmatters.endpoints.audit.Audit,
-                'RESPONSE_RECEIVED': xmatters.endpoints.audit.Response}
+_audit_types = {'EVENT_ANNOTATED': audits.AuditAnnotation,
+                'EVENT_CREATED': audits.Audit,
+                'EVENT_SUSPENDED': audits.Audit,
+                'EVENT_RESUMED': audits.Audit,
+                'EVENT_COMPLETED': audits.Audit,
+                'EVENT_TERMINATED': audits.Audit,
+                'RESPONSE_RECEIVED': audits.Response}
 
 
-def audit_factory(parent, data):
+def audit(parent, data):
     """ For use with audit types """
     audit_type = data.get('type')
     o = _audit_types.get(audit_type)
@@ -65,7 +65,7 @@ _form_sections = {'CONFERENCE_BRIDGE': xmatters.endpoints.forms.ConferenceBridge
                   'RESPONSE_CHOICES': xmatters.endpoints.forms.FormSection}
 
 
-def sections_factory(parent, data, section_type):
+def section(parent, data, section_type):
     """ For use with form sections """
     o = _form_sections.get(section_type)
     return o(parent, data) if o else None
@@ -78,7 +78,7 @@ _auth_types = {'NO_AUTH': None,
                'OAUTH_SLACK': OAuth2Authentication}
 
 
-def auth_factory(data, auth_type):
+def auth(data, auth_type):
     """ For use with plan endpoints """
     o = _auth_types.get(auth_type)
     return o(data) if o else None
@@ -93,7 +93,7 @@ _properties = {'BOOLEAN': Boolean,
                'TEXT': Text}
 
 
-def prop_factory(data):
+def plan_property(data):
     """ For use with plan properties """
     prop_type = data.get('propertyType')
     o = _properties.get(prop_type)
@@ -104,7 +104,7 @@ _scenario_permissions = {'PERSON': xmatters.endpoints.scenarios.ScenarioPermissi
                          'ROLE': xmatters.endpoints.scenarios.ScenarioPermissionRole}
 
 
-def scenario_permissions_factory(parent, data):
+def scenario_permission(parent, data):
     """ For use with scenario endpoints """
     perm_type = data.get('permissibleType')
     o = _scenario_permissions.get(perm_type)
@@ -114,7 +114,7 @@ def scenario_permissions_factory(parent, data):
 _device_names = {'EMAIL': xmatters.endpoints.device_names.DeviceNameEmail}
 
 
-def device_name_factory(data):
+def device_name(data):
     device_type = data.get('deviceType')
     o = _device_names.get(device_type, xmatters.endpoints.device_names.DeviceName)
     return o(data) if o else None

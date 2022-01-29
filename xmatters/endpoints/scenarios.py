@@ -1,6 +1,6 @@
-import xmatters.endpoints.events
-import xmatters.endpoints.forms
-import xmatters.factories as factories
+import xmatters.endpoints.events as events
+import xmatters.endpoints.forms as forms
+import xmatters.factories as factory
 import xmatters.utils
 from xmatters.connection import ApiBridge
 from xmatters.endpoints.common import Pagination, SelfLink
@@ -68,18 +68,17 @@ class Scenario(ApiBridge):
         self.override_device_restrictions = data.get('overrideDeviceRestrictions')
         self.require_phone_password = data.get('requirePhonePassword')
         sender_overrides = data.get('senderOverrides')
-        self.sender_overrides = xmatters.endpoints.forms.SenderOverrides(sender_overrides) if sender_overrides else None
+        self.sender_overrides = forms.SenderOverrides(sender_overrides) if sender_overrides else None
         vm_opts = data.get('voicemailOptions')
-        self.voicemail_options = xmatters.endpoints.events.VoicemailOptions(vm_opts) if vm_opts else None
+        self.voicemail_options = events.VoicemailOptions(vm_opts) if vm_opts else None
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = Pagination(self, tdns, factories.device_name_factory) if tdns.get('data') else []
+        self.target_device_names = Pagination(self, tdns, factory.device_name) if tdns.get('data') else []
         created = data.get('created')
         self.created = xmatters.utils.TimeAttribute(created) if created else None
         perm = data.get('permitted', {}).get('data')
-        self.permitted = [xmatters.factories.scenario_permissions_factory(self, p) for p in perm] if perm else []
-        recipients = data.get('recipients')
-        self.recipients = Pagination(self, xmatters.factories.recipient_factory(self, data),
-                                     recipients) if recipients.get('data') else None
+        self.permitted = [factory.scenario_permission(self, p) for p in perm] if perm else []
+        rs = data.get('recipients')
+        self.recipients = Pagination(self, factory.recipient(self, data), rs) if rs.get('data') else None
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
 

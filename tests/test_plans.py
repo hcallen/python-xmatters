@@ -1,19 +1,19 @@
-import pytest
+from xmatters.endpoints.people import Person
 from .conftest import my_vcr
 
 
-@my_vcr.use_cassette('test_get_plans.json')
-@pytest.mark.usefixtures('xm_session')
-def test_get_plans(xm_session):
-    for plan in xm_session.get_plans():
-        pass
-        for _ in plan.get_forms():
-            pass
-        for _ in plan.get_constants():
-            pass
-        for _ in plan.get_endpoints():
-            pass
-        for _ in plan.get_properties():
-            pass
-        for _ in plan.get_libraries():
-            pass
+class TestPlans:
+    @my_vcr.use_cassette('test_plans.json')
+    def test_plans(self, xm):
+        plans = list(xm.get_plans())
+        assert iter(list(plans))
+        for plan in plans:
+            assert iter(list(plan.get_forms()))
+            assert iter(list(plan.get_constants()))
+            assert iter(list(plan.get_integrations()))
+            assert iter(list(plan.get_properties()))
+            assert iter(list(plan.get_libraries()))
+            assert iter(list(plan.get_endpoints()))
+            assert iter(list(plan.get_subscription_forms()))
+            creator = plan.creator
+            assert isinstance(creator, Person) or creator is None

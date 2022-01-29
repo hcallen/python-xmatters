@@ -1,18 +1,18 @@
 import urllib.parse
-
-import xmatters.factories
+from xmatters.utils import AUDIT_TYPES
+import xmatters.factories as factory
 from xmatters.connection import ApiBridge
-from xmatters.endpoints.audit import Audit
 from xmatters.endpoints.common import Pagination
 from xmatters.endpoints.device_types import DeviceTypes
 from xmatters.endpoints.dynamic_teams import DynamicTeam
 from xmatters.endpoints.events import Event
-from xmatters.endpoints.external_conference_bridges import ConferenceBridge
+from xmatters.endpoints.conference_bridges import ConferenceBridge
 from xmatters.endpoints.forms import Form
 from xmatters.endpoints.groups import Group
 from xmatters.endpoints.import_jobs import Import
 from xmatters.endpoints.incidents import Incident
-from xmatters.endpoints.oncall import OnCall, OnCallSummary
+from xmatters.endpoints.oncall import OnCall
+from xmatters.endpoints.oncall_summary import OnCallSummary
 from xmatters.endpoints.people import Person
 from xmatters.endpoints.plans import Plan
 from xmatters.endpoints.roles import Role
@@ -74,33 +74,34 @@ class xMattersSession(ApiBridge):
         self.con.init_session(base_url, **kwargs)
         super(xMattersSession, self).__init__(self)
 
-    def get_audit(self, event_id, audit_type=None, params=None):
+    def get_audit(self, event_id, audit_types=AUDIT_TYPES, params=None):
         params = params if params else {}
-        params['eventId'] = event_id
-        if audit_type:
-            if isinstance(audit_type, str):
-                params['auditType'] = audit_type
-            elif isinstance(audit_type, list):
-                params['auditType'] = ','.join(audit_type)
+        if 'eventId' not in params.keys():
+            params['eventId'] = event_id
+        if audit_types and 'auditType' not in params.keys():
+            if isinstance(audit_types, str):
+                params['auditType'] = audit_types.upper()
+            elif isinstance(audit_types, list):
+                params['auditType'] = ','.join(audit_types).upper()
 
         url = self.build_url(self._endpoints.get('get_audit'))
         data = self.con.get(url, params)
-        return Pagination(self, data, Audit) if data.get('data') else []
+        return Pagination(self, data, factory.audit) if data.get('data') else []
 
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params)
-        return Pagination(self, data, xmatters.factories.device_factory) if data.get('data') else []
+        return Pagination(self, data, factory.device) if data.get('data') else []
 
     def get_device_by_id(self, device_id, params=None):
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
         data = self.con.get(url, params)
-        return xmatters.factories.device_factory(self, data) if data else None
+        return factory.device(self, data) if data else None
 
     def get_device_names(self, params=None):
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.get(url, params)
-        return Pagination(self, data, xmatters.factories.device_name_factory) if data.get('data') else []
+        return Pagination(self, data, factory.device_name) if data.get('data') else []
 
     def get_device_types(self, params=None):
         url = self.build_url(self._endpoints.get('get_device_types'))
@@ -172,7 +173,7 @@ class xMattersSession(ApiBridge):
         group_ids = ','.join(group_ids) if isinstance(group_ids, list) else group_ids
         url = self.build_url(self._endpoints.get('get_oncall_summary').format(group_ids=group_ids))
         data = self.con.get(url, params)
-        return [OnCallSummary(self, summary) for summary in data] if data else None
+        return [OnCallSummary(self, summary) for summary in data] if data else []
 
     def get_people(self, params=None):
         url = self.build_url(self._endpoints.get('get_people'))

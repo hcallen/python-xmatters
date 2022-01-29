@@ -1,7 +1,5 @@
-import xmatters.factories
-import xmatters.endpoints.people
-from xmatters.endpoints.common import Recipient, SelfLink
-from xmatters.endpoints.people import PersonReference
+import xmatters.utils as util
+from xmatters.endpoints.common import Recipient, SelfLink, Pagination
 from xmatters.connection import ApiBridge
 from xmatters.endpoints.shifts import GroupReference
 
@@ -70,10 +68,11 @@ class OnCall(ApiBridge):
         self.group = GroupReference(parent, data.get('group'))
         self.shift = ShiftReference(parent, data.get('shift', {}))
         start = data.get('start')
-        self.start = xmatters.utils.TimeAttribute(start) if start else None
+        self.start = util.TimeAttribute(start) if start else None
         end = data.get('end')
-        self.end = xmatters.utils.TimeAttribute(end) if end else None
-        self.members = [ShiftOccurrenceMember(self, m) for m in data.get('members', {}).get('data', [])]
+        self.end = util.TimeAttribute(end) if end else None
+        members = data.get('members', {})
+        self.members = Pagination(self, members, ShiftOccurrenceMember) if members.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -82,22 +81,3 @@ class OnCall(ApiBridge):
         return self.__repr__()
 
 
-class OnCallSummary(ApiBridge):
-    def __init__(self, parent, data):
-        super(OnCallSummary, self).__init__(parent, data)
-        group = data.get('group')
-        self.group = GroupReference(self, group) if group else None
-        shift = data.get('shift')
-        self.shift = ShiftReference(self, shift) if shift else None
-        recipient = data.get('recipient')
-        self.recipient = xmatters.factories.recipient_factory(self, recipient) if recipient else None
-        absence = data.get('absence')
-        self.absence = PersonReference(self, absence) if absence else None
-        self.delay = data.get('delay')
-        self.escalation_level = data.get('escalationLevel')
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()

@@ -17,7 +17,7 @@ def skip_token_calls(request):
 my_vcr = vcr.VCR(
     serializer='json',
     cassette_library_dir='../tests/cassettes',
-    record_mode='once',
+    record_mode='new_episodes',
     match_on=['uri', 'method'],
     before_record_request=skip_token_calls
 )
@@ -30,7 +30,7 @@ def settings():
 
 
 @pytest.fixture(scope='session', autouse=True)
-def xm_session(settings):
+def xm(settings):
     base_url = settings.get('base_url')
     client_id = settings.get('client_id')
     token_filepath = settings.get('token_filepath')

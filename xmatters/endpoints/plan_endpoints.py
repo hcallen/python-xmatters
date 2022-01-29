@@ -40,7 +40,7 @@ class Endpoint(ApiBridge):
         self.endpoint_type = data.get('endpointType')
         self.authentication_type = data.get('authenticationType')
         auth = data.get('authentication')
-        self.authentication = xmatters.factories.auth_factory(auth, self.authentication_type) if auth else None
+        self.authentication = xmatters.factories.auth(auth, self.authentication_type) if auth else None
         links = data.get('links')
         self.links = SelfLink(self, data) if links else None
 

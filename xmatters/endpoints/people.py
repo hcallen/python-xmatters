@@ -1,5 +1,5 @@
-import xmatters.factories
-import xmatters.utils
+import xmatters.factories as factory
+import xmatters.utils as utils
 from xmatters.endpoints.common import Recipient, SelfLink, Pagination
 from xmatters.endpoints.roles import Role
 from xmatters.connection import ApiBridge
@@ -23,18 +23,18 @@ class Person(Recipient):
         self.phone_pin = data.get('phonePin')
         self.properties = data.get('properties', {})
         last_login = data.get('lastLogin')
-        self.last_login = xmatters.utils.TimeAttribute(last_login) if last_login else None
+        self.last_login = utils.TimeAttribute(last_login) if last_login else None
         when_created = data.get('whenCreated')
-        self.when_created = xmatters.utils.TimeAttribute(when_created) if when_created else None
+        self.when_created = utils.TimeAttribute(when_created) if when_created else None
         when_updated = data.get('whenUpdated')
-        self.when_updated = xmatters.utils.TimeAttribute(when_updated) if when_updated else None
+        self.when_updated = utils.TimeAttribute(when_updated) if when_updated else None
 
     @property
     def roles(self):
         url = self.build_url(self._endpoints.get('roles'))
         data = self.con.get(url)
         roles = data.get('roles', {})
-        return Pagination(self, data, Role) if roles.get('data') else []
+        return Pagination(self, roles, Role) if roles.get('data') else []
 
     @property
     def devices(self):
@@ -59,7 +59,7 @@ class Person(Recipient):
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params).get('data')
-        return [xmatters.factories.device_factory(self, device) for device in data]
+        return [factory.device(self, device) for device in data]
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)

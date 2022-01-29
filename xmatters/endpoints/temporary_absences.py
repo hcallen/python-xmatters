@@ -1,4 +1,4 @@
-import xmatters.utils
+import xmatters.utils as util
 from xmatters.endpoints.people import PersonReference
 from xmatters.endpoints.shifts import GroupReference
 from xmatters.connection import ApiBridge
@@ -12,9 +12,9 @@ class TemporaryAbsence(ApiBridge):
         member = data.get('member')
         self.member = PersonReference(self, member) if member else None
         start = data.get('start')
-        self.start = xmatters.utils.TimeAttribute(start) if start else None
+        self.start = util.TimeAttribute(start) if start else None
         end = data.get('end')
-        self.end = xmatters.utils.TimeAttribute(end) if end else None
+        self.end = util.TimeAttribute(end) if end else None
         group = data.get('group')
         self.group = GroupReference(self, group) if group else None
         replacement = data.get('replacement')

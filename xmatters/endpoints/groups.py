@@ -1,4 +1,4 @@
-import xmatters.utils
+import xmatters.utils as util
 from xmatters.endpoints.common import Recipient, ReferenceByIdAndSelfLink, RecipientReference
 from xmatters.endpoints.oncall import OnCall, SelfLink
 from xmatters.endpoints.people import Person
@@ -63,7 +63,7 @@ class Group(Recipient):
         self.response_count_threshold = data.get('responseCount')
         self.use_default_devices = data.get('responseCountThreshold')
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None
+        self.created = util.TimeAttribute(created) if created else None
         self.group_type = data.get('groupType')
         site = data.get('site')
         self.site = ReferenceByIdAndSelfLink(self, site) if site else None

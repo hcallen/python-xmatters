@@ -37,7 +37,7 @@ class Pagination(ApiBridge):
         self.parent = parent
         self.cons = cons
         self.cons_identifier = cons_identifier
-        self.params_count = len(inspect.signature(self.cons).parameters)
+        self._params_count = len(inspect.signature(self.cons).parameters)
         self.state = 0  # count of items iterated
         self.total = None
         self._init_data = data
@@ -63,10 +63,10 @@ class Pagination(ApiBridge):
         self.index = 0
 
     def _get_object(self, data):
-        if self.params_count == 3:
+        if self._params_count == 3:
             object_type = data.get(self.cons_identifier)
             data_object = self.cons(self, data, object_type)
-        elif self.params_count == 2:
+        elif self._params_count == 2:
             data_object = self.cons(self, data)
         else:
             data_object = self.cons(data)
