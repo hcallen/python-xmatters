@@ -1,6 +1,6 @@
-from xmatters.common import ReferenceByIdAndSelfLink, SelfLink, Recipient
-
-from xmatters.utils.connection import ApiBridge
+import xmatters.utils
+from xmatters.connection import ApiBridge
+from xmatters.endpoints.common import ReferenceByIdAndSelfLink, SelfLink, Recipient
 
 
 class GroupReference(ApiBridge):
@@ -23,7 +23,8 @@ class GroupReference(ApiBridge):
 class End(object):
     def __init__(self, data):
         self.end_by = data.get('endBy')
-        self.date = data.get('date')
+        date = data.get('date')
+        self.date = xmatters.utils.TimeAttribute(date) if date else None
         self.repetitions = data.get('repetitions')
 
     def __repr__(self):
@@ -39,13 +40,15 @@ class Rotation(object):
         self.direction = data.get('direction')
         self.interval = data.get('interval')
         self.interval_unit = data.get('intervalUnit')
-        self.next_rotation_time = data.get('nextRotationTime')
+        next_rotation_time = data.get('nextRotationTime')
+        self.next_rotation_time = xmatters.utils.TimeAttribute(next_rotation_time) if next_rotation_time else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
+
 
 class ShiftRecurrence(object):
     def __init__(self, data):
@@ -97,10 +100,13 @@ class Shift(ApiBridge):
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
         self.name = data.get('name')
-        self.start = data.get('start')
-        self.end = data.get('end')
+        start = data.get('start')
+        self.start = xmatters.utils.TimeAttribute(start) if start else None
+        end = data.get('end')
+        self.end = xmatters.utils.TimeAttribute(end) if end else None
         self.timezone = data.get('timezone')
-        self.recurrence = ShiftRecurrence(data.get('recurrence'))
+        recurrence = data.get('recurrence')
+        self.recurrence = ShiftRecurrence(recurrence) if recurrence else None
 
     @property
     def members(self):

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from xmatters.utils.utils import TimeAttribute
+from xmatters.utils import TimeAttribute
 
 
 def test_timeattribute():

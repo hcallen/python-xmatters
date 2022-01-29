@@ -1,7 +1,7 @@
-from xmatters.common import Recipient, Pagination, SelfLink
-from xmatters.people import Person
-from xmatters.roles import Role
-from xmatters.subscriptions import SubscriptionCriteria
+from xmatters.endpoints.common import Recipient, Pagination, SelfLink
+from xmatters.endpoints.people import Person
+from xmatters.endpoints.roles import Role
+from xmatters.endpoints.subscriptions import SubscriptionCriteriaReference
 
 
 class DynamicTeam(Recipient):
@@ -16,7 +16,7 @@ class DynamicTeam(Recipient):
         self.use_emergency_device = data.get('useEmergencyDevice')
         self.description = data.get('description')
         criteria = data.get('criteria')
-        self.criteria = SubscriptionCriteria(criteria) if criteria else None
+        self.criteria = SubscriptionCriteriaReference(criteria) if criteria else None
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
 

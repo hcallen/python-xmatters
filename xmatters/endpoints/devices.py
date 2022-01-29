@@ -1,9 +1,17 @@
-from xmatters.common import Recipient, ReferenceById
-from xmatters.people import PersonReference
+from xmatters.endpoints.common import Recipient, ReferenceById
+from xmatters.endpoints.people import PersonReference
+
 
 class Provider(object):
     def __init__(self, data):
         self.id = data.get('id')
+
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.id)
+
+    def __str__(self):
+        return self.__repr__()
+
 
 class Device(Recipient):
     _endpoints = {'timeframes': '?embed=timeframes'}
@@ -113,6 +121,7 @@ class AndroidPushDevice(Device):
     def __str__(self):
         return self.__repr__()
 
+
 class FaxDevice(Device):
     def __init__(self, parent, data):
         super(FaxDevice, self).__init__(parent, data)
@@ -164,5 +173,3 @@ class DeviceTimeframe(object):
 
     def __str__(self):
         return self.__repr__()
-
-

@@ -1,7 +1,5 @@
-import pytest
-
-from xmatters.common import Pagination
-from xmatters.people import Person
+from xmatters.endpoints.common import Pagination
+from xmatters.endpoints.people import Person
 from .conftest import my_vcr
 
 

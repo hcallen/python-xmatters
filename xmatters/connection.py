@@ -6,7 +6,7 @@ from requests.adapters import HTTPAdapter
 from requests_oauthlib import OAuth2Session
 from urllib3.util.retry import Retry
 
-from xmatters.utils.errors import xMattersError, AuthorizationError
+from xmatters.errors import xMattersError, ApiAuthorizationError
 
 
 class Connection(object):
@@ -33,7 +33,7 @@ class Connection(object):
         r = self.session.request(method=method, url=url, params=params, timeout=self.timeout)
         data = r.json()
         if r.status_code == 401:
-            raise AuthorizationError(data)
+            raise ApiAuthorizationError(data)
         else:
             return data
 
@@ -59,6 +59,14 @@ class Connection(object):
 
 class BasicAuth(Connection):
     def __init__(self, username, password):
+        """
+        Class used to authentication requests using basic authentication
+
+        :param username: xMatters username
+        :type username: str
+        :param password: xMatters password
+        :type password: str
+        """
         super(BasicAuth, self).__init__()
         self.username = username
         self.password = password
@@ -78,7 +86,25 @@ class BasicAuth(Connection):
 class OAuth2Auth(Connection):
     _endpoints = {'token': '/oauth2/token'}
 
-    def __init__(self, client_id, username=None, password=None, token=None, token_storage=None):
+    def __init__(self, client_id, token=None, username=None, password=None, token_storage=None):
+        """
+        Class used to authentication requests using OAuth2 authentication.
+
+        The method used to obtain a token are used in the following order:  token, username & password, token_storage.
+
+        :param client_id: xMatters instance client id
+        :type client_id: str
+        :param token: Authentication token. Can be just a refresh token (as a str) or a token object (as a dict)
+        :type token: str or dict, optional
+         :param username: xMatters username
+        :type username: str, optional
+        :param password: xMatters password
+        :type password: str, optional
+        :param token_storage: Class instance used to store token returned during a refresh.
+            Any class instance will be accepted as long as it has "read_token" and "write_token" methods.
+        :type token_storage: :class:`xmatters.utils.TokenFileStorage`, optional
+        """
+
         super(OAuth2Auth, self).__init__()
         self.client_id = client_id
         self.token_storage = token_storage

@@ -1,9 +1,9 @@
-import xmatters.utils.factories
-import xmatters.people
-from xmatters.common import Recipient, SelfLink
-from xmatters.people import PersonReference
-from xmatters.utils.connection import ApiBridge
-from xmatters.shifts import GroupReference
+import xmatters.factories
+import xmatters.endpoints.people
+from xmatters.endpoints.common import Recipient, SelfLink
+from xmatters.endpoints.people import PersonReference
+from xmatters.connection import ApiBridge
+from xmatters.endpoints.shifts import GroupReference
 
 
 class Replacer(ApiBridge):
@@ -69,8 +69,10 @@ class OnCall(ApiBridge):
         super(OnCall, self).__init__(parent)
         self.group = GroupReference(parent, data.get('group'))
         self.shift = ShiftReference(parent, data.get('shift', {}))
-        self.start = data.get('start')
-        self.end = data.get('end')
+        start = data.get('start')
+        self.start = xmatters.utils.TimeAttribute(start) if start else None
+        end = data.get('end')
+        self.end = xmatters.utils.TimeAttribute(end) if end else None
         self.members = [ShiftOccurrenceMember(self, m) for m in data.get('members', {}).get('data', [])]
 
     def __repr__(self):
@@ -88,7 +90,7 @@ class OnCallSummary(ApiBridge):
         shift = data.get('shift')
         self.shift = ShiftReference(self, shift) if shift else None
         recipient = data.get('recipient')
-        self.recipient = xmatters.utils.factories.oncall_recipients_factory(self, recipient) if recipient else None
+        self.recipient = xmatters.factories.recipient_factory(self, recipient) if recipient else None
         absence = data.get('absence')
         self.absence = PersonReference(self, absence) if absence else None
         self.delay = data.get('delay')

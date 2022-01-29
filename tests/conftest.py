@@ -3,8 +3,8 @@ import json
 import pytest
 import vcr
 from xmatters.session import xMattersSession
-from xmatters.utils.connection import OAuth2Auth
-from xmatters.utils.utils import TokenFileStorage
+from xmatters.connection import OAuth2Auth
+from xmatters.utils import TokenFileStorage
 
 
 def skip_token_calls(request):

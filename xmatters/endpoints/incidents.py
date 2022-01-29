@@ -1,6 +1,6 @@
-import xmatters.utils.utils
-from xmatters.people import PersonReference
-from xmatters.utils.connection import ApiBridge
+import xmatters.utils
+from xmatters.endpoints.people import PersonReference
+from xmatters.connection import ApiBridge
 
 
 class IncidentProperty(object):
@@ -36,11 +36,11 @@ class Incident(ApiBridge):
         reporter = data.get('reporter')
         self.reporter = PersonReference(self, reporter) if reporter else None
         created_at = data.get('createdAt')
-        self.created_at = xmatters.utils.utils.TimeAttribute(created_at) if created_at else None
+        self.created_at = xmatters.utils.TimeAttribute(created_at) if created_at else None
         updated_at = data.get('updated_at')
-        self.updated_at = xmatters.utils.utils.TimeAttribute(updated_at) if updated_at else None
+        self.updated_at = xmatters.utils.TimeAttribute(updated_at) if updated_at else None
         acknowledged_at = data.get('acknowledgeAt')
-        self.acknowledged_at = xmatters.utils.utils.TimeAttribute(acknowledged_at) if acknowledged_at else None
+        self.acknowledged_at = xmatters.utils.TimeAttribute(acknowledged_at) if acknowledged_at else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -54,7 +54,7 @@ class IncidentNote(ApiBridge):
         super(IncidentNote, self).__init__(parent, data)
         self.id = data.get('id')
         at = data.get('at')
-        self.at = xmatters.utils.utils.TimeAttribute(at) if at else None
+        self.at = xmatters.utils.TimeAttribute(at) if at else None
         self.entry_type = data.get('entryType')
         self.text = data.get('text')
         added_by = data.get('addedBy')

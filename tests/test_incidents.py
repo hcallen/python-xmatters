@@ -1,5 +1,5 @@
-from xmatters.common import Pagination
-from xmatters.incidents import Incident
+from xmatters.endpoints.common import Pagination
+from xmatters.endpoints.incidents import Incident
 from .conftest import my_vcr
 
 

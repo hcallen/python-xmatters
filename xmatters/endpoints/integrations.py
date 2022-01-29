@@ -1,15 +1,15 @@
-from xmatters.common import ReferenceById, Pagination
-from xmatters.people import PersonReference
-from xmatters.plan_endpoints import Endpoint
-import xmatters.plans
-from xmatters.utils.connection import ApiBridge
+from xmatters.endpoints.common import ReferenceById, Pagination
+from xmatters.endpoints.people import PersonReference
+from xmatters.endpoints.plan_endpoints import Endpoint
+import xmatters.endpoints.plans
+from xmatters.connection import ApiBridge
 
 
 class IntegrationReference(object):
     def __init__(self, data):
         self.id = data.get('id')
         plan = data.get('plan')
-        self.plan = xmatters.plans.PlanReference(plan) if plan else None
+        self.plan = xmatters.endpoints.plans.PlanReference(plan) if plan else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

@@ -1,6 +1,6 @@
-from xmatters.common import SelfLink
-import xmatters.plans
-from xmatters.utils.connection import ApiBridge
+from xmatters.endpoints.common import SelfLink
+import xmatters.endpoints.plans
+from xmatters.connection import ApiBridge
 
 
 class PlanConstant(ApiBridge):
@@ -8,7 +8,7 @@ class PlanConstant(ApiBridge):
         super(PlanConstant, self).__init__(parent, data)
         self.id = data.get('id')
         plan = data.get('plan')
-        self.plan = xmatters.plans.PlanPointer(plan) if plan else None
+        self.plan = xmatters.endpoints.plans.PlanPointer(plan) if plan else None
         self.name = data.get('name')
         self.value = data.get('value')
         self.description = data.get('description')

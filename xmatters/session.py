@@ -1,20 +1,27 @@
-import xmatters.utils.factories
-from xmatters.audit import Audit
-from xmatters.common import Pagination
-from xmatters.device_types import DeviceTypes
-from xmatters.dynamic_teams import DynamicTeam
-from xmatters.events import Event, DeviceName
-from xmatters.external_conference_bridges import ConferenceBridge
-from xmatters.forms import Form
-from xmatters.groups import Group
-from xmatters.incidents import Incident
-from xmatters.oncall import OnCall, OnCallSummary
-from xmatters.people import Person
-from xmatters.plans import Plan
-from xmatters.temporary_absences import TemporaryAbsence
-from xmatters.utils.connection import ApiBridge
-from xmatters.import_jobs import Import
 import urllib.parse
+
+import xmatters.factories
+from xmatters.connection import ApiBridge
+from xmatters.endpoints.audit import Audit
+from xmatters.endpoints.common import Pagination
+from xmatters.endpoints.device_types import DeviceTypes
+from xmatters.endpoints.dynamic_teams import DynamicTeam
+from xmatters.endpoints.events import Event
+from xmatters.endpoints.external_conference_bridges import ConferenceBridge
+from xmatters.endpoints.forms import Form
+from xmatters.endpoints.groups import Group
+from xmatters.endpoints.import_jobs import Import
+from xmatters.endpoints.incidents import Incident
+from xmatters.endpoints.oncall import OnCall, OnCallSummary
+from xmatters.endpoints.people import Person
+from xmatters.endpoints.plans import Plan
+from xmatters.endpoints.roles import Role
+from xmatters.endpoints.scenarios import Scenario
+from xmatters.endpoints.services import Service
+from xmatters.endpoints.sites import Site
+from xmatters.endpoints.subscription_forms import SubscriptionForm
+from xmatters.endpoints.subscriptions import Subscription
+from xmatters.endpoints.temporary_absences import TemporaryAbsence
 
 
 class xMattersSession(ApiBridge):
@@ -31,7 +38,7 @@ class xMattersSession(ApiBridge):
                   'get_events': '/events',
                   'get_event_by_id': '/events/{event_id}',
                   'get_temporary_absences': '/temporary-absences',
-                  'get_audit': '/audits?{event_id}',
+                  'get_audit': '/audits',
                   'get_device_names': '/device-names',
                   'get_device_types': '/device-types',
                   'get_dynamic_teams': '/dynamic-teams',
@@ -40,9 +47,30 @@ class xMattersSession(ApiBridge):
                   'get_import_jobs': '/imports',
                   'get_plans': '/plans',
                   'get_incidents': '/incidents',
-                  'get_plan_by_id': '/plans/{plan_id}'}
+                  'get_plan_by_id': '/plans/{plan_id}',
+                  'get_roles': '/roles',
+                  'get_scenarios': '/scenarios',
+                  'get_scenario_by_id': '/scenarios/{scenario_id}',
+                  'get_services': '/services',
+                  'get_service_by_id': '/scenarios/{service_id}',
+                  'get_subscription_forms': '/subscription-forms',
+                  'get_subscription_form_id': '/subscription-forms/{sub_form_id}',
+                  'get_subscriptions': '/subscriptions',
+                  'get_subscription_by_id': '/subscription-forms/{sub_id}'}
 
     def __init__(self, base_url, auth, timeout=3, max_retries=3):
+        """
+        Primary class used to interact with xMatters API
+
+        :param base_url: xMatters instance url or xMatters instance base url
+        :type base_url: str
+        :param auth: Type of authentication to use
+        :type auth: :class:`xmatters.connection.BasicAuth` or :class:`xmatters.connection.OAuth2Auth`
+        :param timeout: Request timeout in seconds, defaults to 3
+        :type timeout: int
+        :param max_retries: Maximum number of request retries, defaults to 3
+        :type max_retries: int
+        """
         p_url = urllib.parse.urlparse(base_url)
         instance_url = 'https://{}'.format(p_url.netloc)
         base_url = '{}/api/xm/1'.format(instance_url)
@@ -50,7 +78,15 @@ class xMattersSession(ApiBridge):
         self.con.init_session(base_url, timeout, max_retries)
         super(xMattersSession, self).__init__(self)
 
-    def get_audit(self, params=None):
+    def get_audit(self, event_id, audit_type=None, params=None):
+        params = params if params else {}
+        params['eventId'] = event_id
+        if audit_type:
+            if isinstance(audit_type, str):
+                params['auditType'] = audit_type
+            elif isinstance(audit_type, list):
+                params['auditType'] = ','.join(audit_type)
+
         url = self.build_url(self._endpoints.get('get_audit'))
         data = self.con.get(url, params)
         return Pagination(self, data, Audit) if data.get('data') else []
@@ -58,17 +94,17 @@ class xMattersSession(ApiBridge):
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params)
-        return Pagination(self, data, xmatters.utils.factories.device_factory) if data.get('data') else []
+        return Pagination(self, data, xmatters.factories.device_factory) if data.get('data') else []
 
     def get_device_by_id(self, device_id, params=None):
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
         data = self.con.get(url, params)
-        return xmatters.utils.factories.device_factory(self, data) if data else None
+        return xmatters.factories.device_factory(self, data) if data else None
 
     def get_device_names(self, params=None):
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.get(url, params)
-        return Pagination(self, data, DeviceName) if data.get('data') else []
+        return Pagination(self, data, xmatters.factories.device_name_factory) if data.get('data') else []
 
     def get_device_types(self, params=None):
         url = self.build_url(self._endpoints.get('get_device_types'))
@@ -162,41 +198,60 @@ class xMattersSession(ApiBridge):
         data = self.con.get(url)
         return Plan(self, data) if data else None
 
-    # TODO
     def get_roles(self, params=None):
-        pass
+        url = self.build_url(self._endpoints.get('get_roles'))
+        data = self.con.get(url, params)
+        return Pagination(self, data, Role) if data.get('data') else []
 
-    # TODO
     def get_scenarios(self, params=None):
-        pass
+        url = self.build_url(self._endpoints.get('get_scenarios'))
+        data = self.con.get(url, params)
+        return Pagination(self, data, Scenario) if data.get('data') else []
 
-    # TODO
+    def get_scenario_by_id(self, scenario_id):
+        url = self.build_url(self._endpoints.get('get_scenario_by_id').format(scenario_id=scenario_id))
+        data = self.con.get(url)
+        return Scenario(self, data) if data else None
+
     def get_services(self, params=None):
-        pass
+        url = self.build_url(self._endpoints.get('get_services'))
+        data = self.con.get(url, params)
+        return Pagination(self, data, Service) if data.get('data') else []
 
-    # TODO
+    def get_service_by_id(self, service_id):
+        url = self.build_url(self._endpoints.get('get_service_by_id').format(service_id=service_id))
+        data = self.con.get(url)
+        return Service(self, data) if data else None
+
     def get_sites(self, params=None):
-        pass
+        url = self.build_url(self._endpoints.get('get_sites'))
+        data = self.con.get(url, params)
+        return Pagination(self, data, Site) if data.get('data') else []
 
-    # TODO
     def get_site_by_id(self, site_id):
-        pass
+        url = self.build_url(self._endpoints.get('get_site_by_id').format(site_id=site_id))
+        data = self.con.get(url)
+        return Site(self, data) if data else None
 
-    # TODO
     def get_subscription_forms(self, params=None):
-        pass
+        url = self.build_url(self._endpoints.get('get_subscription_forms'))
+        data = self.con.get(url, params)
+        return Pagination(self, data, SubscriptionForm) if data.get('data') else []
 
-    # TODO
     def get_subscription_form_by_id(self, sub_form_id):
-        pass
+        url = self.build_url(self._endpoints.get('get_subscription_form_by_id').format(sub_form_id=sub_form_id))
+        data = self.con.get(url)
+        return SubscriptionForm(self, data) if data else None
 
-    # TODO
     def get_subscriptions(self, params=None):
-        pass
+        url = self.build_url(self._endpoints.get('get_subscriptions'))
+        data = self.con.get(url, params)
+        return Pagination(self, data, Subscription) if data else []
 
-    # TODO
     def get_subscription_by_id(self, sub_id):
-        pass
+        url = self.build_url(self._endpoints.get('get_subscription_by_id').format(sub_id=sub_id))
+        data = self.con.get(url)
+        return SubscriptionForm(self, data) if data else None
 
     def get_temporary_absences(self, params=None):
         url = self.build_url(self._endpoints.get('get_temporary_absences'))

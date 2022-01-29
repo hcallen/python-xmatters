@@ -1,6 +1,7 @@
-from xmatters.common import SelfLink
-import xmatters.events
-from xmatters.utils.connection import ApiBridge
+from xmatters.endpoints.common import SelfLink
+import xmatters.endpoints.events
+from xmatters.connection import ApiBridge
+import xmatters.utils
 
 
 class EventFloodFilter(object):
@@ -34,10 +35,11 @@ class EventSuppression(ApiBridge):
     def __init__(self, parent, data):
         super(EventSuppression, self).__init__(parent, data)
         event = data.get('event')
-        self.event = xmatters.events.EventReference(self, event) if event else None
+        self.event = xmatters.endpoints.events.EventReference(self, event) if event else None
         match = data.get('match')
         self.match = SuppressionMatch(self, data) if match else None
-        self.at = data.get('at')
+        at = data.get('at')
+        self.at = xmatters.utils.TimeAttribute(at) if at else None
         filters = data.get('filters', [])
         self.filter = [EventFloodFilter(f) for f in filters]
         self.links = SelfLink(self, data.get('links'))

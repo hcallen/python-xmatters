@@ -1,10 +1,11 @@
-from xmatters.common import Recipient, ReferenceByIdAndSelfLink, RecipientReference
-from xmatters.oncall import OnCall, SelfLink
-from xmatters.people import Person
-from xmatters.roles import Role
-from xmatters.shifts import Shift, GroupReference
-from xmatters.common import Pagination
-from xmatters.utils.connection import ApiBridge
+import xmatters.utils
+from xmatters.endpoints.common import Recipient, ReferenceByIdAndSelfLink, RecipientReference
+from xmatters.endpoints.oncall import OnCall, SelfLink
+from xmatters.endpoints.people import Person
+from xmatters.endpoints.roles import Role
+from xmatters.endpoints.shifts import Shift, GroupReference
+from xmatters.endpoints.common import Pagination
+from xmatters.connection import ApiBridge
 
 
 class GroupMembershipShiftReference(ApiBridge):
@@ -50,7 +51,8 @@ class Group(Recipient):
                   'get_oncall': '{base_url}/on-call?groups={group_id}',
                   'observers': '?embed=observers',
                   'get_shifts': '/shifts',
-                  'get_members': '/members?embed=shifts'}
+                  'get_members': '/members?embed=shifts',
+                  'get_shift_by_id': '/shifts/{shift_id}'}
 
     def __init__(self, parent, data):
         super(Group, self).__init__(parent, data)
@@ -60,7 +62,8 @@ class Group(Recipient):
         self.response_count = data.get('responseCount')
         self.response_count_threshold = data.get('responseCount')
         self.use_default_devices = data.get('responseCountThreshold')
-        self.created = data.get('created')
+        created = data.get('created')
+        self.created = xmatters.utils.TimeAttribute(created) if created else None
         self.group_type = data.get('groupType')
         site = data.get('site')
         self.site = ReferenceByIdAndSelfLink(self, site) if site else None
@@ -90,6 +93,11 @@ class Group(Recipient):
         url = self.build_url(self._endpoints.get('get_shifts'))
         data = self.con.get(url, params)
         return Pagination(self, data, Shift) if data.get('data') else []
+
+    def get_shift_by_id(self, shift_id):
+        url = self.build_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
+        data = self.con.get(url)
+        return Shift(self, data) if data else None
 
     def get_members(self, params=None):
         url = self.build_url(self._endpoints.get('get_members'))

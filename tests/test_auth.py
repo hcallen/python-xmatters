@@ -1,7 +1,7 @@
 import json
 
 from xmatters import xMattersSession, OAuth2Auth, TokenFileStorage
-from xmatters.common import Pagination
+from xmatters.endpoints.common import Pagination
 from .conftest import my_vcr
 
 

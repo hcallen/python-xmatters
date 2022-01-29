@@ -1,5 +1,5 @@
 import inspect
-from xmatters.utils.connection import ApiBridge
+from xmatters.connection import ApiBridge
 
 
 class Error(object):
@@ -194,3 +194,9 @@ class PropertyDefinition(object):
         self.min_length = data.get('minLength')
         self.pattern = data.get('pattern')
         self.validate = data.get('validate')
+
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.name)
+
+    def __str__(self):
+        return self.__repr__()

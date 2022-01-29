@@ -1,12 +1,13 @@
-import xmatters.utils.factories
-from xmatters.common import Pagination, SelfLink
-from xmatters.forms import Form
-from xmatters.integrations import Integration
-from xmatters.people import Person
-from xmatters.plan_constants import PlanConstant
-from xmatters.plan_endpoints import Endpoint
-from xmatters.shared_libraries import SharedLibrary
-from xmatters.utils.connection import ApiBridge
+import xmatters.factories
+import xmatters.endpoints.forms
+from xmatters.endpoints.common import Pagination, SelfLink
+from xmatters.endpoints.integrations import Integration
+from xmatters.endpoints.people import Person
+from xmatters.endpoints.plan_constants import PlanConstant
+from xmatters.endpoints.plan_endpoints import Endpoint
+from xmatters.endpoints.shared_libraries import SharedLibrary
+from xmatters.connection import ApiBridge
+from xmatters.endpoints.subscription_forms import SubscriptionForm
 
 
 class PlanPointer(object):
@@ -40,7 +41,8 @@ class Plan(ApiBridge):
                   'get_constants': '/constants',
                   'get_properties': '/property-definitions',
                   'get_libraries': '/shared-libraries',
-                  'get_endpoints': '/endpoints'}
+                  'get_endpoints': '/endpoints',
+                  'get_subscription_forms': '/subscription-forms'}
 
     def __init__(self, parent, data):
         super(Plan, self).__init__(parent, data)
@@ -61,7 +63,7 @@ class Plan(ApiBridge):
     def get_forms(self, params=None):
         url = self.build_url(self._endpoints.get('get_forms'))
         forms = self.con.get(url, params)
-        return Pagination(self, forms, Form) if forms.get('data') else []
+        return Pagination(self, forms, xmatters.endpoints.forms) if forms.get('data') else []
 
     def get_constants(self, params=None):
         url = self.build_url(self._endpoints.get('get_constants'))
@@ -76,7 +78,7 @@ class Plan(ApiBridge):
     def get_properties(self, params=None):
         url = self.build_url(self._endpoints.get('get_properties'))
         props = self.con.get(url, params)
-        return Pagination(self, props, xmatters.utils.factories.prop_factory) if props.get(
+        return Pagination(self, props, xmatters.factories.prop_factory) if props.get(
             'data') else []
 
     def get_libraries(self, params=None):
@@ -89,9 +91,10 @@ class Plan(ApiBridge):
         endpoints = self.con.get(url, params)
         return Pagination(self, endpoints, Endpoint) if endpoints.get('data') else []
 
-    # TODO
     def get_subscription_forms(self, params=None):
-        pass
+        url = self.build_url(self._endpoints.get('get_subscription_forms'))
+        sub_forms = self.con.get(url, params)
+        return Pagination(self, sub_forms, SubscriptionForm) if sub_forms.get('data') else []
 
     @property
     def creator(self):

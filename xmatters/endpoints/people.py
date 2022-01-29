@@ -1,8 +1,8 @@
-import xmatters.utils.factories
-import xmatters.utils.utils
-from xmatters.common import Recipient, SelfLink, Pagination
-from xmatters.roles import Role
-from xmatters.utils.connection import ApiBridge
+import xmatters.factories
+import xmatters.utils
+from xmatters.endpoints.common import Recipient, SelfLink, Pagination
+from xmatters.endpoints.roles import Role
+from xmatters.connection import ApiBridge
 
 
 class Person(Recipient):
@@ -23,17 +23,18 @@ class Person(Recipient):
         self.phone_pin = data.get('phonePin')
         self.properties = data.get('properties', {})
         last_login = data.get('lastLogin')
+        self.last_login = xmatters.utils.TimeAttribute(last_login) if last_login else None
         when_created = data.get('whenCreated')
+        self.when_created = xmatters.utils.TimeAttribute(when_created) if when_created else None
         when_updated = data.get('whenUpdated')
-        self.last_login = xmatters.utils.utils.TimeAttribute(last_login) if last_login else None
-        self.when_created = xmatters.utils.utils.TimeAttribute(when_created) if when_created else None
-        self.when_updated = xmatters.utils.utils.TimeAttribute(when_updated) if when_updated else None
+        self.when_updated = xmatters.utils.TimeAttribute(when_updated) if when_updated else None
 
     @property
     def roles(self):
         url = self.build_url(self._endpoints.get('roles'))
-        data = self.con.get(url).get('roles', {})
-        return Pagination(self, data, Role) if data.get('data') else []
+        data = self.con.get(url)
+        roles = data.get('roles', {})
+        return Pagination(self, data, Role) if roles.get('data') else []
 
     @property
     def devices(self):
@@ -42,8 +43,9 @@ class Person(Recipient):
     @property
     def supervisors(self):
         url = self.build_url(self._endpoints.get('supervisors'))
-        data = self.con.get(url).get('supervisors', {})
-        return Pagination(self, data, Person) if data.get('data') else []
+        data = self.con.get(url)
+        supervisors = data.get('supervisors', {})
+        return Pagination(self, supervisors, Person) if supervisors.get('data') else []
 
     def get_supervisors(self):
         return self.supervisors
@@ -57,7 +59,7 @@ class Person(Recipient):
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params).get('data')
-        return [xmatters.utils.factories.device_factory(self, device) for device in data]
+        return [xmatters.factories.device_factory(self, device) for device in data]
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)

@@ -1,0 +1,16 @@
+from tests.conftest import my_vcr
+from xmatters.endpoints.common import Pagination
+
+
+class TestForms:
+
+    @my_vcr.use_cassette('test_get_forms.json')
+    def test_get_forms(self, xm_session):
+        forms = xm_session.get_forms()
+        assert isinstance(forms, Pagination) or isinstance(forms, list)
+
+    @my_vcr.use_cassette('test_get_forms_recipients.json')
+    def test_get_forms_recipients(self, xm_session):
+        forms = xm_session.get_forms()
+        for form in forms:
+            assert isinstance(form.recipients, list)
