@@ -1,4 +1,5 @@
 import inspect
+import re
 from xmatters.connection import ApiBridge
 
 
@@ -39,7 +40,7 @@ class Pagination(ApiBridge):
         self.params_count = len(inspect.signature(self.cons).parameters)
         self.state = 0  # count of items iterated
         self.total = None
-
+        self._init_data = data
 
         # properties change every page
         self.count = None
@@ -61,12 +62,39 @@ class Pagination(ApiBridge):
         self.total = data.get('total')
         self.index = 0
 
+    def _get_object(self, data):
+        if self.params_count == 3:
+            object_type = data.get(self.cons_identifier)
+            data_object = self.cons(self, data, object_type)
+        elif self.params_count == 2:
+            data_object = self.cons(self, data)
+        else:
+            data_object = self.cons(data)
+        return data_object
+
+    def _reset(self):
+        self.state = 0
+        self._set_pagination_properties(self._init_data)
+
+    def _check_index(self, index):
+        adj_index = index if index >= 0 else index + self.total
+        if adj_index < 0 or adj_index >= self.total:
+            raise IndexError('index out of range, index={} pagination length={}'.format(index, self.total))
+
+    def _get_item_by_index(self, index):
+        url = self.build_url(self.links.self)
+        url = re.sub('^(.*offset=)[0-9]+(.*limit=)[0-9]+(.*)$', '\g<1>{}\g<2>{}\g<3>'.format(index, 1), url)
+
+        data = self.con.get(url).get('data')[0]
+        return self._get_object(data)
+
     def __iter__(self):
         return self
 
     def __next__(self):
 
         if self.state == self.total:
+            self._reset()
             raise StopIteration()
 
         if self.index == self.count and self.links and self.links.next:
@@ -74,18 +102,42 @@ class Pagination(ApiBridge):
 
         if self.index < self.count:
             item_data = self.data[self.index]
-
-            if self.params_count == 3:
-                object_type = item_data.get(self.cons_identifier)
-                data_object = self.cons(self, item_data, object_type)
-            elif self.params_count == 2:
-                data_object = self.cons(self, item_data)
-            else:
-                data_object = self.cons(item_data)
-
             self.index += 1
             self.state += 1
-            return data_object
+            return self._get_object(item_data)
+
+    def __getitem__(self, key):
+        if isinstance(key, int):
+            self._check_index(key)
+            key = key if key >= 0 else key + self.total
+            return self._get_item_by_index(key)
+        if isinstance(key, slice):
+            start, stop, step = key.start, key.stop, key.step
+
+            # set default values if None
+            start = start if start else 0
+            stop = stop if stop else self.total
+            step = step if step else 1
+
+            # ensure indexes are within range
+            [self._check_index(k) for k in (start, (stop - 1))]
+
+            # offset with total if either start or stop are negative
+            index = start if start >= 0 else start + self.total
+            stop = stop if stop >= 0 else stop + self.total
+
+            # check step
+            if step == 0:
+                raise ValueError('slice step cannot be zero')
+            # if step negative
+            index = (index + self.total - 1) if step < 0 else index
+            stop = (stop + self.total + 1) if step < 0 else stop
+
+            items = []
+            while index > stop and index >= 0:
+                items.append(self._get_item_by_index(index))
+                index += step
+            return items
 
     def __len__(self):
         return self.total

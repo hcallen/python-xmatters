@@ -13,4 +13,12 @@ class TestForms:
     def test_get_forms_recipients(self, xm_session):
         forms = xm_session.get_forms()
         for form in forms:
-            assert isinstance(form.recipients, list)
+            r = form.recipients
+            assert isinstance(forms, Pagination) or isinstance(forms, list)
+
+    @my_vcr.use_cassette('test_get_forms_response_options.json')
+    def test_get_forms_response_options(self, xm_session):
+        forms = xm_session.get_forms()
+        for form in forms:
+            r = form.response_options
+            assert isinstance(r, Pagination) or isinstance(r, list)

@@ -16,7 +16,7 @@ def skip_token_calls(request):
 
 my_vcr = vcr.VCR(
     serializer='json',
-    cassette_library_dir='./tests/cassettes',
+    cassette_library_dir='../tests/cassettes',
     record_mode='once',
     match_on=['uri', 'method'],
     before_record_request=skip_token_calls
@@ -25,7 +25,7 @@ my_vcr = vcr.VCR(
 
 @pytest.fixture(scope='session', autouse=True)
 def settings():
-    with open('./tests/settings/settings.json', 'r') as f:
+    with open('../tests/settings/settings.json', 'r') as f:
         return json.load(f)
 
 

@@ -1,6 +1,6 @@
-import xmatters.endpoints.events
-import xmatters.factories
-import xmatters.endpoints.plans
+import xmatters.endpoints.events as events
+import xmatters.factories as factory
+import xmatters.endpoints.plans as plans
 from xmatters.endpoints.common import SelfLink, Pagination, Recipient, PropertyDefinition
 from xmatters.endpoints.device_names import TargetDeviceNameSelector
 from xmatters.connection import ApiBridge
@@ -139,7 +139,7 @@ class HandlingSection(FormSection):
         require_phone_password = data.get('requirePhonePassword')
         self.require_phone_password = SectionValue(require_phone_password) if require_phone_password else None
         voicemail_options = data.get('voicemailOptions')
-        self.voicemail_options = xmatters.endpoints.events.VoicemailOptions(data) if voicemail_options else None
+        self.voicemail_options = events.VoicemailOptions(data) if voicemail_options else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -192,7 +192,7 @@ class Form(ApiBridge):
         sender_overrides = data.get('senderOverrides')
         self.sender_overrides = SenderOverrides(sender_overrides) if sender_overrides else None
         plan = data.get('plan')
-        self.plan = xmatters.endpoints.plans.PlanReference(plan) if plan else None
+        self.plan = plans.PlanReference(plan) if plan else None
         links = data.get('links')
         self.links = SelfLink(self, data) if links else None
 
@@ -204,17 +204,17 @@ class Form(ApiBridge):
     def recipients(self, params=None):
         url = self.build_url(self._endpoints.get('recipients'))
         recipients = self.con.get(url, params).get('recipients', {})
-        return Pagination(self, recipients, xmatters.factories.recipient_factory) if recipients.get('data') else []
+        return Pagination(self, recipients, factory.recipient_factory) if recipients.get('data') else []
 
     def get_response_options(self, params=None):
         url = self.build_url(self._endpoints.get('get_response_options'))
         options = self.con.get(url, params)
-        return Pagination(self, options, xmatters.endpoints.events.ResponseOption) if options.get('data') else []
+        return Pagination(self, options, events.ResponseOption) if options.get('data') else []
 
     def get_sections(self, params=None):
         url = self._endpoints.get('get_sections').format(base_url=self.con.base_url, form_id=self.id)
         s = self.con.get(url, params)
-        return Pagination(self, s, xmatters.factories.sections_factory, 'type') if s.get('data') else []
+        return Pagination(self, s, factory.sections_factory, 'type') if s.get('data') else []
 
     def get_scenarios(self, params=None):
         url = self._endpoints.get('get_scenarios').format(base_url=self.con.base_url, plan_id=self.plan.id,

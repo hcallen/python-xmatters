@@ -58,7 +58,7 @@ class xMattersSession(ApiBridge):
                   'get_subscriptions': '/subscriptions',
                   'get_subscription_by_id': '/subscription-forms/{sub_id}'}
 
-    def __init__(self, base_url, auth, timeout=3, max_retries=3):
+    def __init__(self, base_url, auth, **kwargs):
         """
         Primary class used to interact with xMatters API
 
@@ -66,16 +66,12 @@ class xMattersSession(ApiBridge):
         :type base_url: str
         :param auth: Type of authentication to use
         :type auth: :class:`xmatters.connection.BasicAuth` or :class:`xmatters.connection.OAuth2Auth`
-        :param timeout: Request timeout in seconds, defaults to 3
-        :type timeout: int
-        :param max_retries: Maximum number of request retries, defaults to 3
-        :type max_retries: int
         """
         p_url = urllib.parse.urlparse(base_url)
         instance_url = 'https://{}'.format(p_url.netloc)
         base_url = '{}/api/xm/1'.format(instance_url)
         self.con = auth
-        self.con.init_session(base_url, timeout, max_retries)
+        self.con.init_session(base_url, **kwargs)
         super(xMattersSession, self).__init__(self)
 
     def get_audit(self, event_id, audit_type=None, params=None):
@@ -265,14 +261,6 @@ class xMattersSession(ApiBridge):
     @property
     def instance_url(self):
         return self.con.instance_url
-
-    @property
-    def timeout(self):
-        return self.con.timeout
-
-    @property
-    def max_retries(self):
-        return self.con.max_retries
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

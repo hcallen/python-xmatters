@@ -18,13 +18,14 @@ class Connection(object):
         self.session = None
         self.base_url = None
 
-    def init_session(self, base_url, timeout, max_retries):
+    def init_session(self, base_url, **kwargs):
         self.base_url = base_url
         p_url = parse.urlparse(self.base_url)
         self.api_path = p_url.path
         self.instance_url = 'https://{}'.format(p_url.netloc)
-        self.timeout = timeout
-        self.max_retries = max_retries
+        self.timeout = kwargs.get('timeout')
+        if kwargs.get('max_retries'):
+            self.max_retries = kwargs.get('max_retries')
 
     def get(self, url, params=None):
         return self.request('GET', url, params)
@@ -71,10 +72,10 @@ class BasicAuth(Connection):
         self.username = username
         self.password = password
 
-    def init_session(self, base_url, timeout, max_retries):
+    def init_session(self, base_url, **kwargs):
         self.session.auth = (self.username, self.password)
         self.session = requests.Session()
-        super(BasicAuth, self).init_session(base_url, timeout, max_retries)
+        super(BasicAuth, self).init_session(base_url, **kwargs)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -113,7 +114,7 @@ class OAuth2Auth(Connection):
         self._token = token
         self.session = None
 
-    def init_session(self, base_url, timeout, max_retries):
+    def init_session(self, base_url, **kwargs):
         token_url = '{}{}'.format(base_url, self._endpoints.get('token'))
         client = LegacyApplicationClient(client_id=self.client_id)
         auto_refresh_kwargs = {'client_id': self.client_id}
@@ -127,7 +128,7 @@ class OAuth2Auth(Connection):
         if self.token_storage and self.token_storage.read_token() != self.token:
             self.token_storage.write_token(self.token)
 
-        super(OAuth2Auth, self).init_session(base_url, timeout, max_retries)
+        super(OAuth2Auth, self).init_session(base_url, **kwargs)
 
     def _get_token(self):
         if self._token and isinstance(self._token, dict):
