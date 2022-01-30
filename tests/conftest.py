@@ -3,7 +3,6 @@ import json
 import pytest
 import vcr
 from xmatters.session import xMattersSession
-from xmatters.connection import OAuth2Auth
 from xmatters.utils import TokenFileStorage
 
 
@@ -23,27 +22,16 @@ my_vcr = vcr.VCR(
 )
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(scope='session')
 def settings():
     with open('../tests/settings/settings.json', 'r') as f:
         return json.load(f)
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(scope='session', autouse=False)
 def xm(settings):
     base_url = settings.get('base_url')
     client_id = settings.get('client_id')
     token_filepath = settings.get('token_filepath')
-    token_store = TokenFileStorage(token_filepath)
-    auth = OAuth2Auth(client_id=client_id, token_storage=token_store)
-    return xMattersSession(base_url, auth=auth)
-
-
-@pytest.fixture(scope='function')
-def pagination_factory():
-    def _pagination(api_object, method_name):
-        method = getattr(api_object, method_name)
-        pagination = method()
-        for _ in pagination:
-            pass
-    return _pagination
+    token_storage = TokenFileStorage(token_filepath)
+    return xMattersSession(base_url).set_authentication(client_id=client_id, token_storage=token_storage)

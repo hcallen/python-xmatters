@@ -1,10 +1,10 @@
 import json
-
-from xmatters import xMattersSession, OAuth2Auth, TokenFileStorage
+from xmatters import xMattersSession, TokenFileStorage
 from .conftest import my_vcr
+from requests_oauthlib.oauth2_session import TokenExpiredError
 
 
-class TestSession:
+class TestAuth:
 
     @my_vcr.use_cassette('test_auth.json')
     def test_oauth_token_dict(self, settings):
@@ -13,45 +13,56 @@ class TestSession:
         token_filepath = settings.get('token_filepath')
         with open(token_filepath, 'r') as f:
             token = json.load(f)
-        auth = OAuth2Auth(client_id=client_id, token=token)
-        xm_session = xMattersSession(base_url, auth)
+        try:
+            xm_session = xMattersSession(base_url).set_authentication(client_id=client_id, token=token)
+        except TokenExpiredError:
+            xm_session = xMattersSession(base_url).set_authentication(client_id=client_id, token=token)
         assert isinstance(xm_session.con.token, dict)
-        assert iter(xm_session.get_groups())
+        assert iter(xm_session.groups.get_groups())
 
     @my_vcr.use_cassette('test_auth.json')
-    def test_oauth_token_str(self, settings):
+    def test_oauth_token_refresh_token(self, settings):
         base_url = settings.get('base_url')
-        refresh_token = settings.get('refresh_token')
         client_id = settings.get('client_id')
-        auth = OAuth2Auth(client_id=client_id, token=refresh_token)
-        xm_session = xMattersSession(base_url, auth)
+        refresh_token = settings.get('refresh_token')
+        try:
+            xm_session = xMattersSession(base_url).set_authentication(client_id=client_id, token=refresh_token)
+        except TokenExpiredError:
+            xm_session = xMattersSession(base_url).set_authentication(client_id=client_id, token=refresh_token)
         assert isinstance(xm_session.con.token, dict)
-        assert iter(xm_session.get_groups())
+        assert iter(xm_session.groups.get_groups())
 
     @my_vcr.use_cassette('test_auth.json')
-    def test_oauth_username_and_password(self, settings):
+    def test_oauth_token_username_password(self, settings):
         base_url = settings.get('base_url')
+        client_id = settings.get('client_id')
         username = settings.get('username')
         password = settings.get('password')
-        client_id = settings.get('client_id')
-        auth = OAuth2Auth(client_id=client_id, username=username, password=password)
-        xm_session = xMattersSession(base_url, auth)
+        try:
+            xm_session = xMattersSession(base_url).set_authentication(client_id=client_id, username=username, password=password)
+        except TokenExpiredError:
+            xm_session = xMattersSession(base_url).set_authentication(client_id=client_id, username=username, password=password)
         assert isinstance(xm_session.con.token, dict)
-        assert iter(xm_session.get_groups())
+        assert iter(xm_session.groups.get_groups())
 
     @my_vcr.use_cassette('test_auth.json')
     def test_oauth_token_storage(self, settings):
         base_url = settings.get('base_url')
         client_id = settings.get('client_id')
         token_filepath = settings.get('token_filepath')
-        token_storage = TokenFileStorage(token_filepath)
-        auth = OAuth2Auth(client_id=client_id, token_storage=token_storage)
-        xm_session = xMattersSession(base_url, auth)
+        ts = TokenFileStorage(token_filepath)
+        try:
+            xm_session = xMattersSession(base_url).set_authentication(client_id=client_id, token_storage=ts)
+        except TokenExpiredError:
+            xm_session = xMattersSession(base_url).set_authentication(client_id=client_id, token_storage=ts)
         assert isinstance(xm_session.con.token, dict)
-        assert iter(xm_session.get_groups())
+        assert iter(xm_session.groups.get_groups())
 
-    def test_token_set(self):
-        auth = OAuth2Auth(client_id='some_client_id', token='12345')
-        assert auth.token == '12345'
-        auth.token = '54321'
-        assert auth.token == '54321'
+    @my_vcr.use_cassette('test_auth.json')
+    def test_basic(self, settings):
+        base_url = settings.get('base_url')
+        username = settings.get('username')
+        password = settings.get('password')
+        xm_session = xMattersSession(base_url).set_authentication(username=username, password=password)
+        assert iter(xm_session.groups.get_groups())
+

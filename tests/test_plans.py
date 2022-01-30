@@ -5,7 +5,7 @@ from .conftest import my_vcr
 class TestPlans:
     @my_vcr.use_cassette('test_plans.json')
     def test_plans(self, xm):
-        plans = list(xm.get_plans())
+        plans = list(xm.plans.get_plans())
         assert iter(list(plans))
         for plan in plans:
             assert iter(list(plan.get_forms()))

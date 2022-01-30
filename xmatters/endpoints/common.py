@@ -1,6 +1,5 @@
 import inspect
-import re
-from xmatters.connection import ApiBridge
+import xmatters.connection
 
 
 class Error(object):
@@ -31,7 +30,7 @@ class PaginationLinks(object):
         return self.__repr__()
 
 
-class Pagination(ApiBridge):
+class Pagination(xmatters.connection.ApiBridge):
     def __init__(self, parent, data, cons, cons_identifier=None):
         super(Pagination, self).__init__(parent, data)
         self.parent = parent
@@ -76,18 +75,6 @@ class Pagination(ApiBridge):
         self.state = 0
         self._set_pagination_properties(self._init_data)
 
-    def _check_index(self, index):
-        adj_index = index if index >= 0 else index + self.total
-        if adj_index < 0 or adj_index >= self.total:
-            raise IndexError('index out of range, index={} pagination length={}'.format(index, self.total))
-
-    def _get_item_by_index(self, index):
-        url = self.build_url(self.links.self)
-        url = re.sub('^(.*offset=)[0-9]+(.*limit=)[0-9]+(.*)$', '\g<1>{}\g<2>{}\g<3>'.format(index, 1), url)
-
-        data = self.con.get(url).get('data')[0]
-        return self._get_object(data)
-
     def __iter__(self):
         return self
 
@@ -106,39 +93,6 @@ class Pagination(ApiBridge):
             self.state += 1
             return self._get_object(item_data)
 
-    def __getitem__(self, key):
-        if isinstance(key, int):
-            self._check_index(key)
-            key = key if key >= 0 else key + self.total
-            return self._get_item_by_index(key)
-        if isinstance(key, slice):
-            start, stop, step = key.start, key.stop, key.step
-
-            # set default values if None
-            start = start if start else 0
-            stop = stop if stop else self.total
-            step = step if step else 1
-
-            # ensure indexes are within range
-            [self._check_index(k) for k in (start, (stop - 1))]
-
-            # offset with total if either start or stop are negative
-            index = start if start >= 0 else start + self.total
-            stop = stop if stop >= 0 else stop + self.total
-
-            # check step
-            if step == 0:
-                raise ValueError('slice step cannot be zero')
-            # if step negative
-            index = (index + self.total - 1) if step < 0 else index
-            stop = (stop + self.total + 1) if step < 0 else stop
-
-            items = []
-            while index > stop and index >= 0:
-                items.append(self._get_item_by_index(index))
-                index += step
-            return items
-
     def __len__(self):
         return self.total
 
@@ -149,7 +103,7 @@ class Pagination(ApiBridge):
         return self.__repr__()
 
 
-class Recipient(ApiBridge):
+class Recipient(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(Recipient, self).__init__(parent, data)
         self.id = data.get('id')
@@ -169,7 +123,7 @@ class Recipient(ApiBridge):
         return self.__repr__()
 
 
-class RecipientReference(ApiBridge):
+class RecipientReference(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(RecipientReference, self).__init__(parent, data)
         self.id = data.get('id')
@@ -185,7 +139,7 @@ class RecipientReference(ApiBridge):
         return self.__repr__()
 
 
-class SelfLink(ApiBridge):
+class SelfLink(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(SelfLink, self).__init__(parent, data)
         self.self = data.get('self')
@@ -197,7 +151,7 @@ class SelfLink(ApiBridge):
         return self.__repr__()
 
 
-class RecipientPointer(ApiBridge):
+class RecipientPointer(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(RecipientPointer, self).__init__(parent, data)
         self.id = data.get('id')
@@ -221,7 +175,7 @@ class ReferenceById(object):
         return self.__repr__()
 
 
-class ReferenceByIdAndSelfLink(ApiBridge):
+class ReferenceByIdAndSelfLink(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(ReferenceByIdAndSelfLink, self).__init__(parent, data)
         self.id = data.get('id')

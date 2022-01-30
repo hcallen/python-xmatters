@@ -1,4 +1,4 @@
-import xmatters.endpoints.common
+import xmatters.endpoints.common as comm
 
 
 class Error(Exception):
@@ -18,7 +18,10 @@ class xMattersError(Error):
 
 class ApiAuthorizationError(Error):
     def __init__(self, data):
-        msg = '{} - {}'.format(data.get('error'), data.get('error_description'))
+        if isinstance(data, dict):
+            msg = '{} - {}'.format(data.get('error'), data.get('error_description'))
+        else:
+            msg = data
         super(ApiAuthorizationError, self).__init__(msg)
 
 
@@ -36,7 +39,7 @@ class ResponseError(Error):
 
 class ApiError(Error):
     def __init__(self, data):
-        self.error = xmatters.endpoints.common.Error(data) if data else None
+        self.error = comm.Error(data) if data else None
         msg = '{} {} {}'.format(self.error.reason, self.error.code, self.error.message)
         super(ApiError, self).__init__(msg)
 

@@ -5,7 +5,7 @@ class TestGroups:
 
     @my_vcr.use_cassette('test_groups.json')
     def test_groups(self, xm):
-        groups = list(xm.get_groups())
+        groups = list(xm.groups.get_groups())
         assert iter(groups)
         for group in groups:
             assert iter(list(group.get_supervisors()))

@@ -30,3 +30,5 @@ class DeviceNameEmail(DeviceName):
     def __init__(self, data):
         super(DeviceNameEmail, self).__init__(data)
         self.domains = data.get('domains')
+
+

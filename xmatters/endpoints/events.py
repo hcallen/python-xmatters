@@ -2,7 +2,7 @@ import xmatters.factories as factory
 import xmatters.utils as util
 from xmatters.endpoints.common import Recipient, Pagination, SelfLink
 from xmatters.endpoints.event_supressions import EventSuppression
-from xmatters.endpoints.forms import FormReference
+import xmatters.endpoints.forms as forms
 from xmatters.endpoints.people import PersonReference
 from xmatters.endpoints.plans import PlanReference
 from xmatters.connection import ApiBridge
@@ -205,7 +205,7 @@ class Event(ApiBridge):
         self.expiration_in_minutes = data.get('expirationInMinutes')
         self.flood_control = data.get('floodControl')
         self.plan = PlanReference(data.get('plan')) if data.get('plan') else None
-        self.form = FormReference(data.get('form')) if data.get('form') else None
+        self.form = forms.FormReference(data.get('form')) if data.get('form') else None
         self.id = data.get('id')
         self.incident = data.get('incident')
         self.override_device_restrictions = data.get('overrideDeviceRestrictions')
@@ -275,3 +275,4 @@ class Event(ApiBridge):
 
     def __str__(self):
         return self.__repr__()
+

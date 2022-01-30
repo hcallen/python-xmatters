@@ -1,14 +1,12 @@
-import xmatters.utils as utils
-import xmatters.factories as factory
 import xmatters.endpoints.forms as forms
-import xmatters.endpoints.plans as plans
+import xmatters.factories as factory
+import xmatters.utils as utils
 from xmatters.connection import ApiBridge
+from xmatters.endpoints import plans as plans
 from xmatters.endpoints.common import Pagination, SelfLink
-
 from xmatters.endpoints.roles import Role
 
 
-# noinspection SpellCheckingInspection
 class SubscriptionForm(ApiBridge):
     _endpoints = {'target_device_names': '?embed=deviceNames',
                   'visible_target_device_names': '?embed=deviceNames',

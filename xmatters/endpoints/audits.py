@@ -1,8 +1,8 @@
-import xmatters.endpoints.events as events
-import xmatters.utils as utils
+import xmatters.utils as util
 from xmatters.endpoints.common import Recipient
 from xmatters.endpoints.people import PersonReference
 from xmatters.connection import ApiBridge
+from xmatters.endpoints.events import EventReference, ResponseOption
 
 
 class Notification(ApiBridge):
@@ -14,11 +14,11 @@ class Notification(ApiBridge):
         self.recipient = Recipient(parent, recipient) if recipient else None
         self.delivery_status = data.get('deliveryStatus')
         created = data.get('created')
-        self.created = utils.TimeAttribute(created) if created else None
+        self.created = util.TimeAttribute(created) if created else None
         delivery_attempted = data.get('deliveryAttempted')
-        self.delivery_attempted = utils.TimeAttribute(delivery_attempted) if delivery_attempted else None
+        self.delivery_attempted = util.TimeAttribute(delivery_attempted) if delivery_attempted else None
         event = data.get('event')
-        self.event = events.EventReference(parent, data) if event else None
+        self.event = EventReference(parent, data) if event else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -34,10 +34,10 @@ class Response(ApiBridge):
         notification = data.get('notification')
         self.notification = Notification(self, notification) if notification else None
         options = data.get('options', {}).get('data')
-        self.options = [events.ResponseOption(r) for r in options] if options else None
+        self.options = [ResponseOption(r) for r in options] if options else None
         self.source = data.get('source')
         received = data.get('received')
-        self.received = utils.TimeAttribute(received) if received else None
+        self.received = util.TimeAttribute(received) if received else None
         self.response = data.get('response')
 
     def __repr__(self):
@@ -51,7 +51,7 @@ class AuditAnnotation(ApiBridge):
     def __init__(self, parent, data):
         super(AuditAnnotation, self).__init__(parent, data)
         event = data.get('event')
-        self.event = events.EventReference(parent, event) if event else None
+        self.event = EventReference(parent, event) if event else None
         author = data.get('author')
         self.author = PersonReference(parent, author) if author else None
         self.comment = data.get('comment')
@@ -68,13 +68,15 @@ class Audit(ApiBridge):
         super(Audit, self).__init__(parent, data)
         self.type = data.get('type')
         event = data.get('event')
-        self.event = events.EventReference(parent, event) if event else None
+        self.event = EventReference(parent, event) if event else None
         self.order_id = data.get('orderId')
         at = data.get('at')
-        self.at = utils.TimeAttribute(at) if at else None
+        self.at = util.TimeAttribute(at) if at else None
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.type)
 
     def __str__(self):
         return self.__repr__()
+
+

@@ -22,3 +22,4 @@ class Site(ApiBridge):
         self.state = data.get('state')
         self.status = data.get('status')
         self.timezone = data.get('timezone')
+
