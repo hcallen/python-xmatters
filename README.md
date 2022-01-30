@@ -23,7 +23,9 @@ currently implemented.
 Review source code and the [xMatters REST API Reference](https://help.xmatters.com/xmapi/)
 for methods and parameters.
 
-### Basic Authentication
+### Authentication
+
+#### Basic Authentication
 
 ```python
 from xmatters import XMSession
@@ -35,10 +37,10 @@ for group in groups.get_groups():
     print(group.target_name)
 ```
 
-### OAuth2 Authentication
+#### OAuth2 Authentication
 It is assumed that if a client_id is provided; OAuth2 authentication is desired.
 
-#### Using refresh token
+##### Using refresh token
 ```python
 from xmatters import XMSession
 refresh_token = 'my-refresh-token'
@@ -48,7 +50,7 @@ groups = xm.groups()
 for group in groups.get_groups():
     print(group.target_name)
 ```
-#### Using token object
+##### Using token object
 ```python
 from xmatters import XMSession
 my_token = {
@@ -66,7 +68,7 @@ groups = xm.groups()
 for group in groups.get_groups():
     print(group.target_name)
 ```
-#### Using username and password with token storage
+##### Using username and password with token storage
 Any class instance with read_token and write_token methods should work as token_storage
 ```python
 from xmatters import XMSession, TokenFileStorage
