@@ -6,21 +6,38 @@ from xmatters.endpoints import *
 
 
 class XMSession(object):
+    """ Primary class used to interact with xMatters API """
 
     def __init__(self, base_url, **kwargs):
         """
-        Primary class used to interact with xMatters API
-
         :param base_url: xMatters instance url or xMatters instance base url
         :type base_url: str
         """
         p_url = urllib.parse.urlparse(base_url)
-        instance_url = 'https://{}'.format(p_url.netloc)
+        instance_url = 'https://{}'.format(p_url.netloc) if p_url.netloc else 'https://{}'.format(p_url.path)
         self._base_url = '{}/api/xm/1'.format(instance_url)
         self.con = None
         self._kwargs = kwargs
 
     def set_authentication(self, username=None, password=None, client_id=None, token=None, token_storage=None):
+        """
+        Set authentication method to use.
+            If client_id is provided, it is assumed OAuth2 authentication is desired;
+            otherwise basic authentication is used.
+        :param username: xMatters username
+        :type username: str, optional
+        :param password: xMatters password
+        :type password: str, optional
+        :param client_id: xMatters instance client id
+        :type client_id: str, optional
+        :param token: xMatters token object or refresh token
+        :type token: dict or str, optional
+        :param token_storage: Class instance used to store token returned during a refresh.
+            Any class instance will be accepted as long as it has "read_token" and "write_token" methods.
+        :type token_storage: :class:`xmatters.utils.TokenFileStorage`, optional
+        :return: self
+        :rtype: :class:`xmatters.session.XMSession`
+        """
         timeout = self._kwargs.get('timeout')
         max_retries = self._kwargs.get('max_retries')
         if client_id:

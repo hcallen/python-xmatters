@@ -33,8 +33,7 @@ class AuditsEndpoint(ApiBridge):
 
         # process parameters
         params = params if params else {}
-        if 'eventId' not in params.keys():
-            params['eventId'] = event_id
+        params['eventId'] = event_id
         if audit_type and 'auditType' not in params.keys():
             params['auditType'] = ','.join(audit_type).upper() if isinstance(audit_type, list) else audit_type.upper()
         if sort_order and 'sortOrder' not in params.keys():
@@ -95,7 +94,21 @@ class DeviceNamesEndpoint(ApiBridge):
     def __init__(self, parent):
         super(DeviceNamesEndpoint, self).__init__(parent)
 
-    def get_device_names(self, params=None):
+    def get_device_names(self, device_types=util.DEVICE_TYPES, search=None, sort_by=None, sort_order='ASCENDING',
+                         params=None):
+
+        # process parameters
+        params = params if params else {}
+        if device_types and 'device_names' not in params.keys():
+            params['deviceTypes'] = ','.join(device_types).upper() if isinstance(device_types,
+                                                                                 list) else device_types.upper()
+        if search and 'search' not in params.keys():
+            params['search'] = ' '.join(search).upper() if isinstance(search, list) else search.upper()
+        if sort_by and 'sortBy' not in params.keys():
+            params['sortBy'] = sort_by.upper()
+        if sort_order and 'sortOrder' not in params.keys():
+            params['sortOrder'] = sort_order.upper()
+
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.get(url, params)
         return Pagination(self, data, factory.device_name) if data.get('data') else []

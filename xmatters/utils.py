@@ -5,6 +5,9 @@ from dateutil import tz, parser
 AUDIT_TYPES = ['EVENT_ANNOTATED', 'EVENT_CREATED', 'EVENT_SUSPENDED', 'EVENT_RESUMED', 'EVENT_COMPLETED',
                'EVENT_TERMINATED', 'RESPONSE_RECEIVED']
 
+DEVICE_TYPES = ['ANDROID_PUSH', 'APPLE_PUSH', 'EMAIL', 'FAX', 'GENERIC', 'TEXT_PAGER', 'TEXT_PHONE', 'VOICE',
+                'VOICE_IVR']
+
 
 class TimeAttribute(str):
     def datetime(self):
