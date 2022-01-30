@@ -7,7 +7,7 @@ currently implemented.
 
 - Most (if not all) endpoints and objects implemented.
 - Support for both basic and OAuth2 authentication.
-- Auto-refresh of access tokens and storage for token objects.
+- Auto-refresh of access tokens and storage of token objects.
 - Support for pagination objects.
 - Conversion to datetime objects (local or UTC timezone) for time attributes.
 
