@@ -1,12 +1,12 @@
-import xmatters.endpoints.events as events
-import xmatters.endpoints.forms as forms
+import xmatters.xm_objects.events as events
+import xmatters.xm_objects.forms as forms
 import xmatters.factories as factory
 import xmatters.utils
 from xmatters.connection import ApiBridge
-from xmatters.endpoints.common import Pagination, SelfLink
-from xmatters.endpoints.people import PersonReference
-from xmatters.endpoints.plans import PlanReference
-from xmatters.endpoints.roles import Role
+from xmatters.xm_objects.common import Pagination, SelfLink
+from xmatters.xm_objects.people import PersonReference
+from xmatters.xm_objects.plans import PlanReference
+from xmatters.xm_objects.roles import Role
 
 
 class ScenarioPermission(ApiBridge):
@@ -59,7 +59,7 @@ class Scenario(ApiBridge):
         plan = data.get('plan')
         self.plan = PlanReference(plan) if plan else None
         form = data.get('form')
-        self.form = xmatters.endpoints.forms.FormReference(form) if form else None
+        self.form = xmatters.xm_objects.forms.FormReference(form) if form else None
         self.priority = data.get('priority')
         self.position = data.get('position')
         self.bypass_phone_intro = data.get('bypassPhoneIntro')

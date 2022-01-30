@@ -1,5 +1,5 @@
-from xmatters.endpoints.common import Recipient, ReferenceById
-from xmatters.endpoints.people import PersonReference
+from xmatters.xm_objects.common import Recipient, ReferenceById
+from xmatters.xm_objects.people import PersonReference
 
 
 class Provider(object):

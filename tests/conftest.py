@@ -2,7 +2,7 @@ import json
 
 import pytest
 import vcr
-from xmatters.session import xMattersSession
+from xmatters.session import XMSession
 from xmatters.utils import TokenFileStorage
 
 
@@ -28,10 +28,10 @@ def settings():
         return json.load(f)
 
 
-@pytest.fixture(scope='session', autouse=False)
+@pytest.fixture(scope='session', autouse=True)
 def xm(settings):
     base_url = settings.get('base_url')
     client_id = settings.get('client_id')
     token_filepath = settings.get('token_filepath')
     token_storage = TokenFileStorage(token_filepath)
-    return xMattersSession(base_url).set_authentication(client_id=client_id, token_storage=token_storage)
+    return XMSession(base_url).set_authentication(client_id=client_id, token_storage=token_storage)

@@ -5,7 +5,7 @@ class TestShifts:
 
     @my_vcr.use_cassette('test_shifts.json')
     def test_get_shifts(self, xm):
-        for group in xm.groups.get_groups():
+        for group in xm.groups().get_groups():
             shifts = list(group.get_shifts())
             assert iter(list(shifts))
             for shift in shifts:

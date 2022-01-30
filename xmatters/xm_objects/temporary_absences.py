@@ -1,6 +1,6 @@
 import xmatters.utils as util
-from xmatters.endpoints.people import PersonReference
-from xmatters.endpoints.shifts import GroupReference
+from xmatters.xm_objects.people import PersonReference
+from xmatters.xm_objects.shifts import GroupReference
 from xmatters.connection import ApiBridge
 
 

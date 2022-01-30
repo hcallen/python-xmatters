@@ -1,9 +1,9 @@
 import xmatters.utils as util
 import xmatters.factories as factory
 from xmatters.connection import ApiBridge
-from xmatters.endpoints.common import Pagination, SelfLink
-from xmatters.endpoints.forms import FormReference
-from xmatters.endpoints.people import PersonReference, Person
+from xmatters.xm_objects.common import Pagination, SelfLink
+from xmatters.xm_objects.forms import FormReference
+from xmatters.xm_objects.people import PersonReference, Person
 
 
 class SubscriptionCriteriaReference(object):

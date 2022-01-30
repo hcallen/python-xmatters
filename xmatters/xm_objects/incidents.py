@@ -1,5 +1,5 @@
 import xmatters.utils as utils
-from xmatters.endpoints.people import PersonReference
+from xmatters.xm_objects.people import PersonReference
 from xmatters.connection import ApiBridge
 
 

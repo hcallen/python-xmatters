@@ -1,26 +1,26 @@
 from xmatters import utils as util, factories as factory
 from xmatters.connection import ApiBridge
-from xmatters.endpoints.common import Pagination
-from xmatters.endpoints.conference_bridges import ConferenceBridge
-from xmatters.endpoints.device_types import DeviceTypes
-from xmatters.endpoints.dynamic_teams import DynamicTeam
-from xmatters.endpoints.event_supressions import EventSuppression
-from xmatters.endpoints.events import Event
-from xmatters.endpoints.forms import Form
-from xmatters.endpoints.groups import Group
-from xmatters.endpoints.import_jobs import Import
-from xmatters.endpoints.incidents import Incident
-from xmatters.endpoints.oncall import OnCall
-from xmatters.endpoints.oncall_summary import OnCallSummary
-from xmatters.endpoints.people import Person
-from xmatters.endpoints.plans import Plan
-from xmatters.endpoints.roles import Role
-from xmatters.endpoints.scenarios import Scenario
-from xmatters.endpoints.services import Service
-from xmatters.endpoints.sites import Site
-from xmatters.endpoints.subscription_forms import SubscriptionForm
-from xmatters.endpoints.subscriptions import Subscription
-from xmatters.endpoints.temporary_absences import TemporaryAbsence
+from xmatters.xm_objects.common import Pagination
+from xmatters.xm_objects.conference_bridges import ConferenceBridge
+from xmatters.xm_objects.device_types import DeviceTypes
+from xmatters.xm_objects.dynamic_teams import DynamicTeam
+from xmatters.xm_objects.event_supressions import EventSuppression
+from xmatters.xm_objects.events import Event
+from xmatters.xm_objects.forms import Form
+from xmatters.xm_objects.groups import Group
+from xmatters.xm_objects.import_jobs import Import
+from xmatters.xm_objects.incidents import Incident
+from xmatters.xm_objects.oncall import OnCall
+from xmatters.xm_objects.oncall_summary import OnCallSummary
+from xmatters.xm_objects.people import Person
+from xmatters.xm_objects.plans import Plan
+from xmatters.xm_objects.roles import Role
+from xmatters.xm_objects.scenarios import Scenario
+from xmatters.xm_objects.services import Service
+from xmatters.xm_objects.sites import Site
+from xmatters.xm_objects.subscription_forms import SubscriptionForm
+from xmatters.xm_objects.subscriptions import Subscription
+from xmatters.xm_objects.temporary_absences import TemporaryAbsence
 
 
 class AuditsEndpoint(ApiBridge):
@@ -29,15 +29,16 @@ class AuditsEndpoint(ApiBridge):
 
         self._endpoints = {'get_audit': '/audits'}
 
-    def get_audit(self, event_id, audit_types=util.AUDIT_TYPES, params=None):
+    def get_audit(self, event_id, audit_type=util.AUDIT_TYPES, sort_order='ASCENDING', params=None):
+
+        # process parameters
         params = params if params else {}
         if 'eventId' not in params.keys():
             params['eventId'] = event_id
-        if audit_types and 'auditType' not in params.keys():
-            if isinstance(audit_types, str):
-                params['auditType'] = audit_types.upper()
-            elif isinstance(audit_types, list):
-                params['auditType'] = ','.join(audit_types).upper()
+        if audit_type and 'auditType' not in params.keys():
+            params['auditType'] = ','.join(audit_type).upper() if isinstance(audit_type, list) else audit_type.upper()
+        if sort_order and 'sortOrder' not in params.keys():
+            params['sortOrder'] = sort_order.upper()
 
         url = self.build_url(self._endpoints.get('get_audit'))
         data = self.con.get(url, params)
@@ -50,22 +51,36 @@ class AuditsEndpoint(ApiBridge):
         return self.__repr__()
 
 
-class ConferenceBridgesEndpoint(ApiBridge):
-    _endpoints = {'get_conference_bridges': '/conference-bridges',
-                  'get_conference_bridge_by_id': '/conference-bridges/{bridge_id}'}
+class DevicesEndpoint(ApiBridge):
+    _endpoints = {'get_devices': '/devices',
+                  'get_device_by_id': '/devices/{device_id}'}
 
     def __init__(self, parent):
-        super(ConferenceBridgesEndpoint, self).__init__(parent)
+        super(DevicesEndpoint, self).__init__(parent)
 
-    def get_conference_bridges(self, params=None):
-        url = self.build_url(self._endpoints.get('get_conference_bridges'))
-        data = self.con.get(url, params)
-        return Pagination(self, data, ConferenceBridge) if data.get('data') else []
+    def get_devices(self, device_status=None, device_type=None, device_names=None, phone_number_format='E164',
+                    params=None):
 
-    def get_conference_bridge_by_id(self, bridge_id, params=None):
-        url = self.build_url(self._endpoints.get('get_conference_bridge_by_id').format(bridge_id=bridge_id))
+        # process parameters
+        params = params if params else {}
+        if device_status and 'deviceStatus' not in params.keys():
+            params['deviceStatus'] = device_status.upper()
+        if device_type and 'deviceType' not in params.keys():
+            params['deviceType'] = device_type.upper()
+        if device_names and 'deviceNames' not in params.keys():
+            params['deviceNames'] = ','.join(device_names).upper() if isinstance(device_names,
+                                                                                 list) else device_names.upper()
+        if phone_number_format and 'phoneNumberFormat' not in params.keys():
+            params['phoneNumberFormat'] = phone_number_format.upper()
+
+        url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url, params)
-        return ConferenceBridge(self, data) if data else None
+        return Pagination(self, data, factory.device) if data.get('data') else []
+
+    def get_device_by_id(self, device_id, params=None):
+        url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
+        data = self.con.get(url, params)
+        return factory.device(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -110,30 +125,6 @@ class DeviceTypesEndpoint(ApiBridge):
         return self.__repr__()
 
 
-class DevicesEndpoint(ApiBridge):
-    _endpoints = {'get_devices': '/devices',
-                  'get_device_by_id': '/devices/{device_id}'}
-
-    def __init__(self, parent):
-        super(DevicesEndpoint, self).__init__(parent)
-
-    def get_devices(self, params=None):
-        url = self.build_url(self._endpoints.get('get_devices'))
-        data = self.con.get(url, params)
-        return Pagination(self, data, factory.device) if data.get('data') else []
-
-    def get_device_by_id(self, device_id, params=None):
-        url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
-        data = self.con.get(url, params)
-        return factory.device(self, data) if data else None
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()
-
-
 class DynamicTeamsEndpoint(ApiBridge):
     _endpoints = {'get_dynamic_teams': '/dynamic-teams',
                   'get_dynamic_team_by_id': '/dynamic-teams/{dynamic_team_id}'}
@@ -150,6 +141,30 @@ class DynamicTeamsEndpoint(ApiBridge):
 
     def __init__(self, parent):
         super(DynamicTeamsEndpoint, self).__init__(parent)
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class EventsEndpoint(ApiBridge):
+    _endpoints = {'get_events': '/events',
+                  'get_event_by_id': '/events/{event_id}'}
+
+    def __init__(self, parent):
+        super(EventsEndpoint, self).__init__(parent)
+
+    def get_events(self, params=None):
+        url = self.build_url(self._endpoints.get('get_events'))
+        data = self.con.get(url, params)
+        return Pagination(self, data, Event) if data.get('data') else []
+
+    def get_event_by_id(self, event_id, params=None):
+        url = self.build_url(self._endpoints.get('get_event_by_id').format(event_id=event_id))
+        data = self.con.get(url, params)
+        return Event(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -176,22 +191,22 @@ class EventSuppressionsEndpoint(ApiBridge):
         return self.__repr__()
 
 
-class EventsEndpoint(ApiBridge):
-    _endpoints = {'get_events': '/events',
-                  'get_event_by_id': '/events/{event_id}'}
+class ConferenceBridgesEndpoint(ApiBridge):
+    _endpoints = {'get_conference_bridges': '/conference-bridges',
+                  'get_conference_bridge_by_id': '/conference-bridges/{bridge_id}'}
 
     def __init__(self, parent):
-        super(EventsEndpoint, self).__init__(parent)
+        super(ConferenceBridgesEndpoint, self).__init__(parent)
 
-    def get_events(self, params=None):
-        url = self.build_url(self._endpoints.get('get_events'))
+    def get_conference_bridges(self, params=None):
+        url = self.build_url(self._endpoints.get('get_conference_bridges'))
         data = self.con.get(url, params)
-        return Pagination(self, data, Event) if data.get('data') else []
+        return Pagination(self, data, ConferenceBridge) if data.get('data') else []
 
-    def get_event_by_id(self, event_id, params=None):
-        url = self.build_url(self._endpoints.get('get_event_by_id').format(event_id=event_id))
+    def get_conference_bridge_by_id(self, bridge_id, params=None):
+        url = self.build_url(self._endpoints.get('get_conference_bridge_by_id').format(bridge_id=bridge_id))
         data = self.con.get(url, params)
-        return Event(self, data) if data else None
+        return ConferenceBridge(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -478,24 +493,6 @@ class SubscriptionsEndpoint(ApiBridge):
         return self.__repr__()
 
 
-class TemporaryAbsencesEndpoint(ApiBridge):
-    _endpoints = {'get_temporary_absences': '/temporary-absences'}
-
-    def __init__(self, parent):
-        super(TemporaryAbsencesEndpoint, self).__init__(parent)
-
-    def get_temporary_absences(self, params=None):
-        url = self.build_url(self._endpoints.get('get_temporary_absences'))
-        data = self.con.get(url, params)
-        return Pagination(self, data, TemporaryAbsence) if data.get('data') else []
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()
-
-
 class SubscriptionFormsEndpoint(ApiBridge):
     _endpoints = {'get_subscription_forms': '/subscription-forms',
                   'get_subscription_form_id': '/subscription-forms/{sub_form_id}'}
@@ -512,6 +509,24 @@ class SubscriptionFormsEndpoint(ApiBridge):
         url = self.build_url(self._endpoints.get('get_subscription_form_by_id').format(sub_form_id=sub_form_id))
         data = self.con.get(url, params)
         return SubscriptionForm(self, data) if data else None
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class TemporaryAbsencesEndpoint(ApiBridge):
+    _endpoints = {'get_temporary_absences': '/temporary-absences'}
+
+    def __init__(self, parent):
+        super(TemporaryAbsencesEndpoint, self).__init__(parent)
+
+    def get_temporary_absences(self, params=None):
+        url = self.build_url(self._endpoints.get('get_temporary_absences'))
+        data = self.con.get(url, params)
+        return Pagination(self, data, TemporaryAbsence) if data.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

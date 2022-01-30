@@ -1,5 +1,5 @@
-from xmatters.endpoints.common import SelfLink
-import xmatters.endpoints.plans
+from xmatters.xm_objects.common import SelfLink
+import xmatters.xm_objects.plans
 from xmatters.connection import ApiBridge
 import xmatters.factories
 
@@ -35,7 +35,7 @@ class Endpoint(ApiBridge):
         super(Endpoint, self).__init__(parent, data)
         self.id = data.get('id')
         plan = data.get('plan')
-        self.plan = xmatters.endpoints.plans.PlanReference(plan) if plan else None
+        self.plan = xmatters.xm_objects.plans.PlanReference(plan) if plan else None
         self.url = data.get('url')
         self.endpoint_type = data.get('endpointType')
         self.authentication_type = data.get('authenticationType')

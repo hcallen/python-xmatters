@@ -5,7 +5,7 @@ class TestDynamicTeams:
 
     @my_vcr.use_cassette('test_dynamic_teams.json')
     def test_dynamic_teams(self, xm):
-        dts = list(xm.dynamic_teams.get_dynamic_teams())
+        dts = list(xm.dynamic_teams().get_dynamic_teams())
         assert iter(dts)
         for team in dts:
             assert iter(team.observers)

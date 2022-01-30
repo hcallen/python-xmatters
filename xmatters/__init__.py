@@ -1,2 +1,2 @@
-from xmatters.session import xMattersSession
+from xmatters.session import XMSession
 from xmatters.utils import TokenFileStorage

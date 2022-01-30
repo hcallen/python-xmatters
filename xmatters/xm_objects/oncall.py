@@ -1,7 +1,7 @@
 import xmatters.utils as util
-from xmatters.endpoints.common import Recipient, SelfLink, Pagination
+from xmatters.xm_objects.common import Recipient, SelfLink, Pagination
 from xmatters.connection import ApiBridge
-from xmatters.endpoints.shifts import GroupReference
+from xmatters.xm_objects.shifts import GroupReference
 
 
 class Replacer(ApiBridge):

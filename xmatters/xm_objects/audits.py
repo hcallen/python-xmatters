@@ -1,8 +1,8 @@
 import xmatters.utils as util
-from xmatters.endpoints.common import Recipient
-from xmatters.endpoints.people import PersonReference
+from xmatters.xm_objects.common import Recipient
+from xmatters.xm_objects.people import PersonReference
 from xmatters.connection import ApiBridge
-from xmatters.endpoints.events import EventReference, ResponseOption
+from xmatters.xm_objects.events import EventReference, ResponseOption
 
 
 class Notification(ApiBridge):

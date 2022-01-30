@@ -1,5 +1,5 @@
 from xmatters.connection import ApiBridge
-from xmatters.endpoints.shifts import GroupReference
+from xmatters.xm_objects.shifts import GroupReference
 
 
 class Service(ApiBridge):

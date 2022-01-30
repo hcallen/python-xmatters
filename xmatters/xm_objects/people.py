@@ -1,7 +1,7 @@
 import xmatters.factories as factory
 import xmatters.utils as utils
-from xmatters.endpoints.common import Recipient, SelfLink, Pagination
-from xmatters.endpoints.roles import Role
+from xmatters.xm_objects.common import Recipient, SelfLink, Pagination
+from xmatters.xm_objects.roles import Role
 from xmatters.connection import ApiBridge
 
 

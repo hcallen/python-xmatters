@@ -1,7 +1,7 @@
 import xmatters.utils as util
 from xmatters.connection import ApiBridge
-from xmatters.endpoints.people import PersonReference
-from xmatters.endpoints.common import SelfLink
+from xmatters.xm_objects.people import PersonReference
+from xmatters.xm_objects.common import SelfLink
 
 
 class ImportMessage(object):

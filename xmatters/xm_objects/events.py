@@ -1,10 +1,10 @@
 import xmatters.factories as factory
 import xmatters.utils as util
-from xmatters.endpoints.common import Recipient, Pagination, SelfLink
-from xmatters.endpoints.event_supressions import EventSuppression
-import xmatters.endpoints.forms as forms
-from xmatters.endpoints.people import PersonReference
-from xmatters.endpoints.plans import PlanReference
+from xmatters.xm_objects.common import Recipient, Pagination, SelfLink
+from xmatters.xm_objects.event_supressions import EventSuppression
+import xmatters.xm_objects.forms as forms
+from xmatters.xm_objects.people import PersonReference
+from xmatters.xm_objects.plans import PlanReference
 from xmatters.connection import ApiBridge
 
 
@@ -224,14 +224,16 @@ class Event(ApiBridge):
         voicemail_options = data.get('voicemailOptions')
         self.voicemail_options = VoicemailOptions(voicemail_options) if voicemail_options else None
 
-    def get_audit(self, audit_types=util.AUDIT_TYPES, params=None):
+    def get_audit(self, audit_type=util.AUDIT_TYPES, sort_order='ASCENDING', params=None):
+
+        # process parameters
         params = params if params else {}
         params['eventId'] = self.event_id
-        if audit_types and 'auditType' not in params.keys():
-            if isinstance(audit_types, str):
-                params['auditType'] = audit_types.upper()
-            elif isinstance(audit_types, list):
-                params['auditType'] = ','.join(audit_types).upper()
+        if audit_type and 'auditType' not in params.keys():
+            params['auditType'] = ','.join(audit_type).upper() if isinstance(audit_type, list) else audit_type.upper()
+        if sort_order and 'sortOrder' not in params.keys():
+            params['sortOrder'] = sort_order.upper()
+
         url = self._endpoints.get('get_audit').format(base_url=self.con.base_url)
         data = self.con.get(url, params)
         return Pagination(self, data, factory.audit) if data.get('data') else []
@@ -275,4 +277,3 @@ class Event(ApiBridge):
 
     def __str__(self):
         return self.__repr__()
-

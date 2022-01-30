@@ -15,6 +15,8 @@ class OAuth2Auth(Connection):
 
         The method used to obtain a token are used in the following order:  token, username & password, token_storage.
 
+        :param base_url: xMatters instance url or xMatters instance base url
+        :type base_url: str
         :param client_id: xMatters instance client id
         :type client_id: str
         :param token: Authentication token. Can be just a refresh token (as a str) or a token object (as a dict)
@@ -61,7 +63,7 @@ class OAuth2Auth(Connection):
         elif self.token_storage:
             return self.token_storage.read_token()
         else:
-            raise err.xMattersError('Unable to obtain token with provided arguments')
+            raise err.XMError('Unable to obtain token with provided arguments')
 
     @property
     def token(self):
@@ -86,6 +88,8 @@ class BasicAuth(Connection):
         """
         Class used to authentication requests using basic authentication
 
+        :param base_url: xMatters instance url or xMatters instance base url
+        :type base_url: str
         :param username: xMatters username
         :type username: str
         :param password: xMatters password

@@ -1,10 +1,10 @@
-import xmatters.endpoints.forms as forms
+import xmatters.xm_objects.forms as forms
 import xmatters.factories as factory
 import xmatters.utils as utils
 from xmatters.connection import ApiBridge
-from xmatters.endpoints import plans as plans
-from xmatters.endpoints.common import Pagination, SelfLink
-from xmatters.endpoints.roles import Role
+from xmatters.xm_objects import plans as plans
+from xmatters.xm_objects.common import Pagination, SelfLink
+from xmatters.xm_objects.roles import Role
 
 
 class SubscriptionForm(ApiBridge):

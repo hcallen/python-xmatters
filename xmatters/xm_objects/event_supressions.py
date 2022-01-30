@@ -1,6 +1,6 @@
-from xmatters.endpoints.common import SelfLink
+from xmatters.xm_objects.common import SelfLink
 from xmatters.connection import ApiBridge
-import xmatters.endpoints.events as events
+import xmatters.xm_objects.events as events
 import xmatters.utils as util
 
 

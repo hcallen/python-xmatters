@@ -1,10 +1,10 @@
-import xmatters.endpoints.events as events
+import xmatters.xm_objects.events as events
 import xmatters.factories as factory
-import xmatters.endpoints.plans as plans
-from xmatters.endpoints.common import SelfLink, Pagination, Recipient, PropertyDefinition
-from xmatters.endpoints.device_names import TargetDeviceNameSelector
+import xmatters.xm_objects.plans as plans
+from xmatters.xm_objects.common import SelfLink, Pagination, Recipient, PropertyDefinition
+from xmatters.xm_objects.device_names import TargetDeviceNameSelector
 from xmatters.connection import ApiBridge
-from xmatters.endpoints.scenarios import Scenario
+from xmatters.xm_objects.scenarios import Scenario
 
 
 class FormReference(object):

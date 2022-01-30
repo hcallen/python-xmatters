@@ -1,13 +1,13 @@
-import xmatters.endpoints.common as comm
+import xmatters.xm_objects.common as comm
 
 
 class Error(Exception):
     pass
 
 
-class xMattersError(Error):
+class XMError(Error):
     def __init__(self, msg):
-        super(xMattersError, self).__init__(msg)
+        super(XMError, self).__init__(msg)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

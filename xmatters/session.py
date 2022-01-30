@@ -2,10 +2,10 @@ import urllib.parse
 
 import xmatters.auth
 import xmatters.connection
-from xmatters.endpoints.endpoints import *
+from xmatters.endpoints import *
 
 
-class xMattersSession(object):
+class XMSession(object):
 
     def __init__(self, base_url, **kwargs):
         """
@@ -35,95 +35,72 @@ class xMattersSession(object):
 
         return self
 
-    @property
     def audits(self):
         return AuditsEndpoint(self)
 
-    @property
     def conference_bridges(self):
         return ConferenceBridgesEndpoint(self)
 
-    @property
     def device_names(self):
         return DeviceNamesEndpoint(self)
 
-    @property
     def device_types(self):
         return DeviceTypesEndpoint(self)
 
-    @property
     def devices(self):
         return DevicesEndpoint(self)
 
-    @property
     def dynamic_teams(self):
         return DynamicTeamsEndpoint(self)
 
-    @property
     def events(self):
         return EventsEndpoint(self)
 
-    @property
     def event_suppressions(self):
         return EventSuppressionsEndpoint(self)
 
-    @property
     def forms(self):
         return FormsEndpoint(self)
 
-    @property
     def import_jobs(self):
         return ImportJobsEndpoint(self)
 
-    @property
     def groups(self):
         return GroupsEndpoint(self)
 
-    @property
     def incidents(self):
         return IncidentsEndpoint(self)
 
-    @property
     def oncall(self):
         return OnCallEndpoint(self)
 
-    @property
     def oncall_summary(self):
         return OnCallSummaryEndpoint(self)
 
-    @property
     def people(self):
         return PeopleEndpoint(self)
 
-    @property
     def plans(self):
         return PlansEndpoint(self)
 
-    @property
     def roles(self):
         return RolesEndpoint(self)
 
-    @property
     def scenarios(self):
         return ScenariosEndpoint(self)
 
-    @property
     def services(self):
         return ServicesEndpoint(self)
 
-    @property
     def sites(self):
         return SitesEndpoint(self)
 
-    @property
     def subscriptions(self):
         return SubscriptionsEndpoint(self)
 
-    @property
     def subscription_forms(self):
         return SubscriptionFormsEndpoint(self)
 
-    @property
     def temporary_absences(self):
         return TemporaryAbsencesEndpoint(self)
 

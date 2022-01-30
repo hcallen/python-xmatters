@@ -1,5 +1,5 @@
 from xmatters.connection import ApiBridge
-from xmatters.endpoints.common import SelfLink
+from xmatters.xm_objects.common import SelfLink
 
 
 class Site(ApiBridge):

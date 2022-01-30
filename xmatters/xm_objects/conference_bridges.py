@@ -1,4 +1,4 @@
-from xmatters.endpoints.common import SelfLink
+from xmatters.xm_objects.common import SelfLink
 from xmatters.connection import ApiBridge
 
 
