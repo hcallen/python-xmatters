@@ -45,7 +45,8 @@ _audit_types = {'EVENT_ANNOTATED': audits.AuditAnnotation,
                 'EVENT_RESUMED': audits.Audit,
                 'EVENT_COMPLETED': audits.Audit,
                 'EVENT_TERMINATED': audits.Audit,
-                'RESPONSE_RECEIVED': audits.Response}
+                'RESPONSE_RECEIVED': audits.AuditResponse,
+                'NOTIFICATION_DELIVERED': audits.AuditNotification}
 
 
 def audit(parent, data):
