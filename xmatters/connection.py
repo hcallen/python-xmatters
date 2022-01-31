@@ -21,7 +21,10 @@ class Connection(object):
         return self.request('GET', url=url, params=params)
 
     def post(self, url, data):
-        return self.request('GET', url=url, data=data)
+        return self.request('POST', url=url, data=data)
+
+    def delete(self, url):
+        return self.request('DELETE', url=url)
 
     def request(self, method, url, data=None, params=None):
         if params:
