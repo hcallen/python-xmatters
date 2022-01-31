@@ -24,13 +24,31 @@ from xmatters.xm_objects.temporary_absences import TemporaryAbsence
 
 
 class AuditsEndpoint(ApiBridge):
+    """ Used to interact with '/audit' endpoint """
+
     def __init__(self, parent):
+        """
+        :param parent: XMSession instance
+        :type parent: :class:`xmatters.session.XMSession`
+        """
         super(AuditsEndpoint, self).__init__(parent)
 
         self._endpoints = {'get_audit': '/audits'}
 
-    def get_audit(self, event_id, audit_type=util.AUDIT_TYPES, sort_order='ASCENDING', params=None):
-
+    def get_audit(self, event_id, audit_type=None, sort_order=None, params=None):
+        """
+        Perform an audit on a specified event id.
+        :param event_id: xMatters event id
+        :type event_id: str
+        :param audit_type: Comma-separated list of audit types
+        :type audit_type: str or list, optional
+        :param sort_order: Sort order of the results
+        :type sort_order: str, optional
+        :param params: Parameters to apply to the request
+        :type params: dict, optional
+        :return: Pagination of audit objects
+        :rtype: :class:`xmatters.xm_objects.common.Pagination`
+        """
         # process parameters
         params = params if params else {}
         params['eventId'] = event_id
@@ -40,7 +58,7 @@ class AuditsEndpoint(ApiBridge):
             params['sortOrder'] = sort_order.upper()
 
         url = self.build_url(self._endpoints.get('get_audit'))
-        data = self.con.get(url, params)
+        data = self.con.get(url=url, params=params)
         return Pagination(self, data, factory.audit) if data.get('data') else []
 
     def __repr__(self):
@@ -51,13 +69,18 @@ class AuditsEndpoint(ApiBridge):
 
 
 class DevicesEndpoint(ApiBridge):
+    """ Used to interact with '/devices' endpoint """
     _endpoints = {'get_devices': '/devices',
                   'get_device_by_id': '/devices/{device_id}'}
 
     def __init__(self, parent):
+        """
+        :param parent: XMSession instance
+        :type parent: :class:`xmatters.session.XMSession`
+        """
         super(DevicesEndpoint, self).__init__(parent)
 
-    def get_devices(self, device_status=None, device_type=None, device_names=None, phone_number_format='E164',
+    def get_devices(self, device_status=None, device_type=None, device_names=None, phone_number_format=None,
                     params=None):
 
         # process parameters
@@ -73,12 +96,27 @@ class DevicesEndpoint(ApiBridge):
             params['phoneNumberFormat'] = phone_number_format.upper()
 
         url = self.build_url(self._endpoints.get('get_devices'))
-        data = self.con.get(url, params)
+        data = self.con.get(url=url, params=params)
         return Pagination(self, data, factory.device) if data.get('data') else []
 
     def get_device_by_id(self, device_id, params=None):
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
-        data = self.con.get(url, params)
+        data = self.con.get(url=url, params=params)
+        return factory.device(self, data) if data else None
+
+    def create_device(self, data):
+        url = self.build_url(self._endpoints.get('get_devices'))
+        data = self.con.post(url, data=data)
+        return factory.device(self, data) if data else None
+
+    def modify_device(self, device_id, data):
+        url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
+        data = self.con.delete(url=url, data=data)
+        return factory.device(self, data) if data else None
+
+    def delete_device(self, device_id):
+        url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
+        data = self.con.delete(url=url)
         return factory.device(self, data) if data else None
 
     def __repr__(self):
@@ -94,8 +132,7 @@ class DeviceNamesEndpoint(ApiBridge):
     def __init__(self, parent):
         super(DeviceNamesEndpoint, self).__init__(parent)
 
-    def get_device_names(self, device_types=util.DEVICE_TYPES, search=None, sort_by=None, sort_order='ASCENDING',
-                         params=None):
+    def get_device_names(self, device_types=None, search=None, sort_by=None, sort_order=None, params=None):
 
         # process parameters
         params = params if params else {}
@@ -110,7 +147,7 @@ class DeviceNamesEndpoint(ApiBridge):
             params['sortOrder'] = sort_order.upper()
 
         url = self.build_url(self._endpoints.get('get_device_names'))
-        data = self.con.get(url, params)
+        data = self.con.get(url=url, params=params)
         return Pagination(self, data, factory.device_name) if data.get('data') else []
 
     def __repr__(self):

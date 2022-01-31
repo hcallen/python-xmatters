@@ -18,15 +18,20 @@ class Connection(object):
             self.max_retries = kwargs.get('max_retries')
 
     def get(self, url, params=None):
-        return self.request('GET', url, params)
+        return self.request('GET', url=url, params=params)
 
-    def request(self, method, url, params):
-        r = self.session.request(method=method, url=url, params=params, timeout=self.timeout)
-        data = r.json()
-        if r.status_code == 401:
-            raise err.ApiAuthorizationError(data)
+    def post(self, url, data):
+        return self.request('GET', url=url, data=data)
+
+    def request(self, method, url, data=None, params=None):
+        if params:
+            r = self.session.request(method=method, url=url, params=params, timeout=self.timeout)
+        elif data:
+            r = self.session.request(method=method, url=url, json=data, timeout=self.timeout)
         else:
-            return data
+            r = self.session.request(method=method, url=url, timeout=self.timeout)
+        data = r.json()
+        return data
 
     @property
     def max_retries(self):

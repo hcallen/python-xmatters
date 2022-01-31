@@ -6,9 +6,8 @@ import xmatters.xm_objects.forms
 import xmatters.xm_objects.dynamic_teams
 import xmatters.xm_objects.scenarios
 import xmatters.xm_objects.device_names
-from xmatters.xm_objects.plan_endpoints import BasicAuthentication, OAuth2Authentication
-from xmatters.xm_objects.plan_properties import Boolean, Hierarchy, MultLinkSelectList, SingleSelectList, Number, \
-    Password, Text
+import xmatters.xm_objects.plan_endpoints
+import xmatters.xm_objects.plan_properties
 
 _devices = {'EMAIL': xmatters.xm_objects.devices.EmailDevice,
             'VOICE': xmatters.xm_objects.devices.VoiceDevice,
@@ -73,10 +72,10 @@ def section(parent, data, section_type):
 
 
 _auth_types = {'NO_AUTH': None,
-               'BASIC': BasicAuthentication,
-               'OAUTH2': OAuth2Authentication,
-               'OAUTH2_FORCE': OAuth2Authentication,
-               'OAUTH_SLACK': OAuth2Authentication}
+               'BASIC': xmatters.xm_objects.plan_endpoints.BasicAuthentication,
+               'OAUTH2': xmatters.xm_objects.plan_endpoints.OAuth2Authentication,
+               'OAUTH2_FORCE': xmatters.xm_objects.plan_endpoints.OAuth2Authentication,
+               'OAUTH_SLACK': xmatters.xm_objects.plan_endpoints.OAuth2Authentication}
 
 
 def auth(data, auth_type):
@@ -85,13 +84,13 @@ def auth(data, auth_type):
     return o(data) if o else None
 
 
-_properties = {'BOOLEAN': Boolean,
-               'HIERARCHY': Hierarchy,
-               'LIST_TEXT_MULTI_SELECT': MultLinkSelectList,
-               'LIST_TEXT_SINGLE_SELECT': SingleSelectList,
-               'NUMBER': Number,
-               'PASSWORD': Password,
-               'TEXT': Text}
+_properties = {'BOOLEAN': xmatters.xm_objects.plan_properties .Boolean,
+               'HIERARCHY': xmatters.xm_objects.plan_properties .Hierarchy,
+               'LIST_TEXT_MULTI_SELECT': xmatters.xm_objects.plan_properties .MultLinkSelectList,
+               'LIST_TEXT_SINGLE_SELECT': xmatters.xm_objects.plan_properties .SingleSelectList,
+               'NUMBER': xmatters.xm_objects.plan_properties .Number,
+               'PASSWORD': xmatters.xm_objects.plan_properties .Password,
+               'TEXT': xmatters.xm_objects.plan_properties .Text}
 
 
 def plan_property(data):
