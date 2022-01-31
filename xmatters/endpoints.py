@@ -111,7 +111,7 @@ class DevicesEndpoint(ApiBridge):
 
     def modify_device(self, device_id, data):
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
-        data = self.con.delete(url=url, data=data)
+        data = self.con.post(url=url, data=data)
         return factory.device(self, data) if data else None
 
     def delete_device(self, device_id):
