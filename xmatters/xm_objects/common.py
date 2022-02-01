@@ -2,21 +2,6 @@ import inspect
 import xmatters.connection
 
 
-class Error(object):
-    """ xMatters Error common object"""
-
-    def __init__(self, data):
-        self.code = data.get('code')
-        self.reason = data.get('reason')
-        self.message = data.get('message')
-
-    def __repr__(self):
-        return '<Error {code} - {reason} - {message}>'.format(code=self.code, reason=self.reason, message=self.message)
-
-    def __str__(self):
-        return self.__repr__()
-
-
 class PaginationLinks(object):
     def __init__(self, data):
         self.next = data.get('next')

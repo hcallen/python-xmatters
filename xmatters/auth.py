@@ -63,7 +63,7 @@ class OAuth2Auth(Connection):
         elif self.token_storage:
             return self.token_storage.read_token()
         else:
-            raise err.XMError('Unable to obtain token with provided arguments')
+            raise err.XMSessionError('Unable to obtain token with provided arguments')
 
     @property
     def token(self):
