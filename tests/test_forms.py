@@ -14,4 +14,5 @@ class TestForms:
                 assert iter(list(form.get_sections()))
                 assert iter(list(form.get_scenarios()))
             except err.ForbiddenError:
+                # skip forms that account doesn't have access to
                 pass
