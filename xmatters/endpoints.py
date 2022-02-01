@@ -109,8 +109,8 @@ class DevicesEndpoint(ApiBridge):
         data = self.con.post(url, data=data)
         return factory.device(self, data) if data else None
 
-    def modify_device(self, device_id, data):
-        url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
+    def modify_device(self, data):
+        url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.post(url=url, data=data)
         return factory.device(self, data) if data else None
 
