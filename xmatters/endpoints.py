@@ -127,7 +127,8 @@ class DevicesEndpoint(ApiBridge):
 
 
 class DeviceNamesEndpoint(ApiBridge):
-    _endpoints = {'get_device_names': '/device-names'}
+    _endpoints = {'get_device_names': '/device-names',
+                  'delete_device_name': '/device-names/{device_name_id}'}
 
     def __init__(self, parent):
         super(DeviceNamesEndpoint, self).__init__(parent)
@@ -149,6 +150,21 @@ class DeviceNamesEndpoint(ApiBridge):
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.get(url=url, params=params)
         return Pagination(self, data, factory.device_name) if data.get('data') else []
+
+    def create_device_name(self, data):
+        url = self.build_url(self._endpoints.get('get_device_names'))
+        data = self.con.post(url, data=data)
+        return factory.device_name(data) if data else None
+
+    def modify_device_name(self, data):
+        url = self.build_url(self._endpoints.get('get_device_names'))
+        data = self.con.post(url, data=data)
+        return factory.device_name(data) if data else None
+
+    def delete_device_name(self, device_name_id):
+        url = self.build_url(self._endpoints.get('delete_device_name').format(device_name_id=device_name_id))
+        data = self.con.delete(url)
+        return factory.device_name(data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
