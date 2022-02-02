@@ -215,6 +215,7 @@ class Form(ApiBridge):
         s = self.con.get(url, params)
         return Pagination(self, s, factory.section, 'type') if s.get('data') else []
 
+    # TODO: Test is '/scenarios' endpoint suffices instead of full path
     def get_scenarios(self, params=None):
         url = self._endpoints.get('get_scenarios').format(base_url=self.con.base_url, plan_id=self.plan.id,
                                                           form_id=self.id)

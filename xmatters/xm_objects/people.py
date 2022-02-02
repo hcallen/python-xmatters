@@ -50,6 +50,7 @@ class Person(Recipient):
     def get_supervisors(self):
         return self.supervisors
 
+    # TODO: Test
     # Does the '/supervisors' endpoint work?
     # def get_supervisors(self, params=None):
     #     url = self.build_url(self._endpoints.get('get_supervisors'))
