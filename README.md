@@ -5,7 +5,7 @@ been tested**.
 
 ## Features
 
-- Most (if not all) documented endpoints and objects implemented.
+- Most documented endpoints and objects implemented.
 - Support for both basic and OAuth2 authentication.
 - Auto-refresh of access tokens and storage of token objects.
 - Support for pagination objects.

@@ -1,10 +1,10 @@
-import xmatters.utils as util
-import xmatters.factories as factory
+
 from xmatters.connection import ApiBridge
 from xmatters.xm_objects.common import Pagination, SelfLink
-from xmatters.xm_objects.forms import FormReference
 from xmatters.xm_objects.people import PersonReference, Person
-
+import xmatters.utils as util
+import xmatters.factories
+import xmatters.xm_objects.forms
 
 class SubscriptionCriteriaReference(object):
     def __init__(self, data):
@@ -29,7 +29,7 @@ class Subscription(ApiBridge):
         self.name = data.get('name')
         self.description = data.get('description')
         form = data.get('form')
-        self.form = FormReference(form) if form else None
+        self.form = xmatters.xm_objects.forms.FormReference(form) if form else None
         owner = data.get('owner')
 
         self.owner = PersonReference(self, owner)
@@ -39,9 +39,9 @@ class Subscription(ApiBridge):
         criteria = data.get('criteria', {})
         self.criteria = Pagination(self, criteria, SubscriptionCriteriaReference) if criteria.get('data') else []
         recipients = data.get('recipients', {})
-        self.recipients = Pagination(self, recipients, factory.recipient) if recipients.get('data') else []
+        self.recipients = Pagination(self, recipients, xmatters.factories.recipient) if recipients.get('data') else []
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = Pagination(self, tdns, factory.device_name) if tdns.get('data') else []
+        self.target_device_names = Pagination(self, tdns, xmatters.factories.device_name) if tdns.get('data') else []
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
 

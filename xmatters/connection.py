@@ -82,7 +82,7 @@ class ApiBridge(object):
         return '{}{}'.format(url_prefix, endpoint)
 
     @staticmethod
-    def build_params(params, arg_params):
+    def build_params(arg_params, params=None):
         params = params if params else {}
         for k, v in arg_params.items():
             if v and k not in params.keys():

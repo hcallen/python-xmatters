@@ -108,14 +108,20 @@ class Shift(ApiBridge):
         recurrence = data.get('recurrence')
         self.recurrence = ShiftRecurrence(recurrence) if recurrence else None
 
-    @property
-    def members(self):
-        return self.get_members()
-
     def get_members(self):
         url = self.build_url(self._endpoints.get('get_members'))
         data = self.con.get(url).get('data')
         return [ShiftMember(self, m) for m in data]
+
+    # TODO: Test
+    def add_member(self, data):
+        url = self.build_url(self._endpoints.get('get_members'))
+        data = self.con.post(url, data=data)
+        return ShiftMember(self, data) if data else None
+
+    @property
+    def members(self):
+        return self.get_members()
 
     def __repr__(self):
         return '<Shift {}>'.format(self.name)

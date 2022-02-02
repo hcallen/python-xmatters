@@ -1,10 +1,10 @@
 import xmatters.factories as factory
-import xmatters.xm_objects.forms as forms
+import xmatters.xm_objects.forms
 from xmatters.xm_objects.common import Pagination, SelfLink
 from xmatters.xm_objects.integrations import Integration
 from xmatters.xm_objects.people import Person
 from xmatters.xm_objects.plan_constants import PlanConstant
-from xmatters.xm_objects.plan_endpoints import Endpoint
+import xmatters.xm_objects.plan_endpoints
 from xmatters.xm_objects.shared_libraries import SharedLibrary
 from xmatters.connection import ApiBridge
 from xmatters.xm_objects.subscription_forms import SubscriptionForm
@@ -35,14 +35,19 @@ class PlanReference(object):
 
 class Plan(ApiBridge):
     _endpoints = {'creator': '?embed=creator',
-                  'constants': '/constants',
                   'get_forms': '/forms',
+                  'get_form_by_id': '/forms/{form_id}',
                   'get_integrations': '/integrations',
+                  'get_integration_by_id': '/integrations/{int_id}',
                   'get_constants': '/constants',
                   'get_properties': '/property-definitions',
                   'get_libraries': '/shared-libraries',
+                  'get_library_by_id': '/shared-libraries/{lib_id}',
                   'get_endpoints': '/endpoints',
-                  'get_subscription_forms': '/subscription-forms'}
+                  'get_subscription_forms': '/subscription-forms',
+                  'delete_constant': '/constants/{const_id}',
+                  'delete_endpoints': '/endpoints/{end_id}',
+                  'delete_property': '/property-definitions/{prop_id}'}
 
     def __init__(self, parent, data):
         super(Plan, self).__init__(parent, data)
@@ -63,32 +68,152 @@ class Plan(ApiBridge):
     def get_forms(self, params=None):
         url = self.build_url(self._endpoints.get('get_forms'))
         fs = self.con.get(url, params)
-        return Pagination(self, fs, forms.Form) if fs.get('data') else []
+        return Pagination(self, fs, xmatters.xm_objects.forms.Form) if fs.get('data') else []
+
+    # TODO: Test
+    def get_form_by_id(self, form_id):
+        url = self.build_url(self._endpoints.get('get_form_by_id').format(form_id=form_id))
+        data = self.con.get(url)
+        return xmatters.xm_objects.forms.Form(self, data) if data else None
+
+    # TODO: Test
+    def create_form(self, data):
+        url = self.build_url(self._endpoints.get('get_forms'))
+        data = self.con.post(url, data=data)
+        return xmatters.xm_objects.forms.Form(self, data) if data else None
+
+    # TODO: Test
+    def update_form(self, data):
+        url = self.build_url(self._endpoints.get('get_forms'))
+        data = self.con.post(url, data=data)
+        return xmatters.xm_objects.forms.Form(self, data) if data else None
 
     def get_constants(self, params=None):
         url = self.build_url(self._endpoints.get('get_constants'))
         constants = self.con.get(url, params)
         return Pagination(self, constants, PlanConstant) if constants.get('data') else []
 
+    # TODO: Test
+    def create_constant(self, data):
+        url = self.build_url(self._endpoints.get('get_constants'))
+        data = self.con.post(url, data=data)
+        return PlanConstant(self, data) if data else None
+
+    # TODO: Test
+    def update_constant(self, data):
+        url = self.build_url(self._endpoints.get('get_constants'))
+        data = self.con.post(url, data=data)
+        return PlanConstant(self, data) if data else None
+
+    # TODO: Test
+    def delete_constant(self, constant_id):
+        url = self.build_url(self._endpoints.get('delete_constant').format(const_id=constant_id))
+        data = self.con.delete(url)
+        return PlanConstant(self, data) if data else None
+
     def get_integrations(self, params=None):
         url = self.build_url(self._endpoints.get('get_integrations'))
         ints = self.con.get(url, params)
         return Pagination(self, ints, Integration) if ints.get('data') else []
+
+    # TODO: Test
+    def get_integration_by_id(self, integration_id):
+        url = self.build_url(self._endpoints.get('get_integration_by_id').format(int_id=integration_id))
+        data = self.con.get(url)
+        return Integration(self, data) if data else None
+
+    # TODO: Test
+    def create_integration(self, data):
+        url = self.build_url(self._endpoints.get('get_integrations'))
+        data = self.con.post(url, data=data)
+        return Integration(self, data) if data else None
+
+    # TODO: Test
+    def update_integration(self, data):
+        url = self.build_url(self._endpoints.get('get_integrations'))
+        data = self.con.post(url, data=data)
+        return Integration(self, data) if data else None
+
+    # TODO: Test
+    def delete_integration(self, integration_id):
+        url = self.build_url(self._endpoints.get('get_integration_by_id').format(int_id=integration_id))
+        data = self.con.delete(url)
+        return Integration(self, data) if data else None
 
     def get_properties(self, params=None):
         url = self.build_url(self._endpoints.get('get_properties'))
         props = self.con.get(url, params)
         return Pagination(self, props, factory.plan_property) if props.get('data') else []
 
-    def get_libraries(self, params=None):
+    # TODO: Test
+    def create_property(self, data):
+        url = self.build_url(self._endpoints.get('get_properties'))
+        data = self.con.post(url, data=data)
+        return factory.plan_property(data) if data else None
+
+    # TODO: Test
+    def update_property(self, data):
+        url = self.build_url(self._endpoints.get('get_properties'))
+        data = self.con.post(url, data=data)
+        return factory.plan_property(data) if data else None
+
+    # TODO: Test
+    def delete_property(self, property_id):
+        url = self.build_url(self._endpoints.get('delete_property').format(prop_id=property_id))
+        data = self.con.delete(url)
+        return factory.plan_property(data) if data else None
+
+    def get_shared_libraries(self, params=None):
         url = self.build_url(self._endpoints.get('get_libraries'))
         libs = self.con.get(url, params)
         return Pagination(self, libs, SharedLibrary) if libs.get('data') else []
 
+    # TODO: Test
+    def get_shared_library_by_id(self, library_id):
+        url = self.build_url(self._endpoints.get('get_library_by_id').format(lib_id=library_id))
+        data = self.con.get(url)
+        return SharedLibrary(data) if data else None
+
+    # TODO: Test
+    def create_shared_library(self, data):
+        url = self.build_url(self._endpoints.get('get_libraries'))
+        data = self.con.post(url, data=data)
+        return SharedLibrary(data) if data else None
+
+    # TODO: Test
+    def update_shared_library(self, data):
+        url = self.build_url(self._endpoints.get('get_libraries'))
+        data = self.con.post(url, data=data)
+        return SharedLibrary(data) if data else None
+
+    # TODO: Test
+    def delete_shared_library(self, library_id):
+        url = self.build_url(self._endpoints.get('get_library_by_id').format(lib_id=library_id))
+        data = self.con.delete(url)
+        return SharedLibrary(data) if data else None
+
     def get_endpoints(self, params=None):
         url = self.build_url(self._endpoints.get('get_endpoints'))
         endpoints = self.con.get(url, params)
-        return Pagination(self, endpoints, Endpoint) if endpoints.get('data') else []
+        return Pagination(self, endpoints, xmatters.xm_objects.plan_endpoints.Endpoint) if endpoints.get('data') else []
+
+    # TODO: Test
+    def create_endpoint(self, data):
+        url = self.build_url(self._endpoints.get('get_endpoints'))
+        data = self.con.post(url, data=data)
+        return xmatters.xm_objects.plan_endpoints.Endpoint(self, data) if data else None
+
+    # TODO: Test
+    def update_endpoint(self, data):
+        url = self.build_url(self._endpoints.get('get_endpoints'))
+        data = self.con.post(url, data=data)
+        return xmatters.xm_objects.plan_endpoints.Endpoint(self, data) if data else None
+
+    # TODO: Test
+    def delete_endpoint(self, endpoint_id):
+        url = self.build_url(self._endpoints.get('delete_endpoint').format(end_id=endpoint_id))
+        data = self.con.delete(url)
+        return xmatters.xm_objects.plan_endpoints.Endpoint(self, data) if data else None
 
     def get_subscription_forms(self, params=None):
         url = self.build_url(self._endpoints.get('get_subscription_forms'))
@@ -96,16 +221,16 @@ class Plan(ApiBridge):
         return Pagination(self, sub_forms, SubscriptionForm) if sub_forms.get('data') else []
 
     # TODO: Test
-    def create_form(self, data):
-        url = self.build_url(self._endpoints.get('get_forms'))
+    def create_subscription_form(self, data):
+        url = self.build_url(self._endpoints.get('get_subscription_forms'))
         data = self.con.post(url, data=data)
-        return forms.Form(self, data) if data else None
+        return SubscriptionForm(self, data) if data else None
 
     # TODO: Test
-    def update_form(self, data):
-        url = self.build_url(self._endpoints.get('get_forms'))
+    def update_subscription_form(self, data):
+        url = self.build_url(self._endpoints.get('get_subscription_forms'))
         data = self.con.post(url, data=data)
-        return forms.Form(self, data) if data else None
+        return SubscriptionForm(self, data) if data else None
 
     @property
     def creator(self):

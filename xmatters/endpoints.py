@@ -1,12 +1,11 @@
-from xmatters import utils as util, factories as factory
+from xmatters import factories as factory
 from xmatters.connection import ApiBridge
-from xmatters.xm_objects.common import Pagination
+from xmatters.xm_objects.common import Pagination, RequestReference
 from xmatters.xm_objects.conference_bridges import ConferenceBridge
 from xmatters.xm_objects.device_types import DeviceTypes
 from xmatters.xm_objects.dynamic_teams import DynamicTeam
 from xmatters.xm_objects.event_supressions import EventSuppression
-from xmatters.xm_objects.events import Event, EventRequest
-from xmatters.xm_objects.forms import Form
+from xmatters.xm_objects.events import Event
 from xmatters.xm_objects.groups import Group
 from xmatters.xm_objects.import_jobs import Import
 from xmatters.xm_objects.incidents import Incident
@@ -21,6 +20,7 @@ from xmatters.xm_objects.sites import Site
 from xmatters.xm_objects.subscription_forms import SubscriptionForm
 from xmatters.xm_objects.subscriptions import Subscription
 from xmatters.xm_objects.temporary_absences import TemporaryAbsence
+import xmatters.xm_objects.forms
 
 
 class AuditsEndpoint(ApiBridge):
@@ -54,7 +54,7 @@ class AuditsEndpoint(ApiBridge):
         audit_type = ','.join(audit_type) if isinstance(audit_type, list) else audit_type
         arg_params = {'eventId': event_id, 'auditType': audit_type, 'sortOrder': sort_order}
         url = self.build_url(self._endpoints.get('get_audit'))
-        data = self.con.get(url=url, params=self.build_params(params, arg_params))
+        data = self.con.get(url=url, params=self.build_params(arg_params, params))
         return Pagination(self, data, factory.audit) if data.get('data') else []
 
     def __repr__(self):
@@ -83,7 +83,7 @@ class DevicesEndpoint(ApiBridge):
         arg_params = {'deviceStatus': device_status, 'deviceType': device_type,
                       'phoneNumberFormat': phone_number_format, 'deviceNames': device_names}
         url = self.build_url(self._endpoints.get('get_devices'))
-        data = self.con.get(url=url, params=self.build_params(params, arg_params))
+        data = self.con.get(url=url, params=self.build_params(arg_params, params))
         return Pagination(self, data, factory.device) if data.get('data') else []
 
     def get_device_by_id(self, device_id, params=None):
@@ -125,7 +125,7 @@ class DeviceNamesEndpoint(ApiBridge):
         device_types = ','.join(device_types) if isinstance(device_types, list) else device_types
         arg_params = {'search': search, 'sortBy': sort_by, 'sortOrder': sort_order, 'deviceTypes': device_types}
         url = self.build_url(self._endpoints.get('get_device_names'))
-        data = self.con.get(url=url, params=self.build_params(params, arg_params))
+        data = self.con.get(url=url, params=self.build_params(arg_params, params))
         return Pagination(self, data, factory.device_name) if data.get('data') else []
 
     def create_device_name(self, data):
@@ -232,7 +232,7 @@ class EventsEndpoint(ApiBridge):
     def trigger_event(self, function_id, data, params=None):
         url = self._endpoints.get('trigger_event').format(instance_url=self.con.instance_url, func_id=function_id)
         data = self.con.post(url, data=data, params=params)
-        return EventRequest(data) if data else None
+        return RequestReference(data) if data else None
 
     # TODO: Test
     def change_event_status(self, data):
@@ -308,7 +308,8 @@ class ConferenceBridgesEndpoint(ApiBridge):
 
 
 class FormsEndpoint(ApiBridge):
-    _endpoints = {'get_forms': '/forms'}
+    _endpoints = {'get_forms': '/forms',
+                  'get_form_by_id': '/forms/{form_id}'}
 
     def __init__(self, parent):
         super(FormsEndpoint, self).__init__(parent)
@@ -316,7 +317,13 @@ class FormsEndpoint(ApiBridge):
     def get_forms(self, params=None):
         url = self.build_url(self._endpoints.get('get_forms'))
         data = self.con.get(url, params)
-        return Pagination(self, data, Form) if data.get('data') else []
+        return Pagination(self, data, xmatters.xm_objects.forms.Form) if data.get('data') else []
+
+    # TODO: Test
+    def get_form_by_id(self, form_id):
+        url = self.build_url(self._endpoints.get('get_form_by_id').format(form_id=form_id))
+        data = self.con.get(url)
+        return xmatters.xm_objects.forms.Form(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -393,7 +400,8 @@ class ImportJobsEndpoint(ApiBridge):
 
 
 class IncidentsEndpoint(ApiBridge):
-    _endpoints = {'get_incidents': '/incidents'}
+    _endpoints = {'get_incidents': '/incidents',
+                  'update_incident': '/incidents/{incident_id}'}
 
     def __init__(self, parent):
         super(IncidentsEndpoint, self).__init__(parent)
@@ -402,6 +410,18 @@ class IncidentsEndpoint(ApiBridge):
         url = self.build_url(self._endpoints.get('get_incidents'))
         data = self.con.get(url, params)
         return Pagination(self, data, Incident) if data.get('data') else []
+
+    # TODO
+    # def trigger_incident(self, data, params=None):
+    #     url = self._endpoints.get('trigger_incident').format(instance_url=self.con.instance_url)
+    #     data = self.con.post(url, data=data, params=params)
+    #     return RequestReference(data) if data else None
+
+    # TODO: Test
+    def update_incident(self, incident_id, data):
+        url = self.build_url(self._endpoints.get('update_incident').format(incident_id=incident_id))
+        data = self.con.post(url, data=data)
+        return Incident(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -465,6 +485,37 @@ class PeopleEndpoint(ApiBridge):
         data = self.con.get(url, params)
         return Person(self, data) if data else None
 
+    # TODO: Test
+    def get_person_by_query(self, first_name=None, last_name=None, target_name=None, web_login=None, phone_number=None,
+                            email_address=None):
+        arg_params = {'firstName': first_name,
+                      'lastName': last_name,
+                      'targetName': target_name,
+                      'webLogin': web_login,
+                      'phoneNumber': phone_number,
+                      'emailAddress': email_address}
+        url = self.build_url(self._endpoints.get('get_people'))
+        data = self.con.get(url, params=self.build_params(arg_params=arg_params))
+        return Person(self, data) if data else None
+
+    # TODO: Test
+    def create_person(self, data):
+        url = self.build_url(self._endpoints.get('get_people'))
+        data = self.con.post(url, data=data)
+        return Person(self, data) if data else None
+
+    # TODO: Test
+    def update_person(self, data):
+        url = self.build_url(self._endpoints.get('get_people'))
+        data = self.con.post(url, data=data)
+        return Person(self, data) if data else None
+
+    # TODO: Test
+    def delete_person(self, person_id):
+        url = self.build_url(self._endpoints.get('get_person_by_id').format(person_id=person_id))
+        data = self.con.delete(url)
+        return Person(self, data) if data else None
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
@@ -487,6 +538,24 @@ class PlansEndpoint(ApiBridge):
     def get_plan_by_id(self, plan_id, params=None):
         url = self.build_url(self._endpoints.get('get_plan_by_id').format(person_id=plan_id))
         data = self.con.get(url, params)
+        return Plan(self, data) if data else None
+
+    # TODO: Test
+    def create_plan(self, data):
+        url = self.build_url(self._endpoints.get('get_plans'))
+        data = self.con.post(url, data=data)
+        return Plan(self, data) if data else None
+
+    # TODO: Test
+    def update_plan(self, data):
+        url = self.build_url(self._endpoints.get('get_plans'))
+        data = self.con.post(url, data=data)
+        return Plan(self, data) if data else None
+
+    # TODO: Test
+    def delete_plan(self, plan_id):
+        url = self.build_url(self._endpoints.get('get_plan_by_id').format(plan_id=plan_id))
+        data = self.con.delete(url)
         return Plan(self, data) if data else None
 
     def __repr__(self):
@@ -555,6 +624,24 @@ class ServicesEndpoint(ApiBridge):
         data = self.con.get(url, params)
         return Service(self, data) if data else None
 
+    # TODO: Test
+    def create_service(self, data):
+        url = self.build_url(self._endpoints.get('get_services'))
+        data = self.con.post(url, data=data)
+        return Service(self, data) if data else None
+
+    # TODO: Test
+    def update_service(self, data):
+        url = self.build_url(self._endpoints.get('get_services'))
+        data = self.con.post(url, data=data)
+        return Service(self, data) if data else None
+
+    # TODO: Test
+    def delete_service(self, service_id):
+        url = self.build_url(self._endpoints.get('get_service_by_id').format(service_id=service_id))
+        data = self.con.delete(url)
+        return Service(self, data) if data else None
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
@@ -579,6 +666,24 @@ class SitesEndpoint(ApiBridge):
         data = self.con.get(url, params)
         return Site(self, data) if data else None
 
+    # TODO: Test
+    def create_site(self, data):
+        url = self.build_url(self._endpoints.get('get_sites'))
+        data = self.con.post(url, data=data)
+        return Site(self, data) if data else None
+
+    # TODO: Test
+    def update_site(self, data):
+        url = self.build_url(self._endpoints.get('get_sites'))
+        data = self.con.post(url, data=data)
+        return Site(self, data) if data else None
+
+    # TODO: Test
+    def delete_site(self, site_id):
+        url = self.build_url(self._endpoints.get('get_site_by_id').format(site_id=site_id))
+        data = self.con.delete(url)
+        return Site(self, data) if data else None
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
@@ -588,7 +693,9 @@ class SitesEndpoint(ApiBridge):
 
 class SubscriptionsEndpoint(ApiBridge):
     _endpoints = {'get_subscriptions': '/subscriptions',
-                  'get_subscription_by_id': '/subscription-forms/{sub_id}'}
+                  'get_subscription_by_id': '/subscription-forms/{sub_id}',
+                  'get_subscribers': '/subscribers',
+                  'unsubscribe_person': '/subscribers/{person_id}'}
 
     def __init__(self, parent):
         super(SubscriptionsEndpoint, self).__init__(parent)
@@ -598,10 +705,40 @@ class SubscriptionsEndpoint(ApiBridge):
         data = self.con.get(url, params)
         return Pagination(self, data, Subscription) if data else []
 
-    def get_subscription_by_id(self, sub_id, params=None):
-        url = self.build_url(self._endpoints.get('get_subscription_by_id').format(sub_id=sub_id))
+    def get_subscription_by_id(self, subscription_id, params=None):
+        url = self.build_url(self._endpoints.get('get_subscription_by_id').format(sub_id=subscription_id))
         data = self.con.get(url, params)
         return SubscriptionForm(self, data) if data else None
+
+    # TODO: Test
+    def get_subscribers(self, params=None):
+        url = self.build_url(self._endpoints.get('get_subscribers'))
+        subscribers = self.con.get(url, params)
+        return Pagination(self, subscribers, Person) if subscribers.get('data') else []
+
+    # TODO: Test
+    def unsubscribe_person(self, person_id):
+        url = self.build_url(self._endpoints.get('unsubscribe_person').format(person_id=person_id))
+        data = self.con.delete(url)
+        return Subscription(self, data) if data else None
+
+    # TODO: Test
+    def create_subscription(self, data):
+        url = self.build_url(self._endpoints.get('get_subscriptions'))
+        data = self.con.post(url, data=data)
+        return Subscription(self, data) if data else None
+
+    # TODO: Test
+    def update_subscription(self, data):
+        url = self.build_url(self._endpoints.get('get_subscriptions'))
+        data = self.con.post(url, data=data)
+        return Subscription(self, data) if data else None
+
+    # TODO: Test
+    def delete_subscription(self, subscription_id):
+        url = self.build_url(self._endpoints.get('get_subscription_by_id').format(sub_id=subscription_id))
+        data = self.con.delete(url)
+        return Subscription(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -635,7 +772,8 @@ class SubscriptionFormsEndpoint(ApiBridge):
 
 
 class TemporaryAbsencesEndpoint(ApiBridge):
-    _endpoints = {'get_temporary_absences': '/temporary-absences'}
+    _endpoints = {'get_temporary_absences': '/temporary-absences',
+                  'delete_temporary_absence': '/temporary-absences/{temp_abs_id}'}
 
     def __init__(self, parent):
         super(TemporaryAbsencesEndpoint, self).__init__(parent)
@@ -644,6 +782,39 @@ class TemporaryAbsencesEndpoint(ApiBridge):
         url = self.build_url(self._endpoints.get('get_temporary_absences'))
         data = self.con.get(url, params)
         return Pagination(self, data, TemporaryAbsence) if data.get('data') else []
+
+    # TODO: Test
+    def create_temporary_absence(self, data):
+        url = self.build_url(self._endpoints.get('get_temporary_absences'))
+        data = self.con.post(url, data=data)
+        return TemporaryAbsence(self, data) if data else None
+
+    # TODO: Test
+    def delete_temporary_absence(self, temporary_absence_id):
+        url = self.build_url(self._endpoints.get('delete_temporary_absence').format(temp_abs_id=temporary_absence_id))
+        data = self.con.delete(url)
+        return TemporaryAbsence(self, data) if data else None
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+# TODO
+class UploadUsersEndpoint(ApiBridge):
+    _endpoints = {'upload_user_upload_file': '/uploads/users-v1',
+                  'upload_epic_zipsync_file': '/uploads/epic-v1'}
+
+    def __init__(self, parent):
+        super(UploadUsersEndpoint, self).__init__(parent)
+
+    def upload_user_upload_file(self, file_path):
+        pass
+
+    def upload_epic_zipsync_file(self, file_path):
+        pass
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

@@ -1,13 +1,13 @@
 import xmatters.xm_objects.devices
 import xmatters.xm_objects.groups
-import xmatters.xm_objects.audits as audits
+import xmatters.xm_objects.audits
 import xmatters.xm_objects.people
-import xmatters.xm_objects.forms
 import xmatters.xm_objects.dynamic_teams
 import xmatters.xm_objects.scenarios
 import xmatters.xm_objects.device_names
 import xmatters.xm_objects.plan_endpoints
 import xmatters.xm_objects.plan_properties
+import xmatters.xm_objects.forms
 
 _devices = {'EMAIL': xmatters.xm_objects.devices.EmailDevice,
             'VOICE': xmatters.xm_objects.devices.VoiceDevice,
@@ -38,14 +38,14 @@ def recipient(parent, data, recipient_type=None):
     return o(parent, data) if o else None
 
 
-_audit_types = {'EVENT_ANNOTATED': audits.AuditAnnotation,
-                'EVENT_CREATED': audits.Audit,
-                'EVENT_SUSPENDED': audits.Audit,
-                'EVENT_RESUMED': audits.Audit,
-                'EVENT_COMPLETED': audits.Audit,
-                'EVENT_TERMINATED': audits.Audit,
-                'RESPONSE_RECEIVED': audits.AuditResponse,
-                'NOTIFICATION_DELIVERED': audits.AuditNotification}
+_audit_types = {'EVENT_ANNOTATED': xmatters.xm_objects.audits.AuditAnnotation,
+                'EVENT_CREATED': xmatters.xm_objects.audits.Audit,
+                'EVENT_SUSPENDED': xmatters.xm_objects.audits.Audit,
+                'EVENT_RESUMED': xmatters.xm_objects.audits.Audit,
+                'EVENT_COMPLETED': xmatters.xm_objects.audits.Audit,
+                'EVENT_TERMINATED': xmatters.xm_objects.audits.Audit,
+                'RESPONSE_RECEIVED': xmatters.xm_objects.audits.AuditResponse,
+                'NOTIFICATION_DELIVERED': xmatters.xm_objects.audits.AuditNotification}
 
 
 def audit(parent, data):

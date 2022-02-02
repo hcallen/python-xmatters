@@ -2,7 +2,7 @@ import urllib.parse
 
 import xmatters.auth
 import xmatters.connection
-from xmatters.endpoints import *
+import xmatters.endpoints
 
 
 class XMSession(object):
@@ -53,73 +53,77 @@ class XMSession(object):
         return self
 
     def audits(self):
-        return AuditsEndpoint(self)
+        return xmatters.endpoints.AuditsEndpoint(self)
 
     def conference_bridges(self):
-        return ConferenceBridgesEndpoint(self)
+        return xmatters.endpoints.ConferenceBridgesEndpoint(self)
 
     def device_names(self):
-        return DeviceNamesEndpoint(self)
+        return xmatters.endpoints.DeviceNamesEndpoint(self)
 
     def device_types(self):
-        return DeviceTypesEndpoint(self)
+        return xmatters.endpoints.DeviceTypesEndpoint(self)
 
     def devices(self):
-        return DevicesEndpoint(self)
+        return xmatters.endpoints.DevicesEndpoint(self)
 
     def dynamic_teams(self):
-        return DynamicTeamsEndpoint(self)
+        return xmatters.endpoints.DynamicTeamsEndpoint(self)
 
     def events(self):
-        return EventsEndpoint(self)
+        return xmatters.endpoints.EventsEndpoint(self)
 
     def event_suppressions(self):
-        return EventSuppressionsEndpoint(self)
+        return xmatters.endpoints.EventSuppressionsEndpoint(self)
 
     def forms(self):
-        return FormsEndpoint(self)
+        return xmatters.endpoints.FormsEndpoint(self)
 
     def import_jobs(self):
-        return ImportJobsEndpoint(self)
+        return xmatters.endpoints.ImportJobsEndpoint(self)
 
     def groups(self):
-        return GroupsEndpoint(self)
+        return xmatters.endpoints.GroupsEndpoint(self)
 
     def incidents(self):
-        return IncidentsEndpoint(self)
+        return xmatters.endpoints.IncidentsEndpoint(self)
 
     def oncall(self):
-        return OnCallEndpoint(self)
+        return xmatters.endpoints.OnCallEndpoint(self)
 
     def oncall_summary(self):
-        return OnCallSummaryEndpoint(self)
+        return xmatters.endpoints.OnCallSummaryEndpoint(self)
 
     def people(self):
-        return PeopleEndpoint(self)
+        return xmatters.endpoints.PeopleEndpoint(self)
 
     def plans(self):
-        return PlansEndpoint(self)
+        return xmatters.endpoints.PlansEndpoint(self)
 
     def roles(self):
-        return RolesEndpoint(self)
+        return xmatters.endpoints.RolesEndpoint(self)
 
     def scenarios(self):
-        return ScenariosEndpoint(self)
+        return xmatters.endpoints.ScenariosEndpoint(self)
 
     def services(self):
-        return ServicesEndpoint(self)
+        return xmatters.endpoints.ServicesEndpoint(self)
 
     def sites(self):
-        return SitesEndpoint(self)
+        return xmatters.endpoints.SitesEndpoint(self)
 
     def subscriptions(self):
-        return SubscriptionsEndpoint(self)
+        return xmatters.endpoints.SubscriptionsEndpoint(self)
 
     def subscription_forms(self):
-        return SubscriptionFormsEndpoint(self)
+        return xmatters.endpoints.SubscriptionFormsEndpoint(self)
 
     def temporary_absences(self):
-        return TemporaryAbsencesEndpoint(self)
+        return xmatters.endpoints.TemporaryAbsencesEndpoint(self)
+
+    # TODO
+    # def upload_users(self):
+    #     return xmatters.endpoints.UploadUsersEndpoint(self)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

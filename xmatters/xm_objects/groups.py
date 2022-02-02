@@ -102,6 +102,18 @@ class Group(Recipient):
         data = self.con.get(url)
         return Shift(self, data) if data else None
 
+    # TODO: Test
+    def create_shift(self, data):
+        url = self.build_url(self._endpoints.get('get_shifts'))
+        data = self.con.post(url, data=data)
+        return Shift(self, data) if data else None
+
+    # TODO: Test
+    def delete_shift(self, shift_id):
+        url = self.build_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
+        data = self.con.delete(url)
+        return Shift(self, data) if data else None
+
     def get_members(self, params=None):
         url = self.build_url(self._endpoints.get('get_members'))
         data = self.con.get(url, params)

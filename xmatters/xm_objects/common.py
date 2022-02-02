@@ -191,3 +191,14 @@ class PropertyDefinition(object):
 
     def __str__(self):
         return self.__repr__()
+
+
+class RequestReference(object):
+    def __init__(self, data):
+        self.request_id = data.get('requestId')
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()

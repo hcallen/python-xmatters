@@ -1,11 +1,11 @@
-import xmatters.xm_objects.events as events
-import xmatters.factories as factory
-import xmatters.xm_objects.plans as plans
+
 from xmatters.xm_objects.common import SelfLink, Pagination, Recipient, PropertyDefinition
 from xmatters.xm_objects.device_names import TargetDeviceNameSelector
 from xmatters.connection import ApiBridge
-from xmatters.xm_objects.scenarios import Scenario
-
+import xmatters.xm_objects.scenarios
+import xmatters.xm_objects.events as events
+import xmatters.factories as factory
+import xmatters.xm_objects.plans as plans
 
 class FormReference(object):
     def __init__(self, data):
@@ -176,7 +176,8 @@ class Form(ApiBridge):
                   'get_response_options': '/response-options',
                   'get_sections': '{base_url}/forms/{form_id}/sections',
                   'recipients': '?embed=recipients',
-                  'get_scenarios': '{base_url}/plans/{plan_id}/forms/{form_id}/scenarios'}
+                  'get_scenarios': '{base_url}/plans/{plan_id}/forms/{form_id}/scenarios',
+                  'create_scenario': '/scenarios'}
 
     def __init__(self, parent, data):
         super(Form, self).__init__(parent, data)
@@ -218,7 +219,19 @@ class Form(ApiBridge):
         url = self._endpoints.get('get_scenarios').format(base_url=self.con.base_url, plan_id=self.plan.id,
                                                           form_id=self.id)
         s = self.con.get(url, params)
-        return Pagination(self, s, Scenario, 'type') if s.get('data') else []
+        return Pagination(self, s, xmatters.xm_objects.scenarios.Scenario, 'type') if s.get('data') else []
+
+    # TODO: Test
+    def create_scenario(self, data):
+        url = self.build_url(self._endpoints.get('create_scenario'))
+        data = self.con.post(url, data=data)
+        return xmatters.xm_objects.scenarios.Scenario(self, data) if data else None
+
+    # TODO: Test
+    def update_scenario(self, data):
+        url = self.build_url(self._endpoints.get('create_scenario'))
+        data = self.con.post(url, data=data)
+        return xmatters.xm_objects.scenarios.Scenario(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

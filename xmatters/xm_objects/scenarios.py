@@ -1,5 +1,5 @@
-import xmatters.xm_objects.events as events
-import xmatters.xm_objects.forms as forms
+import xmatters.xm_objects.events
+import xmatters.xm_objects.forms
 import xmatters.factories as factory
 import xmatters.utils
 from xmatters.connection import ApiBridge
@@ -67,10 +67,10 @@ class Scenario(ApiBridge):
         self.expiration_in_minutes = data.get('expirationInMinutes')
         self.override_device_restrictions = data.get('overrideDeviceRestrictions')
         self.require_phone_password = data.get('requirePhonePassword')
-        sender_overrides = data.get('senderOverrides')
-        self.sender_overrides = forms.SenderOverrides(sender_overrides) if sender_overrides else None
+        sos = data.get('senderOverrides')
+        self.sender_overrides = xmatters.xm_objects.forms.SenderOverrides(sos) if sos else None
         vm_opts = data.get('voicemailOptions')
-        self.voicemail_options = events.VoicemailOptions(vm_opts) if vm_opts else None
+        self.voicemail_options = xmatters.xm_objects.events.VoicemailOptions(vm_opts) if vm_opts else None
         tdns = data.get('targetDeviceNames', {})
         self.target_device_names = Pagination(self, tdns, factory.device_name) if tdns.get('data') else []
         created = data.get('created')

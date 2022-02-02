@@ -2,7 +2,7 @@ import xmatters.utils as util
 from xmatters.xm_objects.common import Recipient
 from xmatters.xm_objects.people import PersonReference
 from xmatters.connection import ApiBridge
-from xmatters.xm_objects.events import EventReference, ResponseOption
+import xmatters.xm_objects.events as events
 
 
 class Notification(ApiBridge):
@@ -18,7 +18,7 @@ class Notification(ApiBridge):
         delivery_attempted = data.get('deliveryAttempted')
         self.delivery_attempted = util.TimeAttribute(delivery_attempted) if delivery_attempted else None
         event = data.get('event')
-        self.event = EventReference(parent, data) if event else None
+        self.event = events.EventReference(parent, data) if event else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -34,7 +34,7 @@ class Response(ApiBridge):
         notification = data.get('notification')
         self.notification = Notification(self, notification) if notification else None
         options = data.get('options', {}).get('data')
-        self.options = [ResponseOption(r) for r in options] if options else None
+        self.options = [events.ResponseOption(r) for r in options] if options else None
         self.source = data.get('source')
         received = data.get('received')
         self.received = util.TimeAttribute(received) if received else None
@@ -68,7 +68,7 @@ class Audit(AuditBase):
         super(Audit, self).__init__(parent, data)
 
         event = data.get('event')
-        self.event = EventReference(parent, event) if event else None
+        self.event = events.EventReference(parent, event) if event else None
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.type)
@@ -81,7 +81,7 @@ class Annotation(ApiBridge):
     def __init__(self, parent, data):
         super(Annotation, self).__init__(parent, data)
         event = data.get('event')
-        self.event = EventReference(parent, event) if event else None
+        self.event = events.EventReference(parent, event) if event else None
         author = data.get('author')
         self.author = PersonReference(parent, author) if author else None
         self.comment = data.get('comment')

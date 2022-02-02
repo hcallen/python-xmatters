@@ -1,6 +1,6 @@
 from xmatters.xm_objects.common import ReferenceById, Pagination
 from xmatters.xm_objects.people import PersonReference
-from xmatters.xm_objects.plan_endpoints import Endpoint
+import xmatters.xm_objects.plan_endpoints
 import xmatters.xm_objects.plans
 from xmatters.connection import ApiBridge
 
@@ -59,7 +59,7 @@ class Integration(ApiBridge):
         self.created_by = data.get('createdBy')
         self.authentication_type = data.get('authenticationType')
         endpoint = data.get('endpoint')
-        self.endpoint = Endpoint(self, endpoint) if endpoint else None
+        self.endpoint = xmatters.xm_objects.plan_endpoints.Endpoint(self, endpoint) if endpoint else None
         self.deployed = data.get('deployed')
         self.script = data.get('script')
         self.migrated_outbound_trigger = data.get('migratedOutboundTrigger')

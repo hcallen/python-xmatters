@@ -1,4 +1,4 @@
-import xmatters.factories as factory
+import xmatters.factories
 import xmatters.utils as util
 from xmatters.xm_objects.common import Recipient, Pagination, SelfLink
 from xmatters.xm_objects.event_supressions import EventSuppression
@@ -6,17 +6,6 @@ import xmatters.xm_objects.forms as forms
 from xmatters.xm_objects.people import PersonReference
 from xmatters.xm_objects.plans import PlanReference
 from xmatters.connection import ApiBridge
-
-
-class EventRequest(object):
-    def __init__(self, data):
-        self.request_id = data.get('requestId')
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()
 
 
 class Message(object):
@@ -241,19 +230,21 @@ class Event(ApiBridge):
         self.terminated = util.TimeAttribute(terminated) if terminated else None
         voicemail_options = data.get('voicemailOptions')
         self.voicemail_options = VoicemailOptions(voicemail_options) if voicemail_options else None
+        links = data.get('links')
+        self.links = SelfLink(self, links) if links else None
 
     # TODO: Test params
     def get_audit(self, audit_type=None, sort_order=None, params=None):
         audit_type = ','.join(audit_type) if isinstance(audit_type, list) else audit_type
         arg_params = {'eventId': self.id, 'auditType': audit_type, 'sortOrder': sort_order}
         url = self._endpoints.get('get_audit').format(base_url=self.con.base_url)
-        data = self.con.get(url, params=self.build_params(params, arg_params))
-        return Pagination(self, data, factory.audit) if data.get('data') else []
+        data = self.con.get(url, params=self.build_params(arg_params, params))
+        return Pagination(self, data, xmatters.factories.audit) if data.get('data') else []
 
     def get_user_delivery_data(self, at, params=None):
         arg_params = {'eventId': self.id, 'at': at}
         url = self.build_url(self._endpoints.get('get_user_delivery_data'))
-        data = self.con.get(url, params=self.build_params(params, arg_params))
+        data = self.con.get(url, params=self.build_params(arg_params, params))
         return Pagination(self, data, UserDeliveryData) if data.get('data') else []
 
     def get_annotations(self, params=None):

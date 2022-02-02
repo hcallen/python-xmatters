@@ -15,7 +15,7 @@ class TestPlans:
                 assert iter(list(plan.get_constants()))
                 assert iter(list(plan.get_integrations()))
                 assert iter(list(plan.get_properties()))
-                assert iter(list(plan.get_libraries()))
+                assert iter(list(plan.get_shared_libraries()))
                 assert iter(list(plan.get_endpoints()))
                 assert iter(list(plan.get_subscription_forms()))
                 creator = plan.creator

@@ -1,4 +1,5 @@
 import xmatters.utils as utils
+from xmatters.xm_objects.common import SelfLink
 from xmatters.xm_objects.people import PersonReference
 from xmatters.connection import ApiBridge
 
@@ -17,6 +18,8 @@ class IncidentProperty(object):
 
 
 class Incident(ApiBridge):
+    _endpoints = {'add_timeline_note': '/timeline-entries'}
+
     def __init__(self, parent, data):
         super(Incident, self).__init__(parent, data)
         self.id = data.get('id')
@@ -41,6 +44,16 @@ class Incident(ApiBridge):
         self.updated_at = utils.TimeAttribute(updated_at) if updated_at else None
         acknowledged_at = data.get('acknowledgeAt')
         self.acknowledged_at = utils.TimeAttribute(acknowledged_at) if acknowledged_at else None
+        links = data.get('links')
+        self.links = SelfLink(self, links) if links else None
+
+    # TODO: Test
+    def add_timeline_note(self, text):
+        data = {'entryType': 'TIMELINE_NOTE',
+                'text': text}
+        url = self.build_url(self._endpoints.get('add_timeline_note'))
+        data = self.con.post(url, data=data)
+        return IncidentNote(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -78,5 +91,3 @@ class IncidentDetails(object):
 
     def __str__(self):
         return self.__repr__()
-
-
