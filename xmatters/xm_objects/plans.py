@@ -1,12 +1,12 @@
 import xmatters.factories as factory
 import xmatters.xm_objects.forms
+import xmatters.xm_objects.plan_endpoints
+from xmatters.connection import ApiBridge
 from xmatters.xm_objects.common import Pagination, SelfLink
 from xmatters.xm_objects.integrations import Integration
 from xmatters.xm_objects.people import Person
 from xmatters.xm_objects.plan_constants import PlanConstant
-import xmatters.xm_objects.plan_endpoints
 from xmatters.xm_objects.shared_libraries import SharedLibrary
-from xmatters.connection import ApiBridge
 from xmatters.xm_objects.subscription_forms import SubscriptionForm
 
 

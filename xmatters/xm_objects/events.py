@@ -1,11 +1,11 @@
 import xmatters.factories
 import xmatters.utils as util
+import xmatters.xm_objects.forms as forms
+from xmatters.connection import ApiBridge
 from xmatters.xm_objects.common import Recipient, Pagination, SelfLink
 from xmatters.xm_objects.event_supressions import EventSuppression
-import xmatters.xm_objects.forms as forms
 from xmatters.xm_objects.people import PersonReference
 from xmatters.xm_objects.plans import PlanReference
-from xmatters.connection import ApiBridge
 
 
 class Message(object):

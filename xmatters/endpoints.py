@@ -1,4 +1,5 @@
-from xmatters import factories as factory
+import xmatters.factories as factory
+import xmatters.xm_objects.forms
 from xmatters.connection import ApiBridge
 from xmatters.xm_objects.common import Pagination, RequestReference
 from xmatters.xm_objects.conference_bridges import ConferenceBridge
@@ -20,7 +21,6 @@ from xmatters.xm_objects.sites import Site
 from xmatters.xm_objects.subscription_forms import SubscriptionForm
 from xmatters.xm_objects.subscriptions import Subscription
 from xmatters.xm_objects.temporary_absences import TemporaryAbsence
-import xmatters.xm_objects.forms
 
 
 class AuditsEndpoint(ApiBridge):

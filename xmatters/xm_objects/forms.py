@@ -1,11 +1,11 @@
-
+import xmatters.factories as factory
+import xmatters.xm_objects.events as events
+import xmatters.xm_objects.plans as plans
+import xmatters.xm_objects.scenarios
+from xmatters.connection import ApiBridge
 from xmatters.xm_objects.common import SelfLink, Pagination, Recipient, PropertyDefinition
 from xmatters.xm_objects.device_names import TargetDeviceNameSelector
-from xmatters.connection import ApiBridge
-import xmatters.xm_objects.scenarios
-import xmatters.xm_objects.events as events
-import xmatters.factories as factory
-import xmatters.xm_objects.plans as plans
+
 
 class FormReference(object):
     def __init__(self, data):
