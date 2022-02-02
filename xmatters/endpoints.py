@@ -5,7 +5,7 @@ from xmatters.xm_objects.conference_bridges import ConferenceBridge
 from xmatters.xm_objects.device_types import DeviceTypes
 from xmatters.xm_objects.dynamic_teams import DynamicTeam
 from xmatters.xm_objects.event_supressions import EventSuppression
-from xmatters.xm_objects.events import Event
+from xmatters.xm_objects.events import Event, EventRequest
 from xmatters.xm_objects.forms import Form
 from xmatters.xm_objects.groups import Group
 from xmatters.xm_objects.import_jobs import Import
@@ -35,6 +35,7 @@ class AuditsEndpoint(ApiBridge):
 
         self._endpoints = {'get_audit': '/audits'}
 
+    # TODO: Test params
     def get_audit(self, event_id, audit_type=None, sort_order=None, params=None):
         """
         Perform an audit on a specified event id.
@@ -49,16 +50,11 @@ class AuditsEndpoint(ApiBridge):
         :return: Pagination of audit objects
         :rtype: :class:`xmatters.xm_objects.common.Pagination`
         """
-        # process parameters
-        params = params if params else {}
-        params['eventId'] = event_id
-        if audit_type and 'auditType' not in params.keys():
-            params['auditType'] = ','.join(audit_type).upper() if isinstance(audit_type, list) else audit_type.upper()
-        if sort_order and 'sortOrder' not in params.keys():
-            params['sortOrder'] = sort_order.upper()
 
+        audit_type = ','.join(audit_type) if isinstance(audit_type, list) else audit_type
+        arg_params = {'eventId': event_id, 'auditType': audit_type, 'sortOrder': sort_order}
         url = self.build_url(self._endpoints.get('get_audit'))
-        data = self.con.get(url=url, params=params)
+        data = self.con.get(url=url, params=self.build_params(params, arg_params))
         return Pagination(self, data, factory.audit) if data.get('data') else []
 
     def __repr__(self):
@@ -80,23 +76,14 @@ class DevicesEndpoint(ApiBridge):
         """
         super(DevicesEndpoint, self).__init__(parent)
 
+    # TODO: Test params
     def get_devices(self, device_status=None, device_type=None, device_names=None, phone_number_format=None,
                     params=None):
-
-        # process parameters
-        params = params if params else {}
-        if device_status and 'deviceStatus' not in params.keys():
-            params['deviceStatus'] = device_status.upper()
-        if device_type and 'deviceType' not in params.keys():
-            params['deviceType'] = device_type.upper()
-        if device_names and 'deviceNames' not in params.keys():
-            params['deviceNames'] = ','.join(device_names).upper() if isinstance(device_names,
-                                                                                 list) else device_names.upper()
-        if phone_number_format and 'phoneNumberFormat' not in params.keys():
-            params['phoneNumberFormat'] = phone_number_format.upper()
-
+        device_names = ','.join(device_names) if isinstance(device_names, list) else device_names
+        arg_params = {'deviceStatus': device_status, 'deviceType': device_type,
+                      'phoneNumberFormat': phone_number_format, 'deviceNames': device_names}
         url = self.build_url(self._endpoints.get('get_devices'))
-        data = self.con.get(url=url, params=params)
+        data = self.con.get(url=url, params=self.build_params(params, arg_params))
         return Pagination(self, data, factory.device) if data.get('data') else []
 
     def get_device_by_id(self, device_id, params=None):
@@ -109,7 +96,7 @@ class DevicesEndpoint(ApiBridge):
         data = self.con.post(url, data=data)
         return factory.device(self, data) if data else None
 
-    def modify_device(self, data):
+    def update_device(self, data):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.post(url=url, data=data)
         return factory.device(self, data) if data else None
@@ -133,22 +120,12 @@ class DeviceNamesEndpoint(ApiBridge):
     def __init__(self, parent):
         super(DeviceNamesEndpoint, self).__init__(parent)
 
+    # TODO: Test params
     def get_device_names(self, device_types=None, search=None, sort_by=None, sort_order=None, params=None):
-
-        # process parameters
-        params = params if params else {}
-        if device_types and 'device_names' not in params.keys():
-            params['deviceTypes'] = ','.join(device_types).upper() if isinstance(device_types,
-                                                                                 list) else device_types.upper()
-        if search and 'search' not in params.keys():
-            params['search'] = ' '.join(search).upper() if isinstance(search, list) else search.upper()
-        if sort_by and 'sortBy' not in params.keys():
-            params['sortBy'] = sort_by.upper()
-        if sort_order and 'sortOrder' not in params.keys():
-            params['sortOrder'] = sort_order.upper()
-
+        device_types = ','.join(device_types) if isinstance(device_types, list) else device_types
+        arg_params = {'search': search, 'sortBy': sort_by, 'sortOrder': sort_order, 'deviceTypes': device_types}
         url = self.build_url(self._endpoints.get('get_device_names'))
-        data = self.con.get(url=url, params=params)
+        data = self.con.get(url=url, params=self.build_params(params, arg_params))
         return Pagination(self, data, factory.device_name) if data.get('data') else []
 
     def create_device_name(self, data):
@@ -156,7 +133,7 @@ class DeviceNamesEndpoint(ApiBridge):
         data = self.con.post(url, data=data)
         return factory.device_name(data) if data else None
 
-    def modify_device_name(self, data):
+    def update_device_name(self, data):
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.post(url, data=data)
         return factory.device_name(data) if data else None
@@ -205,6 +182,24 @@ class DynamicTeamsEndpoint(ApiBridge):
         data = self.con.get(url, params)
         return DynamicTeam(self, data) if data else None
 
+    # TODO: Test
+    def create_dynamic_team(self, data):
+        url = self.build_url(self._endpoints.get('get_dynamic_teams'))
+        data = self.con.post(url, data=data)
+        return DynamicTeam(self, data) if data else None
+
+    # TODO: Test
+    def update_dynamic_team(self, data):
+        url = self.build_url(self._endpoints.get('get_dynamic_teams'))
+        data = self.con.post(url, data=data)
+        return DynamicTeam(self, data) if data else None
+
+    # TODO: Test
+    def delete_dynamic_team(self, dynamic_team_id):
+        url = self.build_url(self._endpoints.get('get_dynamic_team_by_id').format(dynamic_team_id=dynamic_team_id))
+        data = self.con.delete(url=url)
+        return DynamicTeam(self, data) if data else None
+
     def __init__(self, parent):
         super(DynamicTeamsEndpoint, self).__init__(parent)
 
@@ -217,7 +212,8 @@ class DynamicTeamsEndpoint(ApiBridge):
 
 class EventsEndpoint(ApiBridge):
     _endpoints = {'get_events': '/events',
-                  'get_event_by_id': '/events/{event_id}'}
+                  'get_event_by_id': '/events/{event_id}',
+                  'trigger_event': '{instance_url}/api/integration/1/functions/{func_id}/triggers'}
 
     def __init__(self, parent):
         super(EventsEndpoint, self).__init__(parent)
@@ -230,6 +226,18 @@ class EventsEndpoint(ApiBridge):
     def get_event_by_id(self, event_id, params=None):
         url = self.build_url(self._endpoints.get('get_event_by_id').format(event_id=event_id))
         data = self.con.get(url, params)
+        return Event(self, data) if data else None
+
+    # TODO: Test
+    def trigger_event(self, function_id, data, params=None):
+        url = self._endpoints.get('trigger_event').format(instance_url=self.con.instance_url, func_id=function_id)
+        data = self.con.post(url, data=data, params=params)
+        return EventRequest(data) if data else None
+
+    # TODO: Test
+    def change_event_status(self, data):
+        url = self.build_url(self._endpoints.get('get_events'))
+        data = self.con.post(url, data=data)
         return Event(self, data) if data else None
 
     def __repr__(self):
@@ -274,6 +282,24 @@ class ConferenceBridgesEndpoint(ApiBridge):
         data = self.con.get(url, params)
         return ConferenceBridge(self, data) if data else None
 
+    # TODO: Test
+    def create_conference_bridge(self, data):
+        url = self.build_url(self._endpoints.get('get_conference_bridges'))
+        data = self.con.post(url, data=data)
+        return ConferenceBridge(self, data) if data else None
+
+    # TODO: Test
+    def update_conference_bridge(self, data):
+        url = self.build_url(self._endpoints.get('get_conference_bridges'))
+        data = self.con.post(url, data=data)
+        return ConferenceBridge(self, data) if data else None
+
+    # TODO: Test
+    def delete_conference_bridge(self, bridge_id):
+        url = self.build_url(self._endpoints.get('get_conference_bridge_by_id').format(bridge_id=bridge_id))
+        data = self.con.delete(url=url)
+        return DynamicTeam(self, data) if data else None
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
@@ -316,6 +342,24 @@ class GroupsEndpoint(ApiBridge):
         data = self.con.get(url, params)
         return Group(self, data) if data else None
 
+    # TODO: Test
+    def create_group(self, data):
+        url = self.build_url(self._endpoints.get('get_groups'))
+        data = self.con.post(url, data=data)
+        return Group(self, data) if data else None
+
+    # TODO: Test
+    def update_group(self, data):
+        url = self.build_url(self._endpoints.get('get_groups'))
+        data = self.con.post(url, data=data)
+        return Group(self, data) if data else None
+
+    # TODO: Test
+    def delete_group(self, group_id):
+        url = self.build_url(self._endpoints.get('get_group_by_id').format(group_id=group_id))
+        data = self.con.delete(url)
+        return Group(self, data) if data else None
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
@@ -324,7 +368,8 @@ class GroupsEndpoint(ApiBridge):
 
 
 class ImportJobsEndpoint(ApiBridge):
-    _endpoints = {'get_import_jobs': '/imports'}
+    _endpoints = {'get_import_jobs': '/imports',
+                  'get_import_job_by_id': '/imports/{import_id}'}
 
     def __init__(self, parent):
         super(ImportJobsEndpoint, self).__init__(parent)
@@ -333,6 +378,12 @@ class ImportJobsEndpoint(ApiBridge):
         url = self.build_url(self._endpoints.get('get_import_jobs'))
         data = self.con.get(url, params).get('data')
         return [Import(self, job) for job in data] if data else []
+
+    # TODO: Test
+    def get_import_job_by_id(self, import_id):
+        url = self.build_url(self._endpoints.get('get_import_job_by_id').format(import_id=import_id))
+        data = self.con.get(url)
+        return Import(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

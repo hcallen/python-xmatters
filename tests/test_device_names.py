@@ -33,7 +33,7 @@ class TestDeviceNames:
         data = {'deviceType': 'EMAIL',
                 'name': 'Another Email Device Modified',
                 'id': to_modify.id}
-        mod_device_name = xm_sb.device_names().modify_device_name(data)
+        mod_device_name = xm_sb.device_names().update_device_name(data)
         assert isinstance(mod_device_name, DeviceName)
         assert mod_device_name.name == 'Another Email Device Modified'
 

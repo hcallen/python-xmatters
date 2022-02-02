@@ -20,14 +20,16 @@ class Connection(object):
     def get(self, url, params=None):
         return self.request('GET', url=url, params=params)
 
-    def post(self, url, data):
-        return self.request('POST', url=url, data=data)
+    def post(self, url, data, params=None):
+        return self.request('POST', url=url, data=data, params=params)
 
     def delete(self, url):
         return self.request('DELETE', url=url)
 
     def request(self, method, url, data=None, params=None):
-        if params:
+        if data and params:
+            r = self.session.request(method=method, url=url, json=data, params=params, timeout=self.timeout)
+        elif params:
             r = self.session.request(method=method, url=url, params=params, timeout=self.timeout)
         elif data:
             r = self.session.request(method=method, url=url, json=data, timeout=self.timeout)
@@ -59,7 +61,7 @@ class Connection(object):
 
 
 class ApiBridge(object):
-    """ Base for api objects who need to make api calls """
+    """ Base for api objects that need to make requests """
 
     def __init__(self, parent, data=None):
         if not parent.con:
@@ -78,3 +80,11 @@ class ApiBridge(object):
         else:
             url_prefix = self.con.base_url
         return '{}{}'.format(url_prefix, endpoint)
+
+    @staticmethod
+    def build_params(params, arg_params):
+        params = params if params else {}
+        for k, v in arg_params.items():
+            if v and k not in params.keys():
+                params[k] = v.upper() if isinstance(v, str) else v
+        return params

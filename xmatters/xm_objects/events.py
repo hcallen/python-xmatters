@@ -8,6 +8,17 @@ from xmatters.xm_objects.plans import PlanReference
 from xmatters.connection import ApiBridge
 
 
+class EventRequest(object):
+    def __init__(self, data):
+        self.request_id = data.get('requestId')
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
 class Message(object):
     def __init__(self, data):
         self.id = data.get('id')
@@ -157,6 +168,12 @@ class UserDeliveryData(ApiBridge):
         person = data.get('person')
         self.person = PersonReference(self, person) if person else None
         self.delivery_status = data.get('deliveryStatus')
+        notifications = data.get('notifications', {}).get('data')
+        self.notifications = [Notification(self, n) for n in notifications] if notifications else []
+        response = data.get('response')
+        self.response = UserDeliveryResponse(response) if response else None
+        links = data.get('links')
+        self.links = SelfLink(self, links) if links else None
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.person.target_name)
@@ -186,12 +203,13 @@ class Annotation(ApiBridge):
 
 class Event(ApiBridge):
     _endpoints = {'messages': '?embed=messages',
-                  'annotations': '?embed=annotations',
+                  'get_annotations': '/annotations',
                   'properties': '?embed=properties',
                   'recipients': '?embed=recipients',
                   'response_options': '?embed=responseOptions',
-                  'get_user_deliveries': '/events/{event_id}/user-deliveries',
-                  'get_audit': '{base_url}/audits'}
+                  'get_user_delivery_data': '/user-deliveries',
+                  'get_audit': '{base_url}/audits',
+                  'update_status': '{base_url}/events'}
 
     def __init__(self, parent, data):
         super(Event, self).__init__(parent, data)
@@ -224,26 +242,45 @@ class Event(ApiBridge):
         voicemail_options = data.get('voicemailOptions')
         self.voicemail_options = VoicemailOptions(voicemail_options) if voicemail_options else None
 
-    def get_audit(self, audit_type=util.AUDIT_TYPES, sort_order='ASCENDING', params=None):
-
-        # process parameters
-        params = params if params else {}
-        params['eventId'] = self.event_id
-        if audit_type and 'auditType' not in params.keys():
-            params['auditType'] = ','.join(audit_type).upper() if isinstance(audit_type, list) else audit_type.upper()
-        if sort_order and 'sortOrder' not in params.keys():
-            params['sortOrder'] = sort_order.upper()
-
+    # TODO: Test params
+    def get_audit(self, audit_type=None, sort_order=None, params=None):
+        audit_type = ','.join(audit_type) if isinstance(audit_type, list) else audit_type
+        arg_params = {'eventId': self.id, 'auditType': audit_type, 'sortOrder': sort_order}
         url = self._endpoints.get('get_audit').format(base_url=self.con.base_url)
-        data = self.con.get(url, params)
+        data = self.con.get(url, params=self.build_params(params, arg_params))
         return Pagination(self, data, factory.audit) if data.get('data') else []
+
+    def get_user_delivery_data(self, at, params=None):
+        arg_params = {'eventId': self.id, 'at': at}
+        url = self.build_url(self._endpoints.get('get_user_delivery_data'))
+        data = self.con.get(url, params=self.build_params(params, arg_params))
+        return Pagination(self, data, UserDeliveryData) if data.get('data') else []
+
+    def get_annotations(self, params=None):
+        url = self.build_url(self._endpoints.get('get_annotations'))
+        data = self.con.get(url, params)
+        annotations = data.get('annotations', {})
+        return Pagination(self, annotations, Annotation) if annotations.get('data') else []
+
+    # TODO: Test
+    def add_annotation(self, comment):
+        data = {'comment': comment}
+        url = self.build_url(self._endpoints.get('get_annotations'))
+        data = self.con.post(url, data=data)
+        return Annotation(self, data) if data else None
+
+    # TODO: Test
+    def update_status(self, status):
+        data = {'id': self.id,
+                'status': status}
+
+        url = self._endpoints.get('update_status').format(base_url=self.con.base_url)
+        data = self.con.post(url, data=data)
+        return Event(self, data) if data else None
 
     @property
     def annotations(self):
-        url = self.build_url(self._endpoints.get('annotations'))
-        data = self.con.get(url)
-        annotations = data.get('annotations')
-        return Pagination(self, annotations, Annotation) if annotations.get('data') else []
+        return self.get_annotations()
 
     @property
     def messages(self):

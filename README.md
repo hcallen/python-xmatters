@@ -1,7 +1,7 @@
 # python-xmatters
 
-python-xmatters is a wrapper for the xMatters API. It is very much still in development and only GET requests are
-currently implemented.
+python-xmatters is a wrapper for the xMatters API. It is very much in development and **only GET requests have
+been tested**.
 
 ## Features
 
@@ -21,7 +21,7 @@ currently implemented.
 ## Usage
 
 Review source code and the [xMatters REST API Reference](https://help.xmatters.com/xmapi/)
-for methods and parameters.
+for methods, parameters, and objects.
 
 ### Authentication
 

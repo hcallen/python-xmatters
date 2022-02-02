@@ -1,4 +1,5 @@
 import xmatters.utils as util
+import xmatters.factories as factory
 from xmatters.xm_objects.common import Recipient, ReferenceByIdAndSelfLink, RecipientReference
 from xmatters.xm_objects.oncall import OnCall, SelfLink
 from xmatters.xm_objects.people import Person
@@ -51,6 +52,8 @@ class Group(Recipient):
                   'get_oncall': '{base_url}/on-call?groups={group_id}',
                   'observers': '?embed=observers',
                   'get_shifts': '/shifts',
+                  'add_member': '/members',
+                  'delete_member': '/members/member_id',
                   'get_members': '/members?embed=shifts',
                   'get_shift_by_id': '/shifts/{shift_id}'}
 
@@ -104,6 +107,18 @@ class Group(Recipient):
         data = self.con.get(url, params)
         return Pagination(self, data, GroupMembership) if data.get('data') else []
 
+    # TODO: Test
+    def add_member(self, data):
+        url = self.build_url(self._endpoints.get('add_member'))
+        data = self.con.post(url, data=data)
+        return factory.recipient(self, data) if data else None
+
+    # TODO: Test
+    def remove_member(self, member_id):
+        url = self.build_url(self._endpoints.get('remove_member').format(member_id=member_id))
+        data = self.con.delete(url)
+        return GroupMembership(self, data) if data else None
+
     def get_observers(self):
         return self.observers
 
@@ -112,5 +127,3 @@ class Group(Recipient):
 
     def __str__(self):
         return self.__repr__()
-
-

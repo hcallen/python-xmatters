@@ -36,7 +36,7 @@ class TestDevices:
                 'id': device.id,
                 'privileged': False,
                 'emailAddress': 'test2@test.com'}
-        mod_device = xm_sb.devices().modify_device(data=data)
+        mod_device = xm_sb.devices().update_device(data=data)
         assert isinstance(mod_device, EmailDevice)
         assert mod_device.email_address == 'test2@test.com'
 

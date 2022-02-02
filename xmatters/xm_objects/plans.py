@@ -95,6 +95,18 @@ class Plan(ApiBridge):
         sub_forms = self.con.get(url, params)
         return Pagination(self, sub_forms, SubscriptionForm) if sub_forms.get('data') else []
 
+    # TODO: Test
+    def create_form(self, data):
+        url = self.build_url(self._endpoints.get('get_forms'))
+        data = self.con.post(url, data=data)
+        return forms.Form(self, data) if data else None
+
+    # TODO: Test
+    def update_form(self, data):
+        url = self.build_url(self._endpoints.get('get_forms'))
+        data = self.con.post(url, data=data)
+        return forms.Form(self, data) if data else None
+
     @property
     def creator(self):
         url = self.build_url(self._endpoints.get('creator'))
@@ -126,5 +138,3 @@ class Plan(ApiBridge):
 
     def __str__(self):
         return self.__repr__()
-
-
