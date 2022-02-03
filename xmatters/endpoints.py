@@ -1,4 +1,3 @@
-from datetime import datetime
 import xmatters.factories as factory
 import xmatters.xm_objects.forms
 from xmatters.connection import ApiBridge
@@ -22,7 +21,6 @@ from xmatters.xm_objects.sites import Site
 from xmatters.xm_objects.subscription_forms import SubscriptionForm
 from xmatters.xm_objects.subscriptions import Subscription
 from xmatters.xm_objects.temporary_absences import TemporaryAbsence
-import xmatters.utils as util
 
 
 class AuditsEndpoint(ApiBridge):
@@ -37,7 +35,7 @@ class AuditsEndpoint(ApiBridge):
 
         self._endpoints = {'get_audit': '/audits'}
 
-    def get_audit(self, event_id, audit_type=None, sort_order=None, params=None):
+    def get_audit(self, event_id, audit_type=None, sort_order=None):
         """
         Perform an audit on a specified event id.
         :param event_id: xMatters event id
@@ -46,16 +44,14 @@ class AuditsEndpoint(ApiBridge):
         :type audit_type: str or list, optional
         :param sort_order: Sort order of the results
         :type sort_order: str, optional
-        :param params: Parameters to apply to the request
-        :type params: dict, optional
         :return: Pagination of audit objects
         :rtype: :class:`xmatters.xm_objects.common.Pagination`
         """
-
-        audit_type = ','.join(audit_type) if isinstance(audit_type, list) else audit_type
-        arg_params = {'eventId': event_id, 'auditType': audit_type, 'sortOrder': sort_order}
+        params = {'eventId': event_id,
+                  'auditType': audit_type,
+                  'sortOrder': sort_order}
         url = self.build_url(self._endpoints.get('get_audit'))
-        data = self.con.get(url=url, params=self.build_params(arg_params, params))
+        data = self.con.get(url=url, params=params)
         return Pagination(self, data, factory.audit) if data.get('data') else []
 
     def __repr__(self):
@@ -77,16 +73,17 @@ class DevicesEndpoint(ApiBridge):
         """
         super(DevicesEndpoint, self).__init__(parent)
 
-    def get_devices(self, device_status=None, device_type=None, device_names=None, phone_number_format=None,
-                    params=None):
-        device_names = ','.join(device_names) if isinstance(device_names, list) else device_names
-        arg_params = {'deviceStatus': device_status, 'deviceType': device_type,
-                      'phoneNumberFormat': phone_number_format, 'deviceNames': device_names}
+    def get_devices(self, device_status=None, device_type=None, device_names=None, phone_number_format=None):
+        params = {'deviceStatus': device_status,
+                  'deviceType': device_type,
+                  'phoneNumberFormat': phone_number_format,
+                  'deviceNames': device_names}
         url = self.build_url(self._endpoints.get('get_devices'))
-        data = self.con.get(url=url, params=self.build_params(arg_params, params))
+        data = self.con.get(url=url, params=params)
         return Pagination(self, data, factory.device) if data.get('data') else []
 
-    def get_device_by_id(self, device_id, params=None):
+    def get_device_by_id(self, device_id, at=None):
+        params = {'at': self.process_time_param(at)}
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
         data = self.con.get(url=url, params=params)
         return factory.device(self, data) if data else None
@@ -121,11 +118,13 @@ class DeviceNamesEndpoint(ApiBridge):
         super(DeviceNamesEndpoint, self).__init__(parent)
 
     # TODO: Test params
-    def get_device_names(self, device_types=None, search=None, sort_by=None, sort_order=None, params=None):
-        device_types = ','.join(device_types) if isinstance(device_types, list) else device_types
-        arg_params = {'search': search, 'sortBy': sort_by, 'sortOrder': sort_order, 'deviceTypes': device_types}
+    def get_device_names(self, device_types=None, search=None, sort_by=None, sort_order=None):
+        params = {'search': search,
+                  'sortBy': sort_by,
+                  'sortOrder': sort_order,
+                  'deviceTypes': device_types}
         url = self.build_url(self._endpoints.get('get_device_names'))
-        data = self.con.get(url=url, params=self.build_params(arg_params, params))
+        data = self.con.get(url=url, params=params)
         return Pagination(self, data, factory.device_name) if data.get('data') else []
 
     def create_device_name(self, data):
@@ -156,9 +155,9 @@ class DeviceTypesEndpoint(ApiBridge):
     def __init__(self, parent):
         super(DeviceTypesEndpoint, self).__init__(parent)
 
-    def get_device_types(self, params=None):
+    def get_device_types(self):
         url = self.build_url(self._endpoints.get('get_device_types'))
-        data = self.con.get(url, params)
+        data = self.con.get(url)
         return DeviceTypes(data) if data else None
 
     def __repr__(self):
@@ -172,14 +171,22 @@ class DynamicTeamsEndpoint(ApiBridge):
     _endpoints = {'get_dynamic_teams': '/dynamic-teams',
                   'get_dynamic_team_by_id': '/dynamic-teams/{dynamic_team_id}'}
 
-    def get_dynamic_teams(self, params=None):
+    # TODO: Test params
+    def get_dynamic_teams(self, search=None, fields=None, operand=None, supervisors=None, sort_by=None,
+                          sort_order=None):
+        params = {'search': '+'.join(search) if search else None,
+                  'fields': fields,
+                  'operand': operand,
+                  'supervisors': supervisors,
+                  'sortBy': sort_by,
+                  'sortOrder': sort_order}
         url = self.build_url(self._endpoints.get('get_dynamic_teams'))
         data = self.con.get(url, params)
         return Pagination(self, data, DynamicTeam) if data.get('data') else []
 
-    def get_dynamic_team_by_id(self, dynamic_team_id, params=None):
+    def get_dynamic_team_by_id(self, dynamic_team_id):
         url = self.build_url(self._endpoints.get('get_dynamic_team_by_id').format(dynamic_team_id=dynamic_team_id))
-        data = self.con.get(url, params)
+        data = self.con.get(url)
         return DynamicTeam(self, data) if data else None
 
     # TODO: Test
@@ -218,12 +225,36 @@ class EventsEndpoint(ApiBridge):
     def __init__(self, parent):
         super(EventsEndpoint, self).__init__(parent)
 
-    def get_events(self, params=None):
+    # TODO: Test params
+    def get_events(self, property_name=None, property_value=None, property_value_operator=None, status=None,
+                   priority=None, plan=None, form=None, request_id=None, event_type=None, sort_by=None, sort_order=None,
+                   submitter_id=None, search=None, targeted_recipients=None, resolved_users=None, from_=None, to=None,
+                   at=None):
+        params = {'propertyName': property_name,
+                  'propertyValue': property_value,
+                  'propertyValueOperator': property_value_operator,
+                  'status': status,
+                  'priority': priority,
+                  'plan': plan,
+                  'form': form,
+                  'requestId': request_id,
+                  'eventType': event_type,
+                  'sortBy': sort_by,
+                  'sortOrder': sort_order,
+                  'submitterid': submitter_id,
+                  'search': '+'.join(search) if search else None,
+                  'targetedRecipients': targeted_recipients,
+                  'resolvedUsers': resolved_users,
+                  'from': self.process_time_param(from_),
+                  'to': self.process_time_param(to),
+                  'at': self.process_time_param(at)}
         url = self.build_url(self._endpoints.get('get_events'))
         data = self.con.get(url, params)
         return Pagination(self, data, Event) if data.get('data') else []
 
-    def get_event_by_id(self, event_id, params=None):
+    # TODO: Test params
+    def get_event_by_id(self, event_id, at=None):
+        params = {'at': self.process_time_param(at)}
         url = self.build_url(self._endpoints.get('get_event_by_id').format(event_id=event_id))
         data = self.con.get(url, params)
         return Event(self, data) if data else None
@@ -383,7 +414,7 @@ class ImportJobsEndpoint(ApiBridge):
 
     def get_import_jobs(self, params=None):
         url = self.build_url(self._endpoints.get('get_import_jobs'))
-        data = self.con.get(url, params).get('data')
+        data = self.con.get(url, params).get('data', {})
         return [Import(self, job) for job in data] if data else []
 
     # TODO: Test
@@ -437,7 +468,6 @@ class OnCallEndpoint(ApiBridge):
         super(OnCallEndpoint, self).__init__(parent)
 
     def get_oncall(self, group_ids, params=None):
-        group_ids = ','.join(group_ids) if isinstance(group_ids, list) else group_ids
         url = self.build_url(self._endpoints.get('get_oncall').format(group_ids=group_ids))
         data = self.con.get(url, params)
         return Pagination(self, data, OnCall) if data.get('data') else []
@@ -456,7 +486,6 @@ class OnCallSummaryEndpoint(ApiBridge):
         super(OnCallSummaryEndpoint, self).__init__(parent)
 
     def get_oncall_summary(self, group_ids, params=None):
-        group_ids = ','.join(group_ids) if isinstance(group_ids, list) else group_ids
         url = self.build_url(self._endpoints.get('get_oncall_summary').format(group_ids=group_ids))
         data = self.con.get(url, params)
         return [OnCallSummary(self, summary) for summary in data] if data else []
@@ -476,27 +505,33 @@ class PeopleEndpoint(ApiBridge):
         super(PeopleEndpoint, self).__init__(parent)
 
     # TODO: Test params
-    def get_people(self, search=None, operand=None, fields=None, property_names=None, property_values=None,
+    def get_people(self, search=None, fields=None, operand=None, property_names=None, property_values=None,
                    devices_exist=None, devices_test_status=None, site=None, status=None, supervisors_exists=None,
                    groups=None, groups_exist=None, roles=None, supervisors=None, created_from=None, created_to=None,
-                   created_before=None, created_after=None, sort_by=None, sort_order=None, at=None, params=None):
-
-        # process list params
-        search = '+'.join(search) if isinstance(search, list) else search
-        for param in (fields, property_names, property_values, groups, roles, supervisors):
-            param = ','.join(param) if isinstance(param, list) else param
-        # process time params
-        for param in (created_from, created_to, created_before, created_after):
-            param = param if isinstance(at, datetime) else util.TimeAttribute(param)
-        arg_params = {'search': search, 'operand': operand, 'fields': fields, 'propertyNames': property_names,
-                      'propertyValues': property_values, 'devices.exists': devices_exist,
-                      'devices.testStatus': devices_test_status, 'site': site, 'status': status,
-                      'supervisors.exists': supervisors_exists, 'groups': groups, 'groups.exists': groups_exist,
-                      'roles': roles, 'supervisors': supervisors, 'createdFrom': created_from,
-                      'createdTo': created_to, 'createdBefore': created_before, 'createdAfter': created_after,
-                      'sortBy': sort_by, 'sortOrder': sort_order, 'at': at}
+                   created_before=None, created_after=None, sort_by=None, sort_order=None, at=None):
+        params = {'search': '+'.join(search) if search else None,
+                  'fields': fields,
+                  'operand': operand,
+                  'propertyNames': property_names,
+                  'propertyValues': property_values,
+                  'devices.exists': devices_exist,
+                  'devices.testStatus': devices_test_status,
+                  'site': site,
+                  'status': status,
+                  'supervisors.exists': supervisors_exists,
+                  'groups': groups,
+                  'groups.exists': groups_exist,
+                  'roles': roles,
+                  'supervisors': supervisors,
+                  'createdFrom': self.process_time_param(created_from),
+                  'createdTo': self.process_time_param(created_to),
+                  'createdBefore': self.process_time_param(created_before),
+                  'createdAfter': self.process_time_param(created_after),
+                  'sortBy': sort_by,
+                  'sortOrder': sort_order,
+                  'at': self.process_time_param(at)}
         url = self.build_url(self._endpoints.get('get_people'))
-        data = self.con.get(url, self.build_params(arg_params, params))
+        data = self.con.get(url, params=params)
         return Pagination(self, data, Person) if data.get('data') else []
 
     def get_person_by_id(self, person_id, params=None):
@@ -508,14 +543,14 @@ class PeopleEndpoint(ApiBridge):
                             email_address=None):
         if all(p is None for p in (first_name, last_name, target_name, web_login, phone_number, email_address)):
             raise ValueError('must assign a parameter to query by')
-        arg_params = {'firstName': first_name,
-                      'lastName': last_name,
-                      'targetName': target_name,
-                      'webLogin': web_login,
-                      'phoneNumber': phone_number,
-                      'emailAddress': email_address}
+        params = {'firstName': first_name,
+                  'lastName': last_name,
+                  'targetName': target_name,
+                  'webLogin': web_login,
+                  'phoneNumber': phone_number,
+                  'emailAddress': email_address}
         url = self.build_url(self._endpoints.get('get_people'))
-        data = self.con.get(url, params=self.build_params(arg_params=arg_params))
+        data = self.con.get(url, params=params)
         return Pagination(self, data, Person) if data.get('data') else []
 
     # TODO: Test

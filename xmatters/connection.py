@@ -7,6 +7,7 @@ from urllib3.util.retry import Retry
 import xmatters.errors as err
 import xmatters.utils as util
 
+
 class Connection(object):
     def __init__(self, base_url, session, **kwargs):
         self.base_url = base_url
@@ -28,10 +29,10 @@ class Connection(object):
         return self.request('DELETE', url=url)
 
     def request(self, method, url, data=None, params=None):
-        if data and params:
-            r = self.session.request(method=method, url=url, json=data, params=params, timeout=self.timeout)
-        elif params:
-            r = self.session.request(method=method, url=url, params=params, timeout=self.timeout)
+        if params:
+
+            r = self.session.request(method=method, url=url, params={k: v for k, v in params.items() if v},
+                                     timeout=self.timeout)
         elif data:
             r = self.session.request(method=method, url=url, json=data, timeout=self.timeout)
         else:
@@ -87,14 +88,12 @@ class ApiBridge(object):
         return '{}{}'.format(url_prefix, endpoint)
 
     @staticmethod
-    def build_params(arg_params, params=None):
-        params = params if params else {}
-        for k, v in arg_params.items():
-            if v and k not in params.keys():
-                if isinstance(v, datetime):
-                    params[k] = v.isoformat()
-                elif isinstance(v, util.TimeAttribute) and v.datetime().tzname() is None:
-                    params[k] = v.local_datetime().isoformat()
-                else:
-                    params[k] = v
-        return params
+    def process_time_param(param):
+        if param:
+            param = util.TimeAttribute(param)
+            # if timezone defined in string
+            if param.datetime().tzname():
+                return param
+            # use local timezone
+            else:
+                return param.local_datetime().isoformat()

@@ -18,6 +18,7 @@ class TestEvents:
                 assert iter(list(event.messages))
                 assert isinstance(event.properties, dict)
                 assert iter(list(event.recipients))
+                assert iter(list(event.targeted_recipients))
                 assert iter(event.response_options)
             except err.NotFoundError:
                 # skip audits not found due to not being on the cassette

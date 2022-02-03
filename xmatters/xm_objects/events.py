@@ -193,12 +193,14 @@ class Annotation(ApiBridge):
 class Event(ApiBridge):
     _endpoints = {'messages': '?embed=messages',
                   'get_annotations': '/annotations',
+                  'get_annotation_by_id': '/annotations/{ann_id}',
                   'properties': '?embed=properties',
                   'recipients': '?embed=recipients',
                   'response_options': '?embed=responseOptions',
                   'get_user_delivery_data': '/user-deliveries',
                   'get_audit': '{base_url}/audits',
-                  'update_status': '{base_url}/events'}
+                  'update_status': '{base_url}/events',
+                  'targeted_recipients': '?embed=recipients&targeted=true'}
 
     def __init__(self, parent, data):
         super(Event, self).__init__(parent, data)
@@ -234,19 +236,20 @@ class Event(ApiBridge):
         self.links = SelfLink(self, links) if links else None
 
     # TODO: Test params
-    def get_audit(self, audit_type=None, sort_order=None, params=None):
+    def get_audit(self, audit_type=None, sort_order=None):
         audit_type = ','.join(audit_type) if isinstance(audit_type, list) else audit_type
-        arg_params = {'eventId': self.id, 'auditType': audit_type, 'sortOrder': sort_order}
+        params = {'eventId': self.id, 'auditType': audit_type, 'sortOrder': sort_order}
         url = self._endpoints.get('get_audit').format(base_url=self.con.base_url)
-        data = self.con.get(url, params=self.build_params(arg_params, params))
+        data = self.con.get(url, params=params)
         return Pagination(self, data, xmatters.factories.audit) if data.get('data') else []
 
     # TODO: Test datetime w/ at
-    def get_user_delivery_data(self, at, params=None):
+    def get_user_delivery_data(self, at):
         at = at if isinstance(at, datetime) else util.TimeAttribute(at)
-        arg_params = {'eventId': self.id, 'at': at}
+        params = {'eventId': self.id,
+                  'at': self.process_time_param(at)}
         url = self.build_url(self._endpoints.get('get_user_delivery_data'))
-        data = self.con.get(url, params=self.build_params(arg_params, params))
+        data = self.con.get(url, params=params)
         return Pagination(self, data, UserDeliveryData) if data.get('data') else []
 
     def get_annotations(self, params=None):
@@ -254,6 +257,12 @@ class Event(ApiBridge):
         data = self.con.get(url, params)
         annotations = data.get('annotations', {})
         return Pagination(self, annotations, Annotation) if annotations.get('data') else []
+
+    # TODO: Test
+    def get_annotation_by_id(self, annotation_id):
+        url = self.build_url(self._endpoints.get('get_annotation_by_id').format(ann_id=annotation_id))
+        data = self.con.get(url)
+        return Annotation(self, data) if data else None
 
     # TODO: Test
     def add_annotation(self, comment):
@@ -301,6 +310,14 @@ class Event(ApiBridge):
         data = self.con.get(url)
         response_options = data.get('responseOptions', {}).get('data')
         return [ResponseOption(r) for r in response_options] if response_options else []
+
+    # TODO: Test
+    @property
+    def targeted_recipients(self):
+        url = self.build_url(self._endpoints.get('targeted_recipients'))
+        data = self.con.get(url)
+        recipients = data.get('recipients')
+        return Pagination(self, recipients, Message) if recipients.get('data') else []
 
     def __repr__(self):
         return '<{} Created: {} Type: {}>'.format(self.__class__.__name__, self.created, self.event_type)
