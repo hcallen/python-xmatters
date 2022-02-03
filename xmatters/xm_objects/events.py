@@ -209,14 +209,17 @@ class Event(ApiBridge):
         self.bypass_phone_intro = data.get('bypassPhoneIntro')
         created = data.get('created')
         self.created = util.TimeAttribute(created) if created else None
-        self.conference = Conference(data.get('conference')) if data.get('conference') else None
+        conference = data.get('conference')
+        self.conference = Conference(conference) if conference else None
         self.escalation_override = data.get('escalationOverride')
         self.event_id = data.get('eventId')
         self.event_type = data.get('eventType')
         self.expiration_in_minutes = data.get('expirationInMinutes')
         self.flood_control = data.get('floodControl')
-        self.plan = PlanReference(data.get('plan')) if data.get('plan') else None
-        self.form = forms.FormReference(data.get('form')) if data.get('form') else None
+        plan = data.get('plan')
+        self.plan = PlanReference(plan) if plan else None
+        form = data.get('form')
+        self.form = forms.FormReference(form) if form else None
         self.id = data.get('id')
         self.incident = data.get('incident')
         self.override_device_restrictions = data.get('overrideDeviceRestrictions')
@@ -285,10 +288,9 @@ class Event(ApiBridge):
         return Pagination(self, data, xmatters.factories.audit) if data.get('data') else []
 
     # TODO: Test datetime w/ at
-    def get_user_delivery_data(self, at):
-        at = at if isinstance(at, datetime) else util.TimeAttribute(at)
+    def get_user_delivery_data(self, at_time):
         params = {'eventId': self.id,
-                  'at': self.process_time_param(at)}
+                  'at': self.process_time_param(at_time)}
         url = self.build_url(self._endpoints.get('get_user_delivery_data'))
         data = self.con.get(url, params=params)
         return Pagination(self, data, UserDeliveryData) if data.get('data') else []

@@ -45,9 +45,11 @@ class Subscription(ApiBridge):
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
 
-    def get_subscribers(self):
+    def get_subscribers(self, offset=None):
+        params = {'offset': offset,
+                  'limit': util.MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_subscribers'))
-        subscribers = self.con.get(url)
+        subscribers = self.con.get(url, params=params)
         return Pagination(self, subscribers, Person) if subscribers.get('data') else []
 
     def __repr__(self):

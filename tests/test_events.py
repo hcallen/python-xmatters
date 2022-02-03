@@ -13,7 +13,7 @@ class TestEvents:
             try:
                 assert iter(list(event.get_audit()))
                 at_param = event.created.datetime().replace(minute=59, second=59).isoformat()
-                assert iter(list(event.get_user_delivery_data(at=at_param)))
+                assert iter(list(event.get_user_delivery_data(at_time=at_param)))
                 assert iter(list(event.get_annotations()))
                 assert iter(list(event.messages))
                 assert isinstance(event.properties, dict)

@@ -45,7 +45,8 @@ _audit_types = {'EVENT_ANNOTATED': xmatters.xm_objects.audits.AuditAnnotation,
                 'EVENT_COMPLETED': xmatters.xm_objects.audits.Audit,
                 'EVENT_TERMINATED': xmatters.xm_objects.audits.Audit,
                 'RESPONSE_RECEIVED': xmatters.xm_objects.audits.AuditResponse,
-                'NOTIFICATION_DELIVERED': xmatters.xm_objects.audits.AuditNotification}
+                'NOTIFICATION_DELIVERED': xmatters.xm_objects.audits.AuditNotification,
+                'NOTIFICATION_FAILED': xmatters.xm_objects.audits.AuditNotification}
 
 
 def audit(parent, data):

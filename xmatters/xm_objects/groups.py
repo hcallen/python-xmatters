@@ -81,9 +81,9 @@ class Group(Recipient):
     def supervisors(self):
         return self.get_supervisors()
 
-    def get_supervisors(self, params=None):
+    def get_supervisors(self):
         url = self.build_url(self._endpoints.get('get_supervisors'))
-        data = self.con.get(url, params)
+        data = self.con.get(url)
         return Pagination(self, data, xmatters.xm_objects.people.Person) if data.get('data') else []
 
     def get_oncall(self, params=None):
@@ -91,14 +91,16 @@ class Group(Recipient):
         data = self.con.get(url, params=params)
         return Pagination(self, data, OnCall) if data.get('data') else []
 
-    def get_shifts(self, params=None):
+    def get_shifts(self, at=None):
+        params = {'at': self.process_time_param(at)}
         url = self.build_url(self._endpoints.get('get_shifts'))
         data = self.con.get(url, params)
         return Pagination(self, data, Shift) if data.get('data') else []
 
-    def get_shift_by_id(self, shift_id):
+    def get_shift_by_id(self, shift_id, at=None):
+        params = {'at': self.process_time_param(at)}
         url = self.build_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
-        data = self.con.get(url)
+        data = self.con.get(url, params=params)
         return Shift(self, data) if data else None
 
     # TODO: Test
@@ -113,9 +115,9 @@ class Group(Recipient):
         data = self.con.delete(url)
         return Shift(self, data) if data else None
 
-    def get_members(self, params=None):
+    def get_members(self):
         url = self.build_url(self._endpoints.get('get_members'))
-        data = self.con.get(url, params)
+        data = self.con.get(url)
         return Pagination(self, data, GroupMembership) if data.get('data') else []
 
     # TODO: Test

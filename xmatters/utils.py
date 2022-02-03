@@ -2,6 +2,7 @@ import json
 import pathlib
 from dateutil import tz, parser
 
+MAX_API_LIMIT = 1000
 
 class TimeAttribute(str):
     def datetime(self):

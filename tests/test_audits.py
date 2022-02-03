@@ -10,6 +10,7 @@ class TestAudits:
         for event in events:
             try:
                 audits = list(xm_test.audits().get_audit(event_id=event.id))
+                print(event.id)
                 assert iter(audits)
                 for audit_object in audits:
                     assert audit_object.id is not None

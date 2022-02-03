@@ -26,6 +26,7 @@ class Replacer(ApiBridge):
 class ShiftOccurrenceMember(ApiBridge):
     def __init__(self, parent, data):
         super(ShiftOccurrenceMember, self).__init__(parent, data)
+        # TODO: update to recipient factory
         self.member = Recipient(self, data.get('member'))
         self.position = data.get('position')
         self.delay = data.get('delay')
@@ -65,14 +66,21 @@ class TemporaryReplacement(ApiBridge):
 class OnCall(ApiBridge):
     def __init__(self, parent, data):
         super(OnCall, self).__init__(parent)
-        self.group = GroupReference(parent, data.get('group'))
-        self.shift = ShiftReference(parent, data.get('shift', {}))
+        group = data.get('group')
+        self.group = GroupReference(parent, group) if group else None
+        shift = data.get('shift')
+        self.shift = ShiftReference(parent, shift) if shift else None
         start = data.get('start')
         self.start = util.TimeAttribute(start) if start else None
         end = data.get('end')
         self.end = util.TimeAttribute(end) if end else None
         members = data.get('members', {})
         self.members = Pagination(self, members, ShiftOccurrenceMember) if members.get('data') else []
+
+    # TODO: update to include full shift instead of reference
+    # @property
+    # def shift(self):
+    #     pass
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

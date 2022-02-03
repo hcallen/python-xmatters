@@ -1,6 +1,6 @@
 import xmatters.utils as util
 from xmatters.connection import ApiBridge
-from xmatters.xm_objects.common import ReferenceByIdAndSelfLink, SelfLink, Recipient
+from xmatters.xm_objects.common import ReferenceByIdAndSelfLink, SelfLink, Recipient, Pagination
 
 
 class GroupReference(ApiBridge):
@@ -110,8 +110,8 @@ class Shift(ApiBridge):
 
     def get_members(self):
         url = self.build_url(self._endpoints.get('get_members'))
-        data = self.con.get(url).get('data')
-        return [ShiftMember(self, m) for m in data]
+        members = self.con.get(url) # .get('data',[])
+        return Pagination(self, members, ShiftMember) if members.get('data') else []
 
     # TODO: Test
     def add_member(self, data):

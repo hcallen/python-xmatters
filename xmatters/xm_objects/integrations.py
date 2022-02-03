@@ -1,4 +1,4 @@
-from xmatters.xm_objects.common import ReferenceById, Pagination
+from xmatters.xm_objects.common import ReferenceById, Pagination, SelfLink
 from xmatters.xm_objects.people import PersonReference
 import xmatters.xm_objects.plan_endpoints
 import xmatters.xm_objects.plans
@@ -43,7 +43,7 @@ class IntegrationLog(ApiBridge):
 
 
 class Integration(ApiBridge):
-    _endpoints = {'get_logs': '{base_url}/plans/{plan_id}/integrations/{int_id}/logs'}
+    _endpoints = {'get_logs': '/logs'}
 
     def __init__(self, parent, data):
         super(Integration, self).__init__(parent, data)
@@ -65,12 +65,14 @@ class Integration(ApiBridge):
         self.migrated_outbound_trigger = data.get('migratedOutboundTrigger')
         self.origin_type = data.get('originType')
         self.is_run_by_service_owner = data.get('isRunByServiceOwner')
+        links = data.get('links')
+        self.links = SelfLink(self, links) if links else None
 
-    def get_logs(self, params=None):
-        endpoint = self._endpoints.get('get_logs').format(base_url=self.con.base_url,
-                                                          plan_id=self.plan.id, int_id=self.id)
+    # TODO: Test
+    def get_logs(self):
+        endpoint = self.build_url(self._endpoints.get('get_logs'))
         url = self.build_url(endpoint)
-        logs = self.con.get(url, params)
+        logs = self.con.get(url)
         return Pagination(self, logs, IntegrationLog) if logs.get('data') else []
 
     @property

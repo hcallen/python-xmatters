@@ -6,41 +6,49 @@ from xmatters.xm_objects.devices import EmailDevice, Device
 
 
 class TestDevices:
-    @my_vcr.use_cassette('test_devices.json')
+    @my_vcr.use_cassette('test_get_devices.json')
     def test_get_devices(self, xm_test):
         devices = list(xm_test.devices().get_devices())
+        assert len(devices) > 0
         for device in devices:
             assert device.id is not None
             assert iter(list(device.timeframes))
 
-    @my_vcr.use_cassette('test_devices.json')
+    @my_vcr.use_cassette('test_get_device_by_id.json')
     def test_get_device_by_id(self, xm_test):
         devices = list(xm_test.devices().get_devices())
+        assert len(devices) > 0
         for device in devices:
             device_by_id = xm_test.devices().get_device_by_id(device.id)
+            assert device.id is not None
             assert isinstance(device_by_id, Device)
 
-    @my_vcr.use_cassette('test_devices.json')
+    @my_vcr.use_cassette('test_get_devices_param_status.json')
     def test_get_devices_param_status(self, xm_test):
         devices = list(xm_test.devices().get_devices(device_status='INACTIVE'))
+        assert len(devices) > 0
         for device in devices:
             assert device.status == 'INACTIVE'
 
-    @my_vcr.use_cassette('test_devices.json')
+    @my_vcr.use_cassette('test_get_devices_param_type.json')
     def test_get_devices_param_type(self, xm_test):
         devices = list(xm_test.devices().get_devices(device_type='EMAIL'))
+        assert len(devices) > 0
         for device in devices:
             assert device.device_type == 'EMAIL'
 
-    @my_vcr.use_cassette('test_devices.json')
+    @my_vcr.use_cassette('test_get_devices_param_name.json')
     def test_get_devices_param_name(self, xm_test):
-        devices = list(xm_test.devices().get_devices(device_names=['Work Email', 'Home Email']))
+        # TODO: Test limitations with params w/ pagination objects; param ordering issue?
+        devices = list(xm_test.devices().get_devices(device_names=['Home Email', 'Work Email']))
+        assert len(devices) > 0
         for device in devices:
             assert device.name in ('Work Email', 'Home Email')
 
-    @my_vcr.use_cassette('test_devices.json')
+    @my_vcr.use_cassette('test_get_devices_param_phone_format.json')
     def test_get_devices_param_phone_format(self, xm_test):
         devices = list(xm_test.devices().get_devices(device_type='VOICE', phone_number_format='COUNTRY_CODE'))
+        assert len(devices) > 0
         for device in devices:
             assert ' ' in device.phone_number
 

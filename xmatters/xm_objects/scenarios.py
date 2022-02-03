@@ -88,6 +88,20 @@ class Scenario(ApiBridge):
         data = self.con.get(url)
         return data.get('properties', {})
 
+    # TODO: embeds
+    # @property
+    # def properties_translations(self):
+    #     pass
+    #
+    # @property
+    # def plan(self):
+    #     pass
+    #
+    # @property
+    # def form(self):
+    #     pass
+
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
