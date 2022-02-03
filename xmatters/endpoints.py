@@ -284,7 +284,9 @@ class EventSuppressionsEndpoint(ApiBridge):
     def __init__(self, parent):
         super(EventSuppressionsEndpoint, self).__init__(parent)
 
-    def get_event_suppressions_by_event_id(self, event_id, params=None):
+    def get_event_suppressions_by_event_id(self, event_id, sort_by, sort_order):
+        params = {'sortBy': sort_by,
+                  'sortOrder': sort_order}
         url = self.build_url(self._endpoints.get('get_event_suppressions_by_event_id').format(event_id))
         data = self.con.get(url, params)
         return Pagination(self, data, EventSuppression) if data.get('data') else []

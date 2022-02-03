@@ -8,6 +8,7 @@ from xmatters.xm_objects.people import PersonReference
 from xmatters.xm_objects.plans import PlanReference
 from datetime import datetime
 
+
 class Message(object):
     def __init__(self, data):
         self.id = data.get('id')
@@ -200,7 +201,8 @@ class Event(ApiBridge):
                   'get_user_delivery_data': '/user-deliveries',
                   'get_audit': '{base_url}/audits',
                   'update_status': '{base_url}/events',
-                  'targeted_recipients': '?embed=recipients&targeted=true'}
+                  'targeted_recipients': '?embed=recipients&targeted=true',
+                  'get_suppressions': '{base_url}/event-suppressions?event={event_id}'}
 
     def __init__(self, parent, data):
         super(Event, self).__init__(parent, data)
@@ -234,6 +236,45 @@ class Event(ApiBridge):
         self.voicemail_options = VoicemailOptions(voicemail_options) if voicemail_options else None
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
+
+    @property
+    def annotations(self):
+        return self.get_annotations()
+
+    @property
+    def messages(self):
+        url = self.build_url(self._endpoints.get('messages'))
+        data = self.con.get(url)
+        messages = data.get('messages')
+        return Pagination(self, messages, Message) if messages.get('data') else []
+
+    @property
+    def properties(self):
+        url = self.build_url(self._endpoints.get('properties'))
+        data = self.con.get(url)
+        return data.get('properties', {})
+
+    @property
+    def recipients(self):
+        url = self.build_url(self._endpoints.get('recipients'))
+        data = self.con.get(url)
+        recipients = data.get('recipients')
+        return Pagination(self, recipients, Message) if recipients.get('data') else []
+
+    @property
+    def response_options(self):
+        url = self.build_url(self._endpoints.get('response_options'))
+        data = self.con.get(url)
+        response_options = data.get('responseOptions', {}).get('data')
+        return [ResponseOption(r) for r in response_options] if response_options else []
+
+    # TODO: Test
+    @property
+    def targeted_recipients(self):
+        url = self.build_url(self._endpoints.get('targeted_recipients'))
+        data = self.con.get(url)
+        recipients = data.get('recipients')
+        return Pagination(self, recipients, Message) if recipients.get('data') else []
 
     # TODO: Test params
     def get_audit(self, audit_type=None, sort_order=None):
@@ -280,44 +321,13 @@ class Event(ApiBridge):
         data = self.con.post(url, data=data)
         return Event(self, data) if data else None
 
-    @property
-    def annotations(self):
-        return self.get_annotations()
-
-    @property
-    def messages(self):
-        url = self.build_url(self._endpoints.get('messages'))
-        data = self.con.get(url)
-        messages = data.get('messages')
-        return Pagination(self, messages, Message) if messages.get('data') else []
-
-    @property
-    def properties(self):
-        url = self.build_url(self._endpoints.get('properties'))
-        data = self.con.get(url)
-        return data.get('properties', {})
-
-    @property
-    def recipients(self):
-        url = self.build_url(self._endpoints.get('recipients'))
-        data = self.con.get(url)
-        recipients = data.get('recipients')
-        return Pagination(self, recipients, Message) if recipients.get('data') else []
-
-    @property
-    def response_options(self):
-        url = self.build_url(self._endpoints.get('response_options'))
-        data = self.con.get(url)
-        response_options = data.get('responseOptions', {}).get('data')
-        return [ResponseOption(r) for r in response_options] if response_options else []
-
     # TODO: Test
-    @property
-    def targeted_recipients(self):
-        url = self.build_url(self._endpoints.get('targeted_recipients'))
-        data = self.con.get(url)
-        recipients = data.get('recipients')
-        return Pagination(self, recipients, Message) if recipients.get('data') else []
+    def get_suppressions(self, sort_by, sort_order):
+        params = {'sortBy': sort_by,
+                  'sortOrder': sort_order}
+        url = self._endpoints.get('update_status').format(base_url=self.con.base_url, event_id=self.id)
+        suppressions = self.con.get(url, params)
+        return Pagination(self, suppressions, EventSuppression) if suppressions.get('data') else []
 
     def __repr__(self):
         return '<{} Created: {} Type: {}>'.format(self.__class__.__name__, self.created, self.event_type)
