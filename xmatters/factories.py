@@ -84,13 +84,13 @@ def auth(data, auth_type):
     return o(data) if o else None
 
 
-_properties = {'BOOLEAN': xmatters.xm_objects.plan_properties .Boolean,
-               'HIERARCHY': xmatters.xm_objects.plan_properties .Hierarchy,
-               'LIST_TEXT_MULTI_SELECT': xmatters.xm_objects.plan_properties .MultLinkSelectList,
-               'LIST_TEXT_SINGLE_SELECT': xmatters.xm_objects.plan_properties .SingleSelectList,
-               'NUMBER': xmatters.xm_objects.plan_properties .Number,
-               'PASSWORD': xmatters.xm_objects.plan_properties .Password,
-               'TEXT': xmatters.xm_objects.plan_properties .Text}
+_properties = {'BOOLEAN': xmatters.xm_objects.plan_properties.Boolean,
+               'HIERARCHY': xmatters.xm_objects.plan_properties.Hierarchy,
+               'LIST_TEXT_MULTI_SELECT': xmatters.xm_objects.plan_properties.MultLinkSelectList,
+               'LIST_TEXT_SINGLE_SELECT': xmatters.xm_objects.plan_properties.SingleSelectList,
+               'NUMBER': xmatters.xm_objects.plan_properties.Number,
+               'PASSWORD': xmatters.xm_objects.plan_properties.Password,
+               'TEXT': xmatters.xm_objects.plan_properties.Text}
 
 
 def plan_property(data):
