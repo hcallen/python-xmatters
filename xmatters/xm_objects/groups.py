@@ -2,12 +2,11 @@ import xmatters.utils as util
 import xmatters.factories as factory
 from xmatters.xm_objects.common import Recipient, ReferenceByIdAndSelfLink, RecipientReference
 from xmatters.xm_objects.oncall import OnCall, SelfLink
-from xmatters.xm_objects.people import Person
 from xmatters.xm_objects.roles import Role
 from xmatters.xm_objects.shifts import Shift, GroupReference
 from xmatters.xm_objects.common import Pagination
 from xmatters.connection import ApiBridge
-
+import xmatters.xm_objects.people
 
 class GroupMembershipShiftReference(ApiBridge):
     """ Custom object for shift information embedded in a group membership response """
@@ -37,7 +36,7 @@ class GroupMembership(ApiBridge):
         self.group = GroupReference(self, group) if group else None
         member = data.get('member')
         self.member = RecipientReference(self, member) if member else None
-        shifts = data.get('shifts')
+        shifts = data.get('shifts', {})
         self.shifts = Pagination(self, shifts, GroupMembershipShiftReference) if shifts.get('data') else []
 
     def __repr__(self):
@@ -85,7 +84,7 @@ class Group(Recipient):
     def get_supervisors(self, params=None):
         url = self.build_url(self._endpoints.get('get_supervisors'))
         data = self.con.get(url, params)
-        return Pagination(self, data, Person) if data.get('data') else []
+        return Pagination(self, data, xmatters.xm_objects.people.Person) if data.get('data') else []
 
     def get_oncall(self, params=None):
         url = self._endpoints.get('get_oncall').format(base_url=self.con.base_url, group_id=self.id)

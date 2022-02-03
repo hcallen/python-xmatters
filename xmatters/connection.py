@@ -1,10 +1,11 @@
+from datetime import datetime
 from urllib import parse
 
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 import xmatters.errors as err
-
+import xmatters.utils as util
 
 class Connection(object):
     def __init__(self, base_url, session, **kwargs):
@@ -73,6 +74,10 @@ class ApiBridge(object):
         self.self_url = '{}{}'.format(self.con.instance_url, self_link) if self_link else None
 
     def build_url(self, endpoint):
+        # don't do anything if endpoint is full path
+        if self.con.instance_url in endpoint:
+            return endpoint
+
         if endpoint.startswith(self.con.api_path):
             url_prefix = self.con.instance_url
         elif self.self_url:
@@ -86,5 +91,10 @@ class ApiBridge(object):
         params = params if params else {}
         for k, v in arg_params.items():
             if v and k not in params.keys():
-                params[k] = v.upper() if isinstance(v, str) else v
+                if isinstance(v, datetime):
+                    params[k] = v.isoformat()
+                elif isinstance(v, util.TimeAttribute) and v.datetime().tzname() is None:
+                    params[k] = v.local_datetime().isoformat()
+                else:
+                    params[k] = v
         return params

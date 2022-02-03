@@ -6,7 +6,7 @@ from xmatters.xm_objects.common import Recipient, Pagination, SelfLink
 from xmatters.xm_objects.event_supressions import EventSuppression
 from xmatters.xm_objects.people import PersonReference
 from xmatters.xm_objects.plans import PlanReference
-
+from datetime import datetime
 
 class Message(object):
     def __init__(self, data):
@@ -241,7 +241,9 @@ class Event(ApiBridge):
         data = self.con.get(url, params=self.build_params(arg_params, params))
         return Pagination(self, data, xmatters.factories.audit) if data.get('data') else []
 
+    # TODO: Test datetime w/ at
     def get_user_delivery_data(self, at, params=None):
+        at = at if isinstance(at, datetime) else util.TimeAttribute(at)
         arg_params = {'eventId': self.id, 'at': at}
         url = self.build_url(self._endpoints.get('get_user_delivery_data'))
         data = self.con.get(url, params=self.build_params(arg_params, params))
