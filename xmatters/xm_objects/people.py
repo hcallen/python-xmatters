@@ -3,13 +3,14 @@ import xmatters.utils as utils
 from xmatters.xm_objects.common import Recipient, SelfLink, Pagination
 from xmatters.xm_objects.roles import Role
 from xmatters.connection import ApiBridge
-
+import xmatters.xm_objects.groups
 
 class Person(Recipient):
     _endpoints = {'get_devices': '/devices',
                   'roles': '?embed=roles',
                   'get_supervisors': '/supervisors',
-                  'supervisors': '?embed=supervisors'}
+                  'supervisors': '?embed=supervisors',
+                  'get_groups': '/group-memberships'}
 
     def __init__(self, parent, data):
         super(Person, self).__init__(parent, data)
@@ -59,8 +60,13 @@ class Person(Recipient):
 
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
-        data = self.con.get(url, params).get('data')
-        return [factory.device(self, device) for device in data]
+        devices = self.con.get(url, params)
+        return Pagination(self, devices, factory.device) if devices.get('data') else []
+
+    def get_groups(self):
+        url = self.build_url(self._endpoints.get('get_groups'))
+        groups = self.con.get(url)
+        return Pagination(self, groups, xmatters.xm_objects.groups.GroupMembership) if groups.get('data') else []
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)

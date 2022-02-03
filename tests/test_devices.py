@@ -2,16 +2,47 @@ import pytest
 
 import xmatters.errors as err
 from tests.conftest import my_vcr
-from xmatters.xm_objects.devices import EmailDevice
+from xmatters.xm_objects.devices import EmailDevice, Device
 
 
 class TestDevices:
     @my_vcr.use_cassette('test_devices.json')
-    def test_devices(self, xm_test):
+    def test_get_devices(self, xm_test):
         devices = list(xm_test.devices().get_devices())
         for device in devices:
             assert device.id is not None
             assert iter(list(device.timeframes))
+
+    @my_vcr.use_cassette('test_devices.json')
+    def test_get_device_by_id(self, xm_test):
+        devices = list(xm_test.devices().get_devices())
+        for device in devices:
+            device_by_id = xm_test.devices().get_device_by_id(device.id)
+            assert isinstance(device_by_id, Device)
+
+    @my_vcr.use_cassette('test_devices.json')
+    def test_get_devices_param_status(self, xm_test):
+        devices = list(xm_test.devices().get_devices(device_status='INACTIVE'))
+        for device in devices:
+            assert device.status == 'INACTIVE'
+
+    @my_vcr.use_cassette('test_devices.json')
+    def test_get_devices_param_type(self, xm_test):
+        devices = list(xm_test.devices().get_devices(device_type='EMAIL'))
+        for device in devices:
+            assert device.device_type == 'EMAIL'
+
+    @my_vcr.use_cassette('test_devices.json')
+    def test_get_devices_param_name(self, xm_test):
+        devices = list(xm_test.devices().get_devices(device_names=['Work Email', 'Home Email']))
+        for device in devices:
+            assert device.name in ('Work Email', 'Home Email')
+
+    @my_vcr.use_cassette('test_devices.json')
+    def test_get_devices_param_phone_format(self, xm_test):
+        devices = list(xm_test.devices().get_devices(device_type='VOICE', phone_number_format='COUNTRY_CODE'))
+        for device in devices:
+            assert ' ' in device.phone_number
 
     @pytest.mark.order(1)
     def test_create_device(self, xm_sb, settings):
