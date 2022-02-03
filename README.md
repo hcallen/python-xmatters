@@ -14,9 +14,9 @@ been tested**.
 ## Requirements
 
 - [Python 3.5+](http://python.org)
-- Installation of package requirements.
 
-  ```$ python3 -m pip install -r requirements.txt```
+## Installation
+  ```$ python -m pip install python-xmatters```
 
 ## Usage
 
