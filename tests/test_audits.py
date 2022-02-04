@@ -4,9 +4,10 @@ import xmatters.errors as err
 
 class TestAudits:
 
-    @my_vcr.use_cassette('test_audits.json')
+    @my_vcr.use_cassette('test_get_audit.json')
     def test_get_audit(self, xm_test):
         events = list(xm_test.events().get_events())
+        assert len(events) > 0
         for event in events:
             try:
                 audits = list(xm_test.audits().get_audit(event_id=event.id))
@@ -18,9 +19,10 @@ class TestAudits:
                 # skip audits not found due to not being on the cassette
                 pass
 
-    @my_vcr.use_cassette('test_audits.json')
+    @my_vcr.use_cassette('test_get_audit_param_type.json')
     def test_get_audit_param_type(self, xm_test):
         events = list(xm_test.events().get_events())
+        assert len(events) > 0
         for event in events:
             try:
                 audits = list(xm_test.audits().get_audit(event_id=event.id, audit_type='event_created'))
@@ -31,7 +33,7 @@ class TestAudits:
                 # skip audits not found due to not being on the cassette
                 pass
 
-    @my_vcr.use_cassette('test_audits.json')
+    @my_vcr.use_cassette('test_get_audit_param_sort_order.json')
     def test_get_audit_param_sort_order(self, xm_test):
         events = list(xm_test.events().get_events())
         for event in events:

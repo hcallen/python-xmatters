@@ -39,6 +39,9 @@ class AuditsEndpoint(ApiBridge):
     def get_audit(self, event_id, audit_type=None, sort_order=None):
         """
         Perform an audit on a specified event id.
+
+        See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid parameters.
+
         :param event_id: xMatters event id
         :type event_id: str
         :param audit_type: Comma-separated list of audit types
@@ -84,8 +87,8 @@ class DevicesEndpoint(ApiBridge):
         data = self.con.get(url=url, params=params)
         return Pagination(self, data, factory.device) if data.get('data') else []
 
-    def get_device_by_id(self, device_id, at=None):
-        params = {'at': self.process_time_param(at)}
+    def get_device_by_id(self, device_id, at_time=None):
+        params = {'at': self.process_time_param(at_time)}
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
         data = self.con.get(url=url, params=params)
         return factory.device(self, data) if data else None
@@ -120,11 +123,15 @@ class DeviceNamesEndpoint(ApiBridge):
         super(DeviceNamesEndpoint, self).__init__(parent)
 
     # TODO: Test params
-    def get_device_names(self, device_types=None, search=None, sort_by=None, sort_order=None):
+    def get_device_names(self, device_types=None, search=None, sort_by=None, sort_order=None, offset=None,
+                         at_time=None):
         params = {'search': ' '.join(search) if search else None,
                   'sortBy': sort_by,
                   'sortOrder': sort_order,
-                  'deviceTypes': device_types}
+                  'deviceTypes': device_types,
+                  'offset': offset,
+                  'at': self.process_time_param(at_time),
+                  'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.get(url=url, params=params)
         return Pagination(self, data, factory.device_name) if data.get('data') else []
@@ -311,7 +318,7 @@ class ConferenceBridgesEndpoint(ApiBridge):
     # TODO: Test params
     def get_conference_bridges(self, name=None, description=None, toll_number=None, toll_free_number=None,
                                preferred_connection_type=None, pause_before_bridge_prompt=None,
-                               static_bridge_number=False, bridge_number=None, dial_after_bridge=None):
+                               static_bridge_number=False, bridge_number=None, dial_after_bridge=None, offset=None):
         params = {'name': name,
                   'description': description,
                   'tollNumber': toll_number,
@@ -320,7 +327,9 @@ class ConferenceBridgesEndpoint(ApiBridge):
                   'pauseBeforeBridgePrompt': pause_before_bridge_prompt,
                   'staticBridgeNumber': static_bridge_number,
                   'bridgeNumber': bridge_number,
-                  'dialAfterBridge': dial_after_bridge}
+                  'dialAfterBridge': dial_after_bridge,
+                  'offset': offset,
+                  'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_conference_bridges'))
         data = self.con.get(url, params)
         return Pagination(self, data, ConferenceBridge) if data.get('data') else []
@@ -330,23 +339,20 @@ class ConferenceBridgesEndpoint(ApiBridge):
         data = self.con.get(url)
         return ConferenceBridge(self, data) if data else None
 
-    # TODO: Test
     def create_conference_bridge(self, data):
         url = self.build_url(self._endpoints.get('get_conference_bridges'))
         data = self.con.post(url, data=data)
         return ConferenceBridge(self, data) if data else None
 
-    # TODO: Test
     def update_conference_bridge(self, data):
         url = self.build_url(self._endpoints.get('get_conference_bridges'))
         data = self.con.post(url, data=data)
         return ConferenceBridge(self, data) if data else None
 
-    # TODO: Test
     def delete_conference_bridge(self, bridge_id):
         url = self.build_url(self._endpoints.get('get_conference_bridge_by_id').format(bridge_id=bridge_id))
         data = self.con.delete(url=url)
-        return DynamicTeam(self, data) if data else None
+        return ConferenceBridge(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
