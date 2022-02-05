@@ -4,12 +4,40 @@ from dateutil import tz, parser
 
 MAX_API_LIMIT = 1000
 
+
 class TimeAttribute(str):
     def datetime(self):
+        """
+        Create datetime object from str
+        :return: datetime object with whichever timezone in str on creation (if present)
+        :rtype: :class:`datetime.datetime`
+        """
         return parser.isoparse(self)
 
-    def local_datetime(self):
-        return self.datetime().astimezone(tz.tzlocal())
+    def isoformat(self):
+        return self.datetime().isoformat()
+
+    def datetime_local(self):
+        """
+        Create datetime object from str and adjust to local timezone
+        :return: datetime object adjusted to local timezone
+        :rtype: :class:`datetime.datetime`
+        """
+        return parser.isoparse(self).astimezone(tz.tzlocal())
+
+    def isoformat_local(self):
+        return self.datetime_local().isoformat()
+
+    def datetime_utc(self):
+        """
+        Create datetime object from str and adjust to utc timezone.
+        :return: datetime object adjusted to utc timezone
+        :rtype: :class:`datetime.datetime`
+        """
+        return parser.isoparse(self).astimezone(tz.tzutc())
+
+    def isoformat_utc(self):
+        return self.datetime_utc().isoformat()
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self)

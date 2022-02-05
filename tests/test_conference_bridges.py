@@ -21,13 +21,15 @@ class TestConferenceBridges:
 
     @pytest.mark.order(2)
     def test_get_conference_bridges(self, xm_sb):
-        bridges = list(xm_sb.conference_bridges().get_conference_bridges())
+        bridges = xm_sb.conference_bridges().get_conference_bridges()
         assert len(bridges) > 0
         assert iter(bridges)
+        for bridge in bridges:
+            assert bridge.id is not None
 
     @pytest.mark.order(3)
     def test_update_conference_bridge(self, xm_sb):
-        bridge = list(xm_sb.conference_bridges().get_conference_bridges(name="INC-211 Zoom Conference"))[0]
+        bridge = xm_sb.conference_bridges().get_conference_bridges(name="INC-211 Zoom Conference")[0]
         data = {"id": bridge.id,
                 "name": "INC-211 Zoom Conference Updated"}
         mod_bridge = xm_sb.conference_bridges().update_conference_bridge(data)

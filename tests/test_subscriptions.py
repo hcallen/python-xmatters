@@ -8,5 +8,6 @@ class TestSubscriptions:
         subs = list(xm_test.subscriptions().get_subscriptions())
         assert iter(subs)
         for sub in subs:
+            assert sub.id is not None
             assert iter(list(sub.get_subscribers()))
 

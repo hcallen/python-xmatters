@@ -16,12 +16,13 @@ class PaginationLinks(object):
 
 
 class Pagination(xmatters.connection.ApiBridge):
-    def __init__(self, parent, data, cons, cons_identifier=None):
+    def __init__(self, parent, data, cons, cons_identifier=None, limit=None):
         super(Pagination, self).__init__(parent, data)
         self.parent = parent
         self.cons = cons
         self.cons_identifier = cons_identifier
         self._params_count = len(inspect.signature(self.cons).parameters)
+        self.limit = limit
         self.state = 0  # count of items iterated
         self.total = None
         self._init_data = data
@@ -65,7 +66,7 @@ class Pagination(xmatters.connection.ApiBridge):
 
     def __next__(self):
 
-        if self.state == self.total:
+        if (self.state == self.total) or (self.limit is not None and self.state == self.limit):
             self._reset()
             raise StopIteration()
 

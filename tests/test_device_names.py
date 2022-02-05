@@ -8,7 +8,7 @@ class TestDeviceNames:
 
     @my_vcr.use_cassette('test_get_device_names.json')
     def test_get_device_names(self, xm_test):
-        dns = list(xm_test.device_names().get_device_names())
+        dns = xm_test.device_names().get_device_names()
         assert iter(dns)
         for dn in dns:
             assert dn.id is not None

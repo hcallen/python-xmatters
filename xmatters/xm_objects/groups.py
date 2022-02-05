@@ -37,7 +37,7 @@ class GroupMembership(ApiBridge):
         member = data.get('member')
         self.member = RecipientReference(self, member) if member else None
         shifts = data.get('shifts', {})
-        self.shifts = Pagination(self, shifts, GroupMembershipShiftReference) if shifts.get('data') else []
+        self.shifts = list(Pagination(self, shifts, GroupMembershipShiftReference)) if shifts.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -84,18 +84,18 @@ class Group(Recipient):
     def get_supervisors(self):
         url = self.build_url(self._endpoints.get('get_supervisors'))
         data = self.con.get(url)
-        return Pagination(self, data, xmatters.xm_objects.people.Person) if data.get('data') else []
+        return list(Pagination(self, data, xmatters.xm_objects.people.Person)) if data.get('data') else []
 
     def get_oncall(self, params=None):
         url = self._endpoints.get('get_oncall').format(base_url=self.con.base_url, group_id=self.id)
         data = self.con.get(url, params=params)
-        return Pagination(self, data, OnCall) if data.get('data') else []
+        return list(Pagination(self, data, OnCall)) if data.get('data') else []
 
     def get_shifts(self, at=None):
         params = {'at': self.process_time_param(at)}
         url = self.build_url(self._endpoints.get('get_shifts'))
         data = self.con.get(url, params)
-        return Pagination(self, data, Shift) if data.get('data') else []
+        return list(Pagination(self, data, Shift)) if data.get('data') else []
 
     def get_shift_by_id(self, shift_id, at=None):
         params = {'at': self.process_time_param(at)}
@@ -118,7 +118,7 @@ class Group(Recipient):
     def get_members(self):
         url = self.build_url(self._endpoints.get('get_members'))
         data = self.con.get(url)
-        return Pagination(self, data, GroupMembership) if data.get('data') else []
+        return list(Pagination(self, data, GroupMembership)) if data.get('data') else []
 
     # TODO: Test
     def add_member(self, data):

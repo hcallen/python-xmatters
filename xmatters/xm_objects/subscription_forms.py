@@ -36,28 +36,28 @@ class SubscriptionForm(ApiBridge):
         url = self.build_url(self._endpoints.get('target_device_names'))
         data = self.con.get(url)
         tdns = data.get('targetDeviceNames', {})
-        return Pagination(self, tdns, factory.device_name) if tdns.get('data') else []
+        return list(Pagination(self, tdns, factory.device_name)) if tdns.get('data') else []
 
     @property
     def visible_target_device_names(self):
         url = self.build_url(self._endpoints.get('visible_target_device_names'))
         data = self.con.get(url)
         vtdns = data.get('visibleTargetDeviceNames', {})
-        return Pagination(self, vtdns, factory.device_name) if vtdns.get('data') else []
+        return list(Pagination(self, vtdns, factory.device_name)) if vtdns.get('data') else []
 
     @property
     def property_definitions(self):
         url = self.build_url(self._endpoints.get('property_definitions'))
         data = self.con.get(url)
         ps = data.get('propertyDefinitions', {})
-        return Pagination(self, ps, factory.plan_property) if ps.get('data') else []
+        return list(Pagination(self, ps, factory.plan_property)) if ps.get('data') else []
 
     @property
     def roles(self):
         url = self.build_url(self._endpoints.get('roles'))
         data = self.con.get(url).get('roles')
         roles = data.get('roles')
-        return Pagination(self, roles, Role) if roles else []
+        return list(Pagination(self, roles, Role)) if roles else []
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.name)

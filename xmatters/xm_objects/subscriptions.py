@@ -37,11 +37,11 @@ class Subscription(ApiBridge):
         self.created = util.TimeAttribute(created) if created else None
         self.notification_delay = data.get('notificationDelay')
         criteria = data.get('criteria', {})
-        self.criteria = Pagination(self, criteria, SubscriptionCriteriaReference) if criteria.get('data') else []
+        self.criteria = list(Pagination(self, criteria, SubscriptionCriteriaReference)) if criteria.get('data') else []
         recipients = data.get('recipients', {})
-        self.recipients = Pagination(self, recipients, xmatters.factories.recipient) if recipients.get('data') else []
+        self.recipients = list(Pagination(self, recipients, xmatters.factories.recipient)) if recipients.get('data') else []
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = Pagination(self, tdns, xmatters.factories.device_name) if tdns.get('data') else []
+        self.target_device_names = list(Pagination(self, tdns, xmatters.factories.device_name)) if tdns.get('data') else []
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
 
@@ -50,7 +50,7 @@ class Subscription(ApiBridge):
                   'limit': util.MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_subscribers'))
         subscribers = self.con.get(url, params=params)
-        return Pagination(self, subscribers, Person) if subscribers.get('data') else []
+        return list(Pagination(self, subscribers, Person)) if subscribers.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

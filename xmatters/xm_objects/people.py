@@ -35,7 +35,7 @@ class Person(Recipient):
         url = self.build_url(self._endpoints.get('roles'))
         data = self.con.get(url)
         roles = data.get('roles', {})
-        return Pagination(self, roles, Role) if roles.get('data') else []
+        return list(Pagination(self, roles, Role)) if roles.get('data') else []
 
     @property
     def devices(self):
@@ -46,7 +46,7 @@ class Person(Recipient):
         url = self.build_url(self._endpoints.get('supervisors'))
         data = self.con.get(url)
         supervisors = data.get('supervisors', {})
-        return Pagination(self, supervisors, Person) if supervisors.get('data') else []
+        return list(Pagination(self, supervisors, Person)) if supervisors.get('data') else []
 
     def get_supervisors(self):
         return self.supervisors
@@ -61,12 +61,12 @@ class Person(Recipient):
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         devices = self.con.get(url, params)
-        return Pagination(self, devices, factory.device) if devices.get('data') else []
+        return list(Pagination(self, devices, factory.device)) if devices.get('data') else []
 
     def get_groups(self):
         url = self.build_url(self._endpoints.get('get_groups'))
         groups = self.con.get(url)
-        return Pagination(self, groups, xmatters.xm_objects.groups.GroupMembership) if groups.get('data') else []
+        return list(Pagination(self, groups, xmatters.xm_objects.groups.GroupMembership)) if groups.get('data') else []
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)

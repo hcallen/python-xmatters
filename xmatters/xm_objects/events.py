@@ -6,7 +6,6 @@ from xmatters.xm_objects.common import Recipient, Pagination, SelfLink
 from xmatters.xm_objects.event_supressions import EventSuppression
 from xmatters.xm_objects.people import PersonReference
 from xmatters.xm_objects.plans import PlanReference
-from datetime import datetime
 
 
 class Message(object):
@@ -249,7 +248,7 @@ class Event(ApiBridge):
         url = self.build_url(self._endpoints.get('messages'))
         data = self.con.get(url)
         messages = data.get('messages')
-        return Pagination(self, messages, Message) if messages.get('data') else []
+        return list(Pagination(self, messages, Message)) if messages.get('data') else []
 
     @property
     def properties(self):
@@ -262,7 +261,7 @@ class Event(ApiBridge):
         url = self.build_url(self._endpoints.get('recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
-        return Pagination(self, recipients, Message) if recipients.get('data') else []
+        return list(Pagination(self, recipients, Message)) if recipients.get('data') else []
 
     @property
     def response_options(self):
@@ -277,7 +276,7 @@ class Event(ApiBridge):
         url = self.build_url(self._endpoints.get('targeted_recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
-        return Pagination(self, recipients, Message) if recipients.get('data') else []
+        return list(Pagination(self, recipients, Message)) if recipients.get('data') else []
 
     # TODO: Test params
     def get_audit(self, audit_type=None, sort_order=None):
@@ -285,7 +284,7 @@ class Event(ApiBridge):
         params = {'eventId': self.id, 'auditType': audit_type, 'sortOrder': sort_order}
         url = self._endpoints.get('get_audit').format(base_url=self.con.base_url)
         data = self.con.get(url, params=params)
-        return Pagination(self, data, xmatters.factories.audit) if data.get('data') else []
+        return list(Pagination(self, data, xmatters.factories.audit)) if data.get('data') else []
 
     # TODO: Test datetime w/ at
     def get_user_delivery_data(self, at_time):
@@ -293,13 +292,13 @@ class Event(ApiBridge):
                   'at': self.process_time_param(at_time)}
         url = self.build_url(self._endpoints.get('get_user_delivery_data'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, UserDeliveryData) if data.get('data') else []
+        return list(Pagination(self, data, UserDeliveryData)) if data.get('data') else []
 
     def get_annotations(self, params=None):
         url = self.build_url(self._endpoints.get('get_annotations'))
         data = self.con.get(url, params)
         annotations = data.get('annotations', {})
-        return Pagination(self, annotations, Annotation) if annotations.get('data') else []
+        return list(Pagination(self, annotations, Annotation)) if annotations.get('data') else []
 
     # TODO: Test
     def get_annotation_by_id(self, annotation_id):
@@ -329,7 +328,7 @@ class Event(ApiBridge):
                   'sortOrder': sort_order}
         url = self._endpoints.get('update_status').format(base_url=self.con.base_url, event_id=self.id)
         suppressions = self.con.get(url, params)
-        return Pagination(self, suppressions, EventSuppression) if suppressions.get('data') else []
+        return list(Pagination(self, suppressions, EventSuppression)) if suppressions.get('data') else []
 
     def __repr__(self):
         return '<{} Created: {} Type: {}>'.format(self.__class__.__name__, self.created, self.event_type)

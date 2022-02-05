@@ -1,4 +1,3 @@
-from datetime import datetime
 from urllib import parse
 
 from requests.adapters import HTTPAdapter
@@ -22,8 +21,8 @@ class Connection(object):
     def get(self, url, params=None):
         return self.request('GET', url=url, params=params)
 
-    def post(self, url, data, params=None):
-        return self.request('POST', url=url, data=data, params=params)
+    def post(self, url, data):
+        return self.request('POST', url=url, data=data)
 
     def delete(self, url):
         return self.request('DELETE', url=url)
@@ -89,11 +88,13 @@ class ApiBridge(object):
 
     @staticmethod
     def process_time_param(param):
+        """
+        Formats iso-formatted date (or date and time) from provided timezone to UTC timezone.
+        If no timezone is specified, local timezone is used.
+        :param param: iso-formatted date, or date and time
+        :type param: str
+        :return: date & time with utc offset applied
+        :rtype: str or None
+        """
         if param:
-            param = util.TimeAttribute(param)
-            # if timezone defined in string
-            if param.datetime().tzname():
-                return param
-            # use local timezone
-            else:
-                return param.local_datetime().isoformat()
+            return util.TimeAttribute(param).isoformat_utc()

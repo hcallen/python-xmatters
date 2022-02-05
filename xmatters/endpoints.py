@@ -2,7 +2,7 @@ import xmatters.factories as factory
 import xmatters.xm_objects.forms
 from xmatters.connection import ApiBridge
 from xmatters.utils import MAX_API_LIMIT
-from xmatters.xm_objects.common import Pagination, RequestReference
+from xmatters.xm_objects.common import Pagination
 from xmatters.xm_objects.conference_bridges import ConferenceBridge
 from xmatters.xm_objects.device_types import DeviceTypes
 from xmatters.xm_objects.dynamic_teams import DynamicTeam
@@ -56,7 +56,7 @@ class AuditsEndpoint(ApiBridge):
                   'sortOrder': sort_order}
         url = self.build_url(self._endpoints.get('get_audit'))
         data = self.con.get(url=url, params=params)
-        return Pagination(self, data, factory.audit) if data.get('data') else []
+        return list(Pagination(self, data, factory.audit)) if data.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -85,7 +85,7 @@ class DevicesEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url=url, params=params)
-        return Pagination(self, data, factory.device) if data.get('data') else []
+        return list(Pagination(self, data, factory.device)) if data.get('data') else []
 
     def get_device_by_id(self, device_id, at_time=None):
         params = {'at': self.process_time_param(at_time)}
@@ -134,7 +134,7 @@ class DeviceNamesEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.get(url=url, params=params)
-        return Pagination(self, data, factory.device_name) if data.get('data') else []
+        return list(Pagination(self, data, factory.device_name)) if data.get('data') else []
 
     def create_device_name(self, data):
         url = self.build_url(self._endpoints.get('get_device_names'))
@@ -191,7 +191,7 @@ class DynamicTeamsEndpoint(ApiBridge):
                   'sortOrder': sort_order}
         url = self.build_url(self._endpoints.get('get_dynamic_teams'))
         data = self.con.get(url, params)
-        return Pagination(self, data, DynamicTeam) if data.get('data') else []
+        return list(Pagination(self, data, DynamicTeam)) if data.get('data') else []
 
     def get_dynamic_team_by_id(self, dynamic_team_id):
         url = self.build_url(self._endpoints.get('get_dynamic_team_by_id').format(dynamic_team_id=dynamic_team_id))
@@ -260,7 +260,7 @@ class EventsEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_events'))
         data = self.con.get(url, params)
-        return Pagination(self, data, Event) if data.get('data') else []
+        return list(Pagination(self, data, Event)) if data.get('data') else []
 
     # TODO: Test params
     def get_event_by_id(self, event_id, at=None):
@@ -299,7 +299,7 @@ class EventSuppressionsEndpoint(ApiBridge):
                   'sortOrder': sort_order}
         url = self.build_url(self._endpoints.get('get_event_suppressions_by_event_id').format(event_id))
         data = self.con.get(url, params)
-        return Pagination(self, data, EventSuppression) if data.get('data') else []
+        return list(Pagination(self, data, EventSuppression)) if data.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -332,7 +332,7 @@ class ConferenceBridgesEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_conference_bridges'))
         data = self.con.get(url, params)
-        return Pagination(self, data, ConferenceBridge) if data.get('data') else []
+        return list(Pagination(self, data, ConferenceBridge)) if data.get('data') else []
 
     def get_conference_bridge_by_id(self, bridge_id):
         url = self.build_url(self._endpoints.get('get_conference_bridge_by_id').format(bridge_id=bridge_id))
@@ -382,7 +382,7 @@ class FormsEndpoint(ApiBridge):
 
         url = self.build_url(self._endpoints.get('get_forms'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, xmatters.xm_objects.forms.Form) if data.get('data') else []
+        return list(Pagination(self, data, xmatters.xm_objects.forms.Form)) if data.get('data') else []
 
     # TODO: Test
     def get_form_by_id(self, form_id):
@@ -420,7 +420,7 @@ class GroupsEndpoint(ApiBridge):
 
         url = self.build_url(self._endpoints.get('get_groups'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, Group) if data.get('data') else []
+        return list(Pagination(self, data, Group)) if data.get('data') else []
 
     def get_group_by_id(self, group_id, at=None):
         params = {'at': self.process_time_param(at)}
@@ -502,7 +502,7 @@ class IncidentsEndpoint(ApiBridge):
 
         url = self.build_url(self._endpoints.get('get_incidents'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, Incident) if data.get('data') else []
+        return list(Pagination(self, data, Incident)) if data.get('data') else []
 
     # TODO: Test
     def get_incident_by_id(self, incident_id):
@@ -544,7 +544,7 @@ class OnCallEndpoint(ApiBridge):
                   'to': self.process_time_param(to_time)}
         url = self.build_url(self._endpoints.get('get_oncall'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, OnCall) if data.get('data') else []
+        return list(Pagination(self, data, OnCall)) if data.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -589,7 +589,7 @@ class PeopleEndpoint(ApiBridge):
                    devices_exist=None, devices_test_status=None, site=None, status=None, supervisors_exists=None,
                    groups=None, groups_exist=None, roles=None, supervisors=None, created_from_time=None,
                    created_to_time=None, created_before_time=None, created_after_time=None, sort_by=None,
-                   sort_order=None, at_time=None):
+                   sort_order=None, at_time=None, limit=None):
         params = {'search': ' '.join(search) if search else None,
                   'operand': operand,
                   'fields': fields,
@@ -611,10 +611,10 @@ class PeopleEndpoint(ApiBridge):
                   'sortBy': sort_by,
                   'sortOrder': sort_order,
                   'at': self.process_time_param(at_time),
-                  'limit': MAX_API_LIMIT}
+                  'limit': limit if limit else MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_people'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, Person) if data.get('data') else []
+        return list(Pagination(self, data, Person, limit=limit)) if data.get('data') else []
 
     def get_person_by_id(self, person_id, params=None):
         url = self.build_url(self._endpoints.get('get_person_by_id').format(person_id=person_id))
@@ -633,21 +633,18 @@ class PeopleEndpoint(ApiBridge):
                   'emailAddress': email_address}
         url = self.build_url(self._endpoints.get('get_people'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, Person) if data.get('data') else []
+        return list(Pagination(self, data, Person)) if data.get('data') else []
 
-    # TODO: Test
     def create_person(self, data):
         url = self.build_url(self._endpoints.get('get_people'))
         data = self.con.post(url, data=data)
         return Person(self, data) if data else None
 
-    # TODO: Test
     def update_person(self, data):
         url = self.build_url(self._endpoints.get('get_people'))
         data = self.con.post(url, data=data)
         return Person(self, data) if data else None
 
-    # TODO: Test
     def delete_person(self, person_id):
         url = self.build_url(self._endpoints.get('get_person_by_id').format(person_id=person_id))
         data = self.con.delete(url)
@@ -682,7 +679,7 @@ class PlansEndpoint(ApiBridge):
                   'at': self.process_time_param(at)}
         url = self.build_url(self._endpoints.get('get_plans'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, Plan) if data.get('data') else []
+        return list(Pagination(self, data, Plan)) if data.get('data') else []
 
     def get_plan_by_id(self, plan_id, at=None):
         params = {'at': self.process_time_param(at)}
@@ -729,7 +726,7 @@ class RolesEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_roles'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, Role) if data.get('data') else []
+        return list(Pagination(self, data, Role)) if data.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -754,7 +751,7 @@ class ScenariosEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_scenarios'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, Scenario) if data.get('data') else []
+        return list(Pagination(self, data, Scenario)) if data.get('data') else []
 
     def get_scenario_by_id(self, scenario_id):
         url = self.build_url(self._endpoints.get('get_scenario_by_id').format(scenario_id=scenario_id))
@@ -784,7 +781,7 @@ class ServicesEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_services'))
         data = self.con.get(url, params)
-        return Pagination(self, data, Service) if data.get('data') else []
+        return list(Pagination(self, data, Service)) if data.get('data') else []
 
     def get_service_by_id(self, service_id):
         url = self.build_url(self._endpoints.get('get_service_by_id').format(service_id=service_id))
@@ -838,7 +835,7 @@ class SitesEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_sites'))
         data = self.con.get(url, params)
-        return Pagination(self, data, Site) if data.get('data') else []
+        return list(Pagination(self, data, Site)) if data.get('data') else []
 
     def get_site_by_id(self, site_id, params=None):
         url = self.build_url(self._endpoints.get('get_site_by_id').format(site_id=site_id))
@@ -893,7 +890,7 @@ class SubscriptionsEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_subscriptions'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, Subscription) if data else []
+        return list(Pagination(self, data, Subscription)) if data else []
 
     def get_subscription_by_id(self, subscription_id):
         url = self.build_url(self._endpoints.get('get_subscription_by_id').format(sub_id=subscription_id))
@@ -904,7 +901,7 @@ class SubscriptionsEndpoint(ApiBridge):
     def get_subscribers(self, params=None):
         url = self.build_url(self._endpoints.get('get_subscribers'))
         subscribers = self.con.get(url, params)
-        return Pagination(self, subscribers, Person) if subscribers.get('data') else []
+        return list(Pagination(self, subscribers, Person)) if subscribers.get('data') else []
 
     # TODO: Test
     def unsubscribe_person(self, person_id):
@@ -952,7 +949,7 @@ class SubscriptionFormsEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_subscription_forms'))
         data = self.con.get(url, params=params)
-        return Pagination(self, data, SubscriptionForm) if data.get('data') else []
+        return list(Pagination(self, data, SubscriptionForm)) if data.get('data') else []
 
     def get_subscription_form_by_id(self, sub_form_id):
         url = self.build_url(self._endpoints.get('get_subscription_form_by_id').format(sub_form_id=sub_form_id))
@@ -985,7 +982,7 @@ class TemporaryAbsencesEndpoint(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_temporary_absences'))
         data = self.con.get(url, params)
-        return Pagination(self, data, TemporaryAbsence) if data.get('data') else []
+        return list(Pagination(self, data, TemporaryAbsence)) if data.get('data') else []
 
     # TODO: Test
     def create_temporary_absence(self, data):

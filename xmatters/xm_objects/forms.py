@@ -111,7 +111,7 @@ class DevicesSection(FormSection):
     def __init__(self, parent, data):
         super(DevicesSection, self).__init__(parent, data)
         devices = data.get('targetDeviceNames', {})
-        self.target_device_names = Pagination(self, devices, TargetDeviceNameSelector) if devices.get('data') else None
+        self.target_device_names = list(Pagination(self, devices, TargetDeviceNameSelector)) if devices.get('data') else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -151,7 +151,7 @@ class RecipientsSection(FormSection):
     def __init__(self, parent, data):
         super(RecipientsSection, self).__init__(parent, data)
         recipients = data.get('recipients', {})
-        self.recipients = Pagination(self, recipients, Recipient) if recipients.get('data') else []
+        self.recipients = list(Pagination(self, recipients, Recipient)) if recipients.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -203,17 +203,17 @@ class Form(ApiBridge):
     def recipients(self, params=None):
         url = self.build_url(self._endpoints.get('recipients'))
         recipients = self.con.get(url, params).get('recipients', {})
-        return Pagination(self, recipients, factory.recipient) if recipients.get('data') else []
+        return list(Pagination(self, recipients, factory.recipient)) if recipients.get('data') else []
 
     def get_response_options(self, params=None):
         url = self.build_url(self._endpoints.get('get_response_options'))
         options = self.con.get(url, params)
-        return Pagination(self, options, events.ResponseOption) if options.get('data') else []
+        return list(Pagination(self, options, events.ResponseOption)) if options.get('data') else []
 
     def get_sections(self, params=None):
         url = self._endpoints.get('get_sections').format(base_url=self.con.base_url, form_id=self.id)
         s = self.con.get(url, params)
-        return Pagination(self, s, factory.section, 'type') if s.get('data') else []
+        return list(Pagination(self, s, factory.section, 'type')) if s.get('data') else []
 
     #TODO: Test params
     def get_scenarios(self, search=None, operand=None, enabled_for=None, offset=None):
@@ -224,7 +224,7 @@ class Form(ApiBridge):
                   'limit': MAX_API_LIMIT}
         url = self.build_url(self._endpoints.get('get_scenarios'))
         s = self.con.get(url, params=params)
-        return Pagination(self, s, xmatters.xm_objects.scenarios.Scenario, 'type') if s.get('data') else []
+        return list(Pagination(self, s, xmatters.xm_objects.scenarios.Scenario, 'type')) if s.get('data') else []
 
     # TODO: Test
     def create_scenario(self, data):

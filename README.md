@@ -81,12 +81,14 @@ for group in groups.get_groups():
 ```
 
 ### Date conversion to local timezone
+
 ```python
 from xmatters import XMSession, TokenFileStorage
+
 token_storage = TokenFileStorage('/path/to/my_token.json')
 xm = XMSession('my_instance.xmatters.com')
 xm.set_authentication(client_id='my-client-id', token_storage=token_storage)
 groups = xm.groups()
 for group in groups.get_groups():
-    print(group.created.local_datetime().isoformat())
+    print(group.created.datetime_local().isoformat())
 ```
