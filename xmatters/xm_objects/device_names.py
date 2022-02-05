@@ -31,4 +31,9 @@ class DeviceNameEmail(DeviceName):
         super(DeviceNameEmail, self).__init__(data)
         self.domains = data.get('domains', [])
 
+    def __repr__(self):
+        return '<{} {}>'.format(self.__class__.__name__, self.name)
+
+    def __str__(self):
+        return self.__repr__()
 

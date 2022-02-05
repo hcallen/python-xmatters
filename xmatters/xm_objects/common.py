@@ -1,5 +1,6 @@
 import inspect
 import xmatters.connection
+from xmatters.utils import MAX_API_LIMIT
 
 
 class PaginationLinks(object):
@@ -21,7 +22,7 @@ class Pagination(xmatters.connection.ApiBridge):
         self.parent = parent
         self.cons = cons
         self.cons_identifier = cons_identifier
-        self._params_count = len(inspect.signature(self.cons).parameters)
+        self._cons_params_count = len(inspect.signature(self.cons).parameters)
         self.limit = limit
         self.state = 0  # count of items iterated
         self.total = None
@@ -48,18 +49,14 @@ class Pagination(xmatters.connection.ApiBridge):
         self.index = 0
 
     def _get_object(self, data):
-        if self._params_count == 3:
+        if self._cons_params_count == 3:
             object_type = data.get(self.cons_identifier)
             data_object = self.cons(self, data, object_type)
-        elif self._params_count == 2:
+        elif self._cons_params_count == 2:
             data_object = self.cons(self, data)
         else:
             data_object = self.cons(data)
         return data_object
-
-    def _reset(self):
-        self.state = 0
-        self._set_pagination_properties(self._init_data)
 
     def __iter__(self):
         return self
@@ -67,7 +64,6 @@ class Pagination(xmatters.connection.ApiBridge):
     def __next__(self):
 
         if (self.state == self.total) or (self.limit is not None and self.state == self.limit):
-            self._reset()
             raise StopIteration()
 
         if self.index == self.count and self.links and self.links.next:

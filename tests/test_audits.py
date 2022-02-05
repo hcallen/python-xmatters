@@ -6,7 +6,14 @@ import xmatters.factories
 class TestAudits:
 
     @my_vcr.use_cassette('test_get_audit.json')
-    def test_get_audit(self, xm_test, events_last_month):
+    def test_get_audit(self, xm_test):
+        audits = xm_test.audits().get_audit()
+        assert len(audits) > 0
+        for audit in audits:
+            assert audit.id is not None
+
+    @my_vcr.use_cassette('test_get_audit_by_event_id.json')
+    def test_get_audit_by_event_id(self, xm_test, events_last_month):
         assert len(events_last_month) > 0
         for event in events_last_month:
             audits = xm_test.audits().get_audit(event_id=event.id)

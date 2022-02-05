@@ -29,7 +29,9 @@ class Connection(object):
 
     def request(self, method, url, data=None, params=None):
         if params:
-
+            # use api max limit if one not specified
+            if 'limit' in params.keys() and params.get('limit') is None:
+                params['limit'] = util.MAX_API_LIMIT
             r = self.session.request(method=method, url=url, params={k: v for k, v in params.items() if v},
                                      timeout=self.timeout)
         elif data:

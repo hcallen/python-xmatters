@@ -1,7 +1,8 @@
 import xmatters.utils as util
+import xmatters.factories
 from xmatters.xm_objects.common import Recipient, SelfLink, Pagination
 from xmatters.connection import ApiBridge
-from xmatters.xm_objects.shifts import GroupReference
+from xmatters.xm_objects.shifts import GroupReference, Shift
 
 
 class Replacer(ApiBridge):
@@ -26,12 +27,13 @@ class Replacer(ApiBridge):
 class ShiftOccurrenceMember(ApiBridge):
     def __init__(self, parent, data):
         super(ShiftOccurrenceMember, self).__init__(parent, data)
-        # TODO: update to recipient factory
-        self.member = Recipient(self, data.get('member'))
+        member = data.get('member')
+        self.member = xmatters.factories.recipient(self, member) if member else None
         self.position = data.get('position')
         self.delay = data.get('delay')
         self.escalation_type = data.get('escalationType')
-        self.replacements = [TemporaryReplacement(self, r) for r in data.get('replacements', {}).get('data', [])]
+        replacements = data.get('replacements', {})
+        self.replacements = Pagination(self, replacements, TemporaryReplacement) if replacements.get('data') else []
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.member.target_name)
@@ -58,18 +60,21 @@ class ShiftReference(ApiBridge):
 class TemporaryReplacement(ApiBridge):
     def __init__(self, parent, data):
         super(TemporaryReplacement, self).__init__(parent, data)
-        self.start = data.get('start')
-        self.end = data.get('end')
-        self.replacement = TemporaryReplacement(self, data.get('replacement'))
+        start = data.get('start')
+        self.start = util.TimeAttribute(start) if start else None
+        end = data.get('end')
+        self.end = util.TimeAttribute(end) if end else None
+        replacement = data.get('replacement')
+        self.replacement = TemporaryReplacement(self, replacement) if replacement else None
 
 
 class OnCall(ApiBridge):
     def __init__(self, parent, data):
         super(OnCall, self).__init__(parent)
+        # save shift self link for use with 'shift' property to return full Shift object (not just ShiftReference)
+        self._shift_link = data.get('shift', {}).get('links', {}).get('self')
         group = data.get('group')
         self.group = GroupReference(parent, group) if group else None
-        shift = data.get('shift')
-        self.shift = ShiftReference(parent, shift) if shift else None
         start = data.get('start')
         self.start = util.TimeAttribute(start) if start else None
         end = data.get('end')
@@ -77,15 +82,17 @@ class OnCall(ApiBridge):
         members = data.get('members', {})
         self.members = list(Pagination(self, members, ShiftOccurrenceMember)) if members.get('data') else []
 
-    # TODO: update to include full shift instead of reference
-    # @property
-    # def shift(self):
-    #     pass
+    @property
+    def shift(self):
+        if self._shift_link:
+            url = '{}{}'.format(self.con.instance_url, self._shift_link)
+            data = self.con.get(url)
+            return Shift(self, data) if data else None
+        else:
+            return None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
-
-

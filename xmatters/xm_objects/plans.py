@@ -2,7 +2,6 @@ import xmatters.factories as factory
 import xmatters.xm_objects.forms
 import xmatters.xm_objects.plan_endpoints
 from xmatters.connection import ApiBridge
-from xmatters.utils import MAX_API_LIMIT
 from xmatters.xm_objects.common import Pagination, SelfLink
 from xmatters.xm_objects.integrations import Integration
 from xmatters.xm_objects.people import Person
@@ -173,12 +172,12 @@ class Plan(ApiBridge):
         return factory.plan_property(data) if data else None
 
     # TODO: Test param
-    def get_shared_libraries(self, offset=None):
+    def get_shared_libraries(self, offset=None, limit=None):
         params = {'offset': offset,
-                  'limit': MAX_API_LIMIT}
+                  'limit': limit}
         url = self.build_url(self._endpoints.get('get_libraries'))
         libs = self.con.get(url, params=params)
-        return list(Pagination(self, libs, SharedLibrary)) if libs.get('data') else []
+        return list(Pagination(self, libs, SharedLibrary, limit=limit)) if libs.get('data') else []
 
     # TODO: Test
     def get_shared_library_by_id(self, library_id):
@@ -228,14 +227,14 @@ class Plan(ApiBridge):
         return xmatters.xm_objects.plan_endpoints.Endpoint(self, data) if data else None
 
     # TODO: Test params
-    def get_subscription_forms(self, sort_by=None, sort_order=None, offset=None):
+    def get_subscription_forms(self, sort_by=None, sort_order=None, offset=None, limit=None):
         params = {'sortBy': sort_by,
                   'sortOrder': sort_order,
                   'offset': offset,
-                  'limit': MAX_API_LIMIT}
+                  'limit': limit}
         url = self.build_url(self._endpoints.get('get_subscription_forms'))
         sub_forms = self.con.get(url, params=params)
-        return list(Pagination(self, sub_forms, SubscriptionForm)) if sub_forms.get('data') else []
+        return list(Pagination(self, sub_forms, SubscriptionForm, limit=limit)) if sub_forms.get('data') else []
 
     # TODO: Test
     def create_subscription_form(self, data):

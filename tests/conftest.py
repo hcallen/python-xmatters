@@ -29,8 +29,12 @@ my_vcr = vcr.VCR(
 
 @pytest.fixture(scope='session')
 def settings():
-    with open('../tests/settings/settings.json', 'r') as f:
-        return json.load(f)
+    try:
+        with open('../tests/settings/settings.json', 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        with open('./tests/settings/settings.json', 'r') as f:
+            return json.load(f)
 
 
 @pytest.fixture(scope='session')

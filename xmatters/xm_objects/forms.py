@@ -3,7 +3,6 @@ import xmatters.xm_objects.events as events
 import xmatters.xm_objects.plans as plans
 import xmatters.xm_objects.scenarios
 from xmatters.connection import ApiBridge
-from xmatters.utils import MAX_API_LIMIT
 from xmatters.xm_objects.common import SelfLink, Pagination, Recipient, PropertyDefinition
 from xmatters.xm_objects.device_names import TargetDeviceNameSelector
 
@@ -210,21 +209,23 @@ class Form(ApiBridge):
         options = self.con.get(url, params)
         return list(Pagination(self, options, events.ResponseOption)) if options.get('data') else []
 
-    def get_sections(self, params=None):
+    def get_sections(self, offset=None, limit=None):
+        params = {'offset': offset,
+                  'limit': limit}
         url = self._endpoints.get('get_sections').format(base_url=self.con.base_url, form_id=self.id)
-        s = self.con.get(url, params)
-        return list(Pagination(self, s, factory.section, 'type')) if s.get('data') else []
+        s = self.con.get(url, params=params)
+        return list(Pagination(self, s, factory.section, cons_identifier='type', limit=limit)) if s.get('data') else []
 
     #TODO: Test params
-    def get_scenarios(self, search=None, operand=None, enabled_for=None, offset=None):
+    def get_scenarios(self, search=None, operand=None, enabled_for=None, offset=None, limit=None):
         params = {'search': ' '.join(search) if search else None,
                   'operand': operand,
                   'enabledFor': enabled_for,
                   'offset': offset,
-                  'limit': MAX_API_LIMIT}
+                  'limit': limit}
         url = self.build_url(self._endpoints.get('get_scenarios'))
         s = self.con.get(url, params=params)
-        return list(Pagination(self, s, xmatters.xm_objects.scenarios.Scenario, 'type')) if s.get('data') else []
+        return list(Pagination(self, s, xmatters.xm_objects.scenarios.Scenario, cons_identifier='type')) if s.get('data') else []
 
     # TODO: Test
     def create_scenario(self, data):

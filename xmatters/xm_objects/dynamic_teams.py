@@ -32,9 +32,9 @@ class DynamicTeam(Recipient):
         supervisors = self.con.get(url).get('supervisors', {})
         return list(Pagination(self, supervisors, Person)) if supervisors.get('data') else []
 
-    def get_members(self, params=None):
+    def get_members(self):
         url = self.build_url(self._endpoints.get('get_members'))
-        data = self.con.get(url, params)
+        data = self.con.get(url)
         return list(Pagination(self, data, Person)) if data.get('data') else None
 
     def __repr__(self):

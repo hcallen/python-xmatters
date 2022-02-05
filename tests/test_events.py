@@ -1,5 +1,4 @@
 from .conftest import my_vcr
-import xmatters.errors as err
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from dateutil import tz
@@ -13,18 +12,14 @@ class TestEvents:
         assert iter(events)
         assert len(events) > 0
         for event in events:
-            try:
-                assert iter(event.get_audit())
-                assert iter(event.get_user_delivery_data(at_time=datetime.utcnow().isoformat()))
-                assert iter((event.get_annotations()))
-                assert iter(event.messages)
-                assert isinstance(event.properties, dict)
-                assert iter(event.recipients)
-                assert iter(event.targeted_recipients)
-                assert iter(event.response_options)
-            except err.NotFoundError:
-                # skip audits not found due to not being on the cassette
-                pass
+            assert iter(event.get_audit())
+            assert iter(event.get_user_delivery_data(at_time=datetime.utcnow().isoformat()))
+            assert iter((event.get_annotations()))
+            assert iter(event.messages)
+            assert isinstance(event.properties, dict)
+            assert iter(event.recipients)
+            assert iter(event.targeted_recipients)
+            assert iter(event.response_options)
 
     @my_vcr.use_cassette('test_get_events_param_from_to.json')
     def test_get_events_param_from_to(self, xm_test):
