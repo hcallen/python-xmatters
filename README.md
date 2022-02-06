@@ -5,9 +5,9 @@ python-xmatters is a wrapper for the xMatters API.
 ## Features
 
 - Most documented endpoints and objects implemented.
+- Auto-refresh of access tokens and storage of tokens.
 - Support for both basic and OAuth2 authentication.
 - Support for most query parameters.
-- Auto-refresh of access tokens and storage of token objects.
 - Support for pagination objects.
 - Conversion to datetime objects (local or UTC timezone) for time attributes.
 
@@ -18,10 +18,10 @@ python-xmatters is a wrapper for the xMatters API.
 ## Installation
   ```$ python -m pip install python-xmatters```
 
-## Usage
+## Example Usage
 
 Review source code and the [xMatters REST API Reference](https://help.xmatters.com/xmapi/)
-for methods, parameters, and objects.
+for possible methods, parameters, and objects.
 
 
 ### Authentication
