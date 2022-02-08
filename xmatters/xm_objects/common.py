@@ -32,6 +32,9 @@ class Pagination(xmatters.connection.ApiBridge):
         self.index = None
         self._set_pagination_properties(data)
 
+    def list(self):
+        return list(self)
+
     def goto_next_page(self):
         url = self.build_url(self.links.next)
         data = self.con.get(url)

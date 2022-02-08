@@ -1,10 +1,9 @@
 import xmatters.connection
-import xmatters.xm_objects.common
-import xmatters.xm_objects.people
 import xmatters.utils
 import xmatters.factories
 import xmatters.xm_objects.forms
-
+from xmatters.xm_objects.common import Pagination, SelfLink
+from xmatters.xm_objects.people import Person
 
 class SubscriptionCriteriaReference(object):
     def __init__(self, data):
@@ -37,27 +36,21 @@ class Subscription(xmatters.connection.ApiBridge):
         self.created = xmatters.utils.TimeAttribute(created) if created else None
         self.notification_delay = data.get('notificationDelay')
         criteria = data.get('criteria', {})
-        self.criteria = list(
-            xmatters.xm_objects.common.Pagination(self, criteria, SubscriptionCriteriaReference)) if criteria.get(
+        self.criteria = Pagination(self, criteria, SubscriptionCriteriaReference) if criteria.get(
             'data') else []
         r = data.get('recipients', {})
-        self.recipients = list(
-            xmatters.xm_objects.common.Pagination(self, r, xmatters.factories.RecipientFactory)) if r.get(
-            'data') else []
+        self.recipients = Pagination(self, r, xmatters.factories.RecipientFactory) if r.get('data') else []
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = list(
-            xmatters.xm_objects.common.Pagination(self, tdns, xmatters.factories.DeviceNameFactory)) if tdns.get(
-            'data') else []
+        self.target_device_names = Pagination(self, tdns, xmatters.factories.DeviceNameFactory) if tdns.get('data') else []
         links = data.get('links')
-        self.links = xmatters.xm_objects.common.SelfLink(self, links) if links else None
+        self.links = SelfLink(self, links) if links else None
 
     def get_subscribers(self, offset=None, limit=None):
         params = {'offset': offset,
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_subscribers'))
         subscribers = self.con.get(url, params=params)
-        return list(xmatters.xm_objects.common.Pagination(self, subscribers, xmatters.xm_objects.people.Person,
-                                                          limit=limit)) if subscribers.get('data') else []
+        return Pagination(self, subscribers, xmatters.xm_objects.people.Person, limit=limit) if subscribers.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

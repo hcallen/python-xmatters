@@ -140,7 +140,8 @@ class Notification(ApiBridge):
         responded = data.get('responded')
         self.responded = util.TimeAttribute(responded) if responded else None
         self.delivery_status = data.get('deliveryStatus')
-        self.responses = data.get('responses', [])
+        responses = data.get('responses')
+        self.responses = [UserDeliveryResponse(r) for r in responses] if responses.get('data') else []
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.recipient.target_name)
@@ -196,7 +197,7 @@ class Event(ApiBridge):
                   'get_annotation_by_id': '/annotations/{ann_id}',
                   'properties': '?embed=properties',
                   'recipients': '?embed=recipients',
-                  'response_options': '?embed=responseOptions.translations',
+                  'response_options': '?embed=responseOptions&responseOptions.translations',
                   'get_user_delivery_data': '/user-deliveries',
                   'get_audit': '{base_url}/audits',
                   'update_status': '{base_url}/events',
@@ -246,7 +247,7 @@ class Event(ApiBridge):
         url = self.build_url(self._endpoints.get('messages'))
         data = self.con.get(url)
         messages = data.get('messages')
-        return list(Pagination(self, messages, Message)) if messages.get('data') else []
+        return Pagination(self, messages, Message) if messages.get('data') else []
 
     @property
     def properties(self):
@@ -259,7 +260,7 @@ class Event(ApiBridge):
         url = self.build_url(self._endpoints.get('recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
-        return list(Pagination(self, recipients, Message)) if recipients.get('data') else []
+        return Pagination(self, recipients, Message) if recipients.get('data') else []
 
     # TODO: Test
     @property
@@ -280,7 +281,7 @@ class Event(ApiBridge):
         url = self.build_url(self._endpoints.get('targeted_recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
-        return list(Pagination(self, recipients, Message)) if recipients.get('data') else []
+        return Pagination(self, recipients, Message) if recipients.get('data') else []
 
     # TODO: Test params
     def get_audit(self, audit_type=None, sort_order=None):
@@ -288,7 +289,7 @@ class Event(ApiBridge):
         params = {'eventId': self.id, 'auditType': audit_type, 'sortOrder': sort_order}
         url = self._endpoints.get('get_audit').format(base_url=self.con.base_url)
         data = self.con.get(url, params=params)
-        return list(Pagination(self, data, xmatters.factories.AuditFactory)) if data.get('data') else []
+        return Pagination(self, data, xmatters.factories.AuditFactory) if data.get('data') else []
 
     # TODO: Test datetime w/ at
     def get_user_delivery_data(self, at_time):
@@ -296,13 +297,13 @@ class Event(ApiBridge):
                   'at': self.process_time_param(at_time)}
         url = self.build_url(self._endpoints.get('get_user_delivery_data'))
         data = self.con.get(url, params=params)
-        return list(Pagination(self, data, UserDeliveryData)) if data.get('data') else []
+        return Pagination(self, data, UserDeliveryData) if data.get('data') else []
 
     def get_annotations(self, params=None):
         url = self.build_url(self._endpoints.get('get_annotations'))
         data = self.con.get(url, params)
         annotations = data.get('annotations', {})
-        return list(Pagination(self, annotations, Annotation)) if annotations.get('data') else []
+        return Pagination(self, annotations, Annotation) if annotations.get('data') else []
 
     # TODO: Test
     def get_annotation_by_id(self, annotation_id):
@@ -335,7 +336,7 @@ class Event(ApiBridge):
                   'limit': limit}
         url = self._endpoints.get('get_suppressions').format(base_url=self.con.base_url)
         suppressions = self.con.get(url, params=params)
-        return list(Pagination(self, suppressions, EventSuppression)) if suppressions.get('data') else []
+        return Pagination(self, suppressions, EventSuppression) if suppressions.get('data') else []
 
     def __repr__(self):
         return '<{} Created: {} Type: {}>'.format(self.__class__.__name__, self.created, self.event_type)

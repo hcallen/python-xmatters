@@ -72,13 +72,13 @@ class Scenario(xmatters.connection.ApiBridge):
         vm_opts = data.get('voicemailOptions')
         self.voicemail_options = xmatters.xm_objects.events.VoicemailOptions(vm_opts) if vm_opts else None
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = list(Pagination(self, tdns, factory.DeviceNameFactory)) if tdns.get('data') else []
+        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []
         created = data.get('created')
         self.created = xmatters.utils.TimeAttribute(created) if created else None
         perm = data.get('permitted', {}).get('data')
         self.permitted = [factory.ScenarioPermFactory.compose(self, p) for p in perm] if perm else []
         rs = data.get('recipients')
-        self.recipients = list(Pagination(self, rs, factory.RecipientFactory)) if rs.get('data') else []
+        self.recipients = Pagination(self, rs, factory.RecipientFactory) if rs.get('data') else []
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
 

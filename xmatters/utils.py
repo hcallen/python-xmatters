@@ -96,6 +96,7 @@ class Factory(ABC):
     @classmethod
     def compose(cls, parent, item_data, default=None):
         identifier = item_data.get(cls.identifier_field)
+        # noinspection PyUnresolvedReferences
         constructor = cls.factory_objects.get(identifier, default)
 
         if cls.needs_parent:

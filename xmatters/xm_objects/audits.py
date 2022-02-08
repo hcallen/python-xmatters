@@ -15,8 +15,6 @@ class Notification(ApiBridge):
         self.delivery_status = data.get('deliveryStatus')
         created = data.get('created')
         self.created = util.TimeAttribute(created) if created else None
-        delivery_attempted = data.get('deliveryAttempted')
-        self.delivery_attempted = util.TimeAttribute(delivery_attempted) if delivery_attempted else None
         event = data.get('event')
         self.event = events.EventReference(parent, data) if event else None
 

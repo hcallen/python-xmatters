@@ -21,7 +21,7 @@ class TestCreateUpdateDelete:
 
     @pytest.mark.order(2)
     def test_update(self, xm_sb):
-        person = xm_sb.people().get_people_by_query(target_name='mmcbride')[0]
+        person = xm_sb.people().get_person_by_id('mmcbride')
         data = {"id": person.id,
                 "firstName": "John"}
         mod_person = xm_sb.people().update_person(data)
@@ -43,10 +43,6 @@ class TestGet:
         assert iter(people)
         for person in people:
             assert person.id is not None
-            groups = person.get_groups()
-            assert iter(groups)
-            for group in groups:
-                assert group.group.id is not None
 
     @my_vcr.use_cassette('people_test_get_roles.json')
     def test_roles(self, xm_test):
@@ -68,24 +64,21 @@ class TestGet:
 
     @my_vcr.use_cassette('people_test_get_groups.json')
     def test_get_groups(self, xm_test):
-        people = xm_test.people().get_people()
-        for person in people:
-            groups = person.get_groups()
-            assert iter(groups)
-            for group in groups:
-                assert group.id is not None
+        for person in xm_test.people().get_people():
+            groups_memberships = person.get_groups()
+            assert iter(groups_memberships)
+            for membership in groups_memberships:
+                assert membership.id is not None
 
     @my_vcr.use_cassette('people_test_get_supervisors.json')
     def test_get_supervisors(self, xm_test):
-        people = list(xm_test.people().get_people())
-        for person in people:
+        for person in xm_test.people().get_people():
             supervisors = person.get_supervisors()
             assert iter(supervisors)
 
     @my_vcr.use_cassette('test_get_person_by_id.json')
     def test_get_by_id(self, xm_test):
-        people = list(xm_test.people().get_people())
-        for person in people:
+        for person in xm_test.people().get_people():
             person_by_id = xm_test.people().get_person_by_id(person.id)
             assert isinstance(person_by_id, Person)
 

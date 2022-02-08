@@ -1,11 +1,11 @@
 import xmatters.utils
 import xmatters.xm_objects.people
 import xmatters.factories
-import xmatters.xm_objects.common
 import xmatters.connection
 import xmatters.xm_objects.oncall
 import xmatters.xm_objects.roles
 import xmatters.xm_objects.shifts
+from xmatters.xm_objects.common import Pagination, SelfLink, RecipientReference, Recipient, ReferenceByIdAndSelfLink
 
 
 class GroupMembershipShiftReference(xmatters.connection.ApiBridge):
@@ -18,7 +18,7 @@ class GroupMembershipShiftReference(xmatters.connection.ApiBridge):
         self.group = xmatters.xm_objects.shifts.GroupReference(self, group) if group else None
         self.name = data.get('name')
         links = data.get('links')
-        self.links = xmatters.xm_objects.common.SelfLink(self, links) if links else None
+        self.links = SelfLink(self, links) if links else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -35,11 +35,9 @@ class GroupMembership(xmatters.connection.ApiBridge):
         group = data.get('group')
         self.group = xmatters.xm_objects.shifts.GroupReference(self, group) if group else None
         member = data.get('member')
-        self.member = xmatters.xm_objects.common.RecipientReference(self, member) if member else None
+        self.member = RecipientReference(self, member) if member else None
         shifts = data.get('shifts', {})
-        self.shifts = list(
-            xmatters.xm_objects.common.Pagination(self, shifts, GroupMembershipShiftReference)) if shifts.get(
-            'data') else []
+        self.shifts = Pagination(self, shifts, GroupMembershipShiftReference) if shifts.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -48,7 +46,7 @@ class GroupMembership(xmatters.connection.ApiBridge):
         return self.__repr__()
 
 
-class Group(xmatters.xm_objects.common.Recipient):
+class Group(Recipient):
     _endpoints = {'get_supervisors': '/supervisors',
                   'get_oncall': '{base_url}/on-call?groups={group_id}',
                   'observers': '?embed=observers',
@@ -70,7 +68,7 @@ class Group(xmatters.xm_objects.common.Recipient):
         self.created = xmatters.utils.TimeAttribute(created) if created else None
         self.group_type = data.get('groupType')
         site = data.get('site')
-        self.site = xmatters.xm_objects.common.ReferenceByIdAndSelfLink(self, site) if site else None
+        self.site = ReferenceByIdAndSelfLink(self, site) if site else None
         self.services = data.get('services', [])
 
     @property
@@ -86,21 +84,18 @@ class Group(xmatters.xm_objects.common.Recipient):
     def get_supervisors(self):
         url = self.build_url(self._endpoints.get('get_supervisors'))
         data = self.con.get(url)
-        return list(xmatters.xm_objects.common.Pagination(self, data, xmatters.xm_objects.people.Person)) if data.get(
-            'data') else []
+        return Pagination(self, data, xmatters.xm_objects.people.Person) if data.get('data') else []
 
     def get_oncall(self, params=None):
         url = self._endpoints.get('get_oncall').format(base_url=self.con.base_url, group_id=self.id)
         data = self.con.get(url, params=params)
-        return list(xmatters.xm_objects.common.Pagination(self, data, xmatters.xm_objects.oncall.OnCall)) if data.get(
-            'data') else []
+        return Pagination(self, data, xmatters.xm_objects.oncall.OnCall) if data.get('data') else []
 
     def get_shifts(self, at=None):
         params = {'at': self.process_time_param(at)}
         url = self.build_url(self._endpoints.get('get_shifts'))
         data = self.con.get(url, params)
-        return list(xmatters.xm_objects.common.Pagination(self, data, xmatters.xm_objects.shifts.Shift)) if data.get(
-            'data') else []
+        return Pagination(self, data, xmatters.xm_objects.shifts.Shift) if data.get('data') else []
 
     def get_shift_by_id(self, shift_id, at=None):
         params = {'at': self.process_time_param(at)}
@@ -123,7 +118,7 @@ class Group(xmatters.xm_objects.common.Recipient):
     def get_members(self):
         url = self.build_url(self._endpoints.get('get_members'))
         data = self.con.get(url)
-        return list(xmatters.xm_objects.common.Pagination(self, data, GroupMembership)) if data.get('data') else []
+        return Pagination(self, data, GroupMembership) if data.get('data') else []
 
     # TODO: Test
     def add_member(self, data):

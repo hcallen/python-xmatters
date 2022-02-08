@@ -73,7 +73,7 @@ class Plan(ApiBridge):
                   'triggerType': trigger_type}
         url = self.build_url(self._endpoints.get('get_forms'))
         fs = self.con.get(url, params=params)
-        return list(Pagination(self, fs, xmatters.xm_objects.forms.Form)) if fs.get('data') else []
+        return Pagination(self, fs, xmatters.xm_objects.forms.Form) if fs.get('data') else []
 
     # TODO: Test
     def get_form_by_id(self, form_id, recipients=None):
@@ -97,7 +97,7 @@ class Plan(ApiBridge):
     def get_constants(self):
         url = self.build_url(self._endpoints.get('get_constants'))
         constants = self.con.get(url)
-        return list(Pagination(self, constants, PlanConstant)) if constants.get('data') else []
+        return Pagination(self, constants, PlanConstant) if constants.get('data') else []
 
     # TODO: Test
     def create_constant(self, data):
@@ -122,7 +122,7 @@ class Plan(ApiBridge):
                   'deployed': deployed}
         url = self.build_url(self._endpoints.get('get_integrations'))
         ints = self.con.get(url, params=params)
-        return list(Pagination(self, ints, Integration)) if ints.get('data') else []
+        return Pagination(self, ints, Integration) if ints.get('data') else []
 
     # TODO: Test
     def get_integration_by_id(self, integration_id):
@@ -151,7 +151,7 @@ class Plan(ApiBridge):
     def get_properties(self):
         url = self.build_url(self._endpoints.get('get_properties'))
         props = self.con.get(url)
-        return list(Pagination(self, props, factory.PropertiesFactory)) if props.get('data') else []
+        return Pagination(self, props, factory.PropertiesFactory) if props.get('data') else []
 
     # TODO: Test
     def create_property(self, data):
@@ -177,7 +177,7 @@ class Plan(ApiBridge):
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_libraries'))
         libs = self.con.get(url, params=params)
-        return list(Pagination(self, libs, SharedLibrary, limit=limit)) if libs.get('data') else []
+        return Pagination(self, libs, SharedLibrary, limit=limit) if libs.get('data') else []
 
     # TODO: Test
     def get_shared_library_by_id(self, library_id):
@@ -206,7 +206,7 @@ class Plan(ApiBridge):
     def get_endpoints(self):
         url = self.build_url(self._endpoints.get('get_endpoints'))
         endpoints = self.con.get(url)
-        return list(Pagination(self, endpoints, xmatters.xm_objects.plan_endpoints.Endpoint)) if endpoints.get('data') else []
+        return Pagination(self, endpoints, xmatters.xm_objects.plan_endpoints.Endpoint) if endpoints.get('data') else []
 
     # TODO: Test
     def create_endpoint(self, data):
@@ -234,7 +234,7 @@ class Plan(ApiBridge):
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_subscription_forms'))
         sub_forms = self.con.get(url, params=params)
-        return list(Pagination(self, sub_forms, SubscriptionForm, limit=limit)) if sub_forms.get('data') else []
+        return Pagination(self, sub_forms, SubscriptionForm, limit=limit) if sub_forms.get('data') else []
 
     # TODO: Test
     def create_subscription_form(self, data):

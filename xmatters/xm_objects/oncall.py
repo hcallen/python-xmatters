@@ -80,7 +80,7 @@ class OnCall(ApiBridge):
         end = data.get('end')
         self.end = util.TimeAttribute(end) if end else None
         members = data.get('members', {})
-        self.members = list(Pagination(self, members, ShiftOccurrenceMember)) if members.get('data') else []
+        self.members = Pagination(self, members, ShiftOccurrenceMember) if members.get('data') else []
 
     @property
     def shift(self):
