@@ -4,17 +4,9 @@ import xmatters.xm_objects.device_names
 from .conftest import my_vcr
 
 
-class TestDeviceNames:
-
-    @my_vcr.use_cassette('test_get_device_names.json')
-    def test_get_device_names(self, xm_test):
-        dns = xm_test.device_names().get_device_names()
-        assert iter(dns)
-        for dn in dns:
-            assert dn.id is not None
-
+class TestCreateUpdateDelete:
     @pytest.mark.order(1)
-    def test_create_device_name(self, xm_sb):
+    def test_create(self, xm_sb):
         data = {'deviceType': 'EMAIL',
                 'name': 'Another Email Device',
                 'description': 'Another Email Device'}
@@ -23,7 +15,7 @@ class TestDeviceNames:
         assert new_device_name.name == 'Another Email Device'
 
     @pytest.mark.order(2)
-    def test_modify_device_name(self, xm_sb):
+    def test_update(self, xm_sb):
         device_names = xm_sb.device_names().get_device_names()
         to_modify = None
         for device_name in device_names:
@@ -38,7 +30,7 @@ class TestDeviceNames:
         assert mod_device_name.name == 'Another Email Device Modified'
 
     @pytest.mark.order(3)
-    def test_delete_device_name(self, xm_sb):
+    def test_delete(self, xm_sb):
         device_names = xm_sb.device_names().get_device_names()
         to_delete = None
         for device_name in device_names:
@@ -51,3 +43,12 @@ class TestDeviceNames:
         for device_name in device_names:
             assert device_name.id != to_delete.id
 
+
+class TestGet:
+
+    @my_vcr.use_cassette('test_get_device_names.json')
+    def test_get(self, xm_test):
+        dns = xm_test.device_names().get_device_names()
+        assert iter(dns)
+        for dn in dns:
+            assert dn.id is not None

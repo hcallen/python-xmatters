@@ -30,6 +30,8 @@ class Person(Recipient):
         self.when_created = utils.TimeAttribute(when_created) if when_created else None
         when_updated = data.get('whenUpdated')
         self.when_updated = utils.TimeAttribute(when_updated) if when_updated else None
+        links = data.get('links')
+        self.links = SelfLink(self, data) if links else None
 
     @property
     def roles(self):
@@ -44,29 +46,29 @@ class Person(Recipient):
 
     @property
     def supervisors(self):
-        url = self.build_url(self._endpoints.get('supervisors'))
-        data = self.con.get(url)
-        supervisors = data.get('supervisors', {})
-        return list(Pagination(self, supervisors, Person)) if supervisors.get('data') else []
+        return self.get_supervisors()
 
-    def get_supervisors(self):
-        return self.supervisors
+    def get_supervisors(self, offset=None, limit=None):
+        params = {'offset': offset,
+                  'limit': limit}
+        url = self.build_url(self._endpoints.get('get_supervisors'))
+        s = self.con.get(url, params=params)
+        return list(Pagination(self, s, Person)) if s.get('data') else []
 
-    # TODO: Test
-    # Does the '/supervisors' endpoint work?
-    # def get_supervisors(self, params=None):
-    #     url = self.build_url(self._endpoints.get('get_supervisors'))
-    #     s = self.con.get(url, params)
-    #     return Pagination(self, s, Person) if s.get('data') else []
-
-    def get_devices(self, params=None):
+    def get_devices(self, offset=None, limit=None, phone_number_format=None, at=None):
+        params = {'phoneNumberFormat': phone_number_format,
+                  'at': utils.TimeAttribute(at),
+                  'offset': offset,
+                  'limit': limit}
         url = self.build_url(self._endpoints.get('get_devices'))
-        devices = self.con.get(url, params)
+        devices = self.con.get(url, params=params)
         return list(Pagination(self, devices, xmatters.factories.DeviceFactory)) if devices.get('data') else []
 
-    def get_groups(self):
+    def get_groups(self, offset=None, limit=None):
+        params = {'offset': offset,
+                  'limit': limit}
         url = self.build_url(self._endpoints.get('get_groups'))
-        groups = self.con.get(url)
+        groups = self.con.get(url, params=params)
         return list(Pagination(self, groups, xmatters.xm_objects.groups.GroupMembership)) if groups.get('data') else []
 
     def __repr__(self):
