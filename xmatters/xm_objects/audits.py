@@ -16,7 +16,7 @@ class Notification(ApiBridge):
         created = data.get('created')
         self.created = util.TimeAttribute(created) if created else None
         event = data.get('event')
-        self.event = events.EventReference(parent, data) if event else None
+        self.event = events.EventReference(parent, event) if event else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
