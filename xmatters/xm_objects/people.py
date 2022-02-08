@@ -1,9 +1,10 @@
-import xmatters.factories as factory
+import xmatters.factories
 import xmatters.utils as utils
 from xmatters.xm_objects.common import Recipient, SelfLink, Pagination
 from xmatters.xm_objects.roles import Role
 from xmatters.connection import ApiBridge
 import xmatters.xm_objects.groups
+
 
 class Person(Recipient):
     _endpoints = {'get_devices': '/devices',
@@ -61,7 +62,7 @@ class Person(Recipient):
     def get_devices(self, params=None):
         url = self.build_url(self._endpoints.get('get_devices'))
         devices = self.con.get(url, params)
-        return list(Pagination(self, devices, factory.device)) if devices.get('data') else []
+        return list(Pagination(self, devices, xmatters.factories.DeviceFactory)) if devices.get('data') else []
 
     def get_groups(self):
         url = self.build_url(self._endpoints.get('get_groups'))
@@ -91,4 +92,3 @@ class PersonReference(ApiBridge):
 
     def __str__(self):
         return self.__repr__()
-

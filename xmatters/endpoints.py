@@ -57,7 +57,7 @@ class AuditsEndpoint(ApiBridge):
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_audit'))
         data = self.con.get(url=url, params=params)
-        return list(Pagination(self, data, factory.audit, limit=limit)) if data.get('data') else []
+        return list(Pagination(self, data, xmatters.factories.AuditFactory, limit=limit)) if data.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -88,28 +88,28 @@ class DevicesEndpoint(ApiBridge):
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.get(url=url, params=params)
-        return list(Pagination(self, data, factory.device, limit=limit)) if data.get('data') else []
+        return list(Pagination(self, data, xmatters.factories.DeviceFactory, limit=limit)) if data.get('data') else []
 
     def get_device_by_id(self, device_id, at_time=None):
         params = {'at': self.process_time_param(at_time)}
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
         data = self.con.get(url=url, params=params)
-        return factory.device(self, data) if data else None
+        return xmatters.factories.DeviceFactory.compose(self, data) if data else None
 
     def create_device(self, data):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.post(url, data=data)
-        return factory.device(self, data) if data else None
+        return xmatters.factories.DeviceFactory.compose(self, data) if data else None
 
     def update_device(self, data):
         url = self.build_url(self._endpoints.get('get_devices'))
         data = self.con.post(url=url, data=data)
-        return factory.device(self, data) if data else None
+        return xmatters.factories.DeviceFactory.compose(self, data) if data else None
 
     def delete_device(self, device_id):
         url = self.build_url(self._endpoints.get('get_device_by_id').format(device_id=device_id))
         data = self.con.delete(url=url)
-        return factory.device(self, data) if data else None
+        return xmatters.factories.DeviceFactory.compose(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -137,22 +137,22 @@ class DeviceNamesEndpoint(ApiBridge):
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.get(url=url, params=params)
-        return list(Pagination(self, data, factory.device_name, limit=limit)) if data.get('data') else []
+        return list(Pagination(self, data, factory.DeviceNameFactory, limit=limit)) if data.get('data') else []
 
     def create_device_name(self, data):
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.post(url, data=data)
-        return factory.device_name(data) if data else None
+        return xmatters.factories.DeviceNameFactory.compose(self, data) if data else None
 
     def update_device_name(self, data):
         url = self.build_url(self._endpoints.get('get_device_names'))
         data = self.con.post(url, data=data)
-        return factory.device_name(data) if data else None
+        return xmatters.factories.DeviceNameFactory.compose(self, data) if data else None
 
     def delete_device_name(self, device_name_id):
         url = self.build_url(self._endpoints.get('delete_device_name').format(device_name_id=device_name_id))
         data = self.con.delete(url)
-        return factory.device_name(data) if data else None
+        return xmatters.factories.DeviceNameFactory.compose(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -551,12 +551,13 @@ class OnCallEndpoint(ApiBridge):
         super(OnCallEndpoint, self).__init__(parent)
 
     # TODO: Test params
-    def get_oncall(self, groups, members_per_shift=None, at_time=None, from_time=None, to_time=None, offset=None, limit=None):
+    def get_oncall(self, groups, members_per_shift=None, at_time=None, from_time=None, to_time=None, offset=None,
+                   limit=None):
         params = {'groups': groups,
                   'membersPerShift': members_per_shift,
                   'at': self.process_time_param(at_time),
                   'from': self.process_time_param(from_time),
-                  'to': self.process_time_param(to_time) ,
+                  'to': self.process_time_param(to_time),
                   'offset': offset,
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_oncall'))

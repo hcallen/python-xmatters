@@ -9,10 +9,22 @@ class TestForms:
         for form in forms:
             assert form.id is not None
             try:
-                assert iter(list(form.recipients))
-                assert iter(list(form.get_response_options()))
-                assert iter(list(form.get_sections()))
-                assert iter(list(form.get_scenarios()))
+                recipients = form.recipients
+                assert iter(recipients)
+                for r in recipients:
+                    assert r.id is not None
+                response_options = form.get_response_options()
+                assert iter(response_options)
+                for r in response_options:
+                    assert r.id is not None
+                sections = form.get_sections()
+                assert iter(sections)
+                for s in sections:
+                    assert s.id is not None
+                scenarios = form.get_scenarios()
+                assert iter(scenarios)
+                for s in scenarios:
+                    assert s.id is not None
             except err.ForbiddenError:
                 # skip forms that account doesn't have access to
                 pass

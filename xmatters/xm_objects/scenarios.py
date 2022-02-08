@@ -2,14 +2,15 @@ import xmatters.xm_objects.events
 import xmatters.xm_objects.forms
 import xmatters.factories as factory
 import xmatters.utils
-from xmatters.connection import ApiBridge
+import xmatters.connection
+import xmatters.xm_objects.people
+import xmatters.xm_objects.plans
+import xmatters.xm_objects.roles
+
 from xmatters.xm_objects.common import Pagination, SelfLink
-from xmatters.xm_objects.people import PersonReference
-from xmatters.xm_objects.plans import PlanReference
-from xmatters.xm_objects.roles import Role
 
 
-class ScenarioPermission(ApiBridge):
+class ScenarioPermission(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(ScenarioPermission, self).__init__(parent, data)
         self.permissible_type = data.get('permissibleType')
@@ -26,7 +27,7 @@ class ScenarioPermissionPerson(ScenarioPermission):
     def __init__(self, parent, data):
         super(ScenarioPermissionPerson, self).__init__(parent, data)
         person = data.get('person')
-        self.person = PersonReference(self, person) if person else None
+        self.person = xmatters.xm_objects.people.PersonReference(self, person) if person else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -39,7 +40,7 @@ class ScenarioPermissionRole(ScenarioPermission):
     def __init__(self, parent, data):
         super(ScenarioPermissionRole, self).__init__(parent, data)
         role = data.get('role')
-        self.role = Role(role) if role else None
+        self.role = xmatters.xm_objects.roles.Role(role) if role else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -48,18 +49,17 @@ class ScenarioPermissionRole(ScenarioPermission):
         return self.__repr__()
 
 
-class Scenario(ApiBridge):
-    _endpoints = {'properties': '?embed=properties'}
+class Scenario(xmatters.connection.ApiBridge):
+    _endpoints = {'properties': '?embed=properties',
+                  'plan': '?embed=properties',
+                  'form': '?embed=form',
+                  'properties_translations': '?embed=properties.translations'}
 
     def __init__(self, parent, data):
         super(Scenario, self).__init__(parent, data)
         self.id = data.get('id')
         self.name = data.get('name')
         self.description = data.get('description')
-        plan = data.get('plan')
-        self.plan = PlanReference(plan) if plan else None
-        form = data.get('form')
-        self.form = xmatters.xm_objects.forms.FormReference(form) if form else None
         self.priority = data.get('priority')
         self.position = data.get('position')
         self.bypass_phone_intro = data.get('bypassPhoneIntro')
@@ -72,13 +72,13 @@ class Scenario(ApiBridge):
         vm_opts = data.get('voicemailOptions')
         self.voicemail_options = xmatters.xm_objects.events.VoicemailOptions(vm_opts) if vm_opts else None
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = list(Pagination(self, tdns, factory.device_name)) if tdns.get('data') else []
+        self.target_device_names = list(Pagination(self, tdns, factory.DeviceNameFactory)) if tdns.get('data') else []
         created = data.get('created')
         self.created = xmatters.utils.TimeAttribute(created) if created else None
         perm = data.get('permitted', {}).get('data')
-        self.permitted = [factory.scenario_permission(self, p) for p in perm] if perm else []
+        self.permitted = [factory.ScenarioPermFactory.compose(self, p) for p in perm] if perm else []
         rs = data.get('recipients')
-        self.recipients = list(Pagination(self, rs, factory.recipient)) if rs.get('data') else None
+        self.recipients = list(Pagination(self, rs, factory.RecipientFactory)) if rs.get('data') else []
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
 
@@ -88,24 +88,26 @@ class Scenario(ApiBridge):
         data = self.con.get(url)
         return data.get('properties', {})
 
-    # TODO: embeds
-    # @property
-    # def properties_translations(self):
-    #     pass
-    #
-    # @property
-    # def plan(self):
-    #     pass
-    #
-    # @property
-    # def form(self):
-    #     pass
+    @property
+    def plan(self):
+        url = self.build_url(self._endpoints.get('plan'))
+        plan = self.con.get(url).get('plan', {})
+        return xmatters.xm_objects.plans.Plan(self, plan) if plan else None
 
+    @property
+    def form(self):
+        url = self.build_url(self._endpoints.get('form'))
+        form = self.con.get(url).get('form', {})
+        return xmatters.xm_objects.forms.Form(self, form) if form else None
+
+    @property
+    def properties_translations(self):
+        url = self.build_url(self._endpoints.get('properties_translations'))
+        data = self.con.get(url)
+        return data.get('properties', {})
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
-
-

@@ -1,9 +1,9 @@
-import xmatters.utils as util
-from xmatters.connection import ApiBridge
-from xmatters.xm_objects.common import ReferenceByIdAndSelfLink, SelfLink, Recipient, Pagination
+import xmatters.utils
+import xmatters.connection
+import xmatters.xm_objects.common
 
 
-class GroupReference(ApiBridge):
+class GroupReference(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(GroupReference, self).__init__(parent, data)
         self.id = data.get('id')
@@ -11,7 +11,7 @@ class GroupReference(ApiBridge):
         self.recipient_type = data.get('recipientType')
         self.group_type = data.get('groupType')
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
+        self.links = xmatters.xm_objects.common.SelfLink(self, links) if links else None
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -24,7 +24,7 @@ class End(object):
     def __init__(self, data):
         self.end_by = data.get('endBy')
         date = data.get('date')
-        self.date = util.TimeAttribute(date) if date else None
+        self.date = xmatters.utils.TimeAttribute(date) if date else None
         self.repetitions = data.get('repetitions')
 
     def __repr__(self):
@@ -41,7 +41,7 @@ class Rotation(object):
         self.interval = data.get('interval')
         self.interval_unit = data.get('intervalUnit')
         next_rotation_time = data.get('nextRotationTime')
-        self.next_rotation_time = util.TimeAttribute(next_rotation_time) if next_rotation_time else None
+        self.next_rotation_time = xmatters.utils.TimeAttribute(next_rotation_time) if next_rotation_time else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -70,7 +70,7 @@ class ShiftRecurrence(object):
         return self.__repr__()
 
 
-class ShiftMember(ApiBridge):
+class ShiftMember(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(ShiftMember, self).__init__(parent, data)
         self.position = data.get('position')
@@ -78,9 +78,9 @@ class ShiftMember(ApiBridge):
         self.escalation_type = data.get('escalationType')
         self.in_rotation = data.get('inRotation')
         recipient = data.get('recipient')
-        self.recipient = Recipient(self, recipient) if recipient else None
+        self.recipient = xmatters.xm_objects.common.Recipient(self, recipient) if recipient else None
         shift = data.get('shift')
-        self.shift = ReferenceByIdAndSelfLink(self, shift) if shift else None
+        self.shift = xmatters.xm_objects.common.ReferenceByIdAndSelfLink(self, shift) if shift else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -89,7 +89,7 @@ class ShiftMember(ApiBridge):
         return self.__repr__()
 
 
-class Shift(ApiBridge):
+class Shift(xmatters.connection.ApiBridge):
     _endpoints = {'get_members': '/members'}
 
     def __init__(self, parent, data):
@@ -98,20 +98,20 @@ class Shift(ApiBridge):
         group = data.get('group')
         self.group = GroupReference(self, group) if group else None
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
+        self.links = xmatters.xm_objects.common.SelfLink(self, links) if links else None
         self.name = data.get('name')
         start = data.get('start')
-        self.start = util.TimeAttribute(start) if start else None
+        self.start = xmatters.utils.TimeAttribute(start) if start else None
         end = data.get('end')
-        self.end = util.TimeAttribute(end) if end else None
+        self.end = xmatters.utils.TimeAttribute(end) if end else None
         self.timezone = data.get('timezone')
         recurrence = data.get('recurrence')
         self.recurrence = ShiftRecurrence(recurrence) if recurrence else None
 
     def get_members(self):
         url = self.build_url(self._endpoints.get('get_members'))
-        members = self.con.get(url) # .get('data',[])
-        return list(Pagination(self, members, ShiftMember)) if members.get('data') else []
+        members = self.con.get(url)
+        return list(xmatters.xm_objects.common.Pagination(self, members, ShiftMember)) if members.get('data') else []
 
     # TODO: Test
     def add_member(self, data):

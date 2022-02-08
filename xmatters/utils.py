@@ -1,5 +1,7 @@
 import json
 import pathlib
+from abc import ABC, abstractmethod
+
 from dateutil import tz, parser
 
 MAX_API_LIMIT = 1000
@@ -72,3 +74,31 @@ class TokenFileStorage(object):
 
     def __str__(self):
         return self.__repr__()
+
+
+class Factory(ABC):
+
+    @property
+    @abstractmethod
+    def needs_parent(self):
+        pass
+
+    @property
+    @abstractmethod
+    def identifier_field(self):
+        pass
+
+    @property
+    @abstractmethod
+    def factory_objects(self):
+        pass
+
+    @classmethod
+    def compose(cls, parent, item_data, default=None):
+        identifier = item_data.get(cls.identifier_field)
+        constructor = cls.factory_objects.get(identifier, default)
+
+        if cls.needs_parent:
+            return constructor(parent, item_data) if constructor else None
+        else:
+            return constructor(item_data) if constructor else None

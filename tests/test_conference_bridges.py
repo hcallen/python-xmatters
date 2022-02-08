@@ -1,6 +1,5 @@
 import pytest
 
-from .conftest import my_vcr
 import xmatters.xm_objects.conference_bridges
 import xmatters.errors
 

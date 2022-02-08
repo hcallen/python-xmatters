@@ -13,7 +13,7 @@ class OnCallSummary(ApiBridge):
         shift = data.get('shift')
         self.shift = ShiftReference(self, shift) if shift else None
         recipient = data.get('recipient')
-        self.recipient = factory.recipient(self, recipient) if recipient else None
+        self.recipient = factory.RecipientFactory.compose(self, recipient) if recipient else None
         absence = data.get('absence')
         self.absence = PersonReference(self, absence) if absence else None
         self.delay = data.get('delay')

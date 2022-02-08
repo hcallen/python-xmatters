@@ -1,6 +1,6 @@
 import xmatters.factories as factory
 import xmatters.xm_objects.forms
-import xmatters.xm_objects.plan_endpoints
+from xmatters.xm_objects.plan_endpoints import Endpoint
 from xmatters.connection import ApiBridge
 from xmatters.xm_objects.common import Pagination, SelfLink
 from xmatters.xm_objects.integrations import Integration
@@ -151,25 +151,25 @@ class Plan(ApiBridge):
     def get_properties(self):
         url = self.build_url(self._endpoints.get('get_properties'))
         props = self.con.get(url)
-        return list(Pagination(self, props, factory.plan_property)) if props.get('data') else []
+        return list(Pagination(self, props, factory.PropertiesFactory)) if props.get('data') else []
 
     # TODO: Test
     def create_property(self, data):
         url = self.build_url(self._endpoints.get('get_properties'))
         data = self.con.post(url, data=data)
-        return factory.plan_property(data) if data else None
+        return factory.PropertiesFactory.compose(self, data) if data else None
 
     # TODO: Test
     def update_property(self, data):
         url = self.build_url(self._endpoints.get('get_properties'))
         data = self.con.post(url, data=data)
-        return factory.plan_property(data) if data else None
+        return factory.PropertiesFactory.compose(self, data) if data else None
 
     # TODO: Test
     def delete_property(self, property_id):
         url = self.build_url(self._endpoints.get('delete_property').format(prop_id=property_id))
         data = self.con.delete(url)
-        return factory.plan_property(data) if data else None
+        return factory.PropertiesFactory.compose(self, data) if data else None
 
     # TODO: Test param
     def get_shared_libraries(self, offset=None, limit=None):

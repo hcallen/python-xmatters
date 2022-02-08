@@ -1,7 +1,5 @@
-import inspect
 import xmatters.connection
-from xmatters.utils import MAX_API_LIMIT
-
+import xmatters.utils
 
 class PaginationLinks(object):
     def __init__(self, data):
@@ -17,12 +15,11 @@ class PaginationLinks(object):
 
 
 class Pagination(xmatters.connection.ApiBridge):
-    def __init__(self, parent, data, cons, cons_identifier=None, limit=None):
+
+    def __init__(self, parent, data, constructor, limit=None):
         super(Pagination, self).__init__(parent, data)
         self.parent = parent
-        self.cons = cons
-        self.cons_identifier = cons_identifier
-        self._cons_params_count = len(inspect.signature(self.cons).parameters)
+        self.constructor = constructor
         self.limit = limit
         self.state = 0  # count of items iterated
         self.total = None
@@ -48,14 +45,13 @@ class Pagination(xmatters.connection.ApiBridge):
         self.total = data.get('total')
         self.index = 0
 
-    def _get_object(self, data):
-        if self._cons_params_count == 3:
-            object_type = data.get(self.cons_identifier)
-            data_object = self.cons(self, data, object_type)
-        elif self._cons_params_count == 2:
-            data_object = self.cons(self, data)
+    def _get_object(self, item_data):
+        if issubclass(self.constructor, xmatters.utils.Factory):
+            data_object = self.constructor.compose(self, item_data)
+        elif issubclass(self.constructor, xmatters.connection.ApiBridge):
+            data_object = self.constructor(self, item_data)
         else:
-            data_object = self.cons(data)
+            data_object = self.constructor(item_data)
         return data_object
 
     def __iter__(self):
@@ -79,7 +75,7 @@ class Pagination(xmatters.connection.ApiBridge):
         return self.total
 
     def __repr__(self):
-        return '<{} {} {} objects>'.format(self.__class__.__name__, self.total, self.cons.__name__)
+        return '<{} {} {} objects>'.format(self.__class__.__name__, self.total, self.constructor.__name__)
 
     def __str__(self):
         return self.__repr__()

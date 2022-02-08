@@ -1,7 +1,7 @@
-import xmatters.utils as util
-from xmatters.connection import ApiBridge
-from xmatters.xm_objects.people import PersonReference
-from xmatters.xm_objects.common import SelfLink
+import xmatters.utils
+import xmatters.connection
+import xmatters.xm_objects.people
+import xmatters.xm_objects.common
 
 
 class ImportMessage(object):
@@ -19,7 +19,7 @@ class ImportMessage(object):
         return self.__repr__()
 
 
-class Import(ApiBridge):
+class Import(xmatters.connection.ApiBridge):
     _endpoints = {'get_messages': '/import-messages'}
 
     def __init__(self, parent, data):
@@ -29,16 +29,16 @@ class Import(ApiBridge):
         self.transform = data.get('transform')
         self.status = data.get('status')
         started = data.get('started')
-        self.started = util.TimeAttribute(started) if started else None
+        self.started = xmatters.utils.TimeAttribute(started) if started else None
         self.last_updated_at = data.get('lastUpdatedAt')
         by = data.get('by')
-        self.by = PersonReference(parent, by) if by else None
+        self.by = xmatters.xm_objects.people.PersonReference(parent, by) if by else None
         self.total_count = data.get('totalCount')
         self.processed_count = data.get('processedCount')
         finished_at = data.get('finishedAt')
-        self.finished_at = util.TimeAttribute(finished_at) if finished_at else None
+        self.finished_at = xmatters.utils.TimeAttribute(finished_at) if finished_at else None
         links = data.get('links')
-        self.links = SelfLink(parent, links)
+        self.links = xmatters.xm_objects.common.SelfLink(parent, links)
 
     def get_messages(self, params=None):
         url = self.build_url(self._endpoints.get('get_messages'))
@@ -50,5 +50,3 @@ class Import(ApiBridge):
 
     def __str__(self):
         return self.__repr__()
-
-

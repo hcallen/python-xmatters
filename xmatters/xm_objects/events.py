@@ -284,7 +284,7 @@ class Event(ApiBridge):
         params = {'eventId': self.id, 'auditType': audit_type, 'sortOrder': sort_order}
         url = self._endpoints.get('get_audit').format(base_url=self.con.base_url)
         data = self.con.get(url, params=params)
-        return list(Pagination(self, data, xmatters.factories.audit)) if data.get('data') else []
+        return list(Pagination(self, data, xmatters.factories.AuditFactory)) if data.get('data') else []
 
     # TODO: Test datetime w/ at
     def get_user_delivery_data(self, at_time):

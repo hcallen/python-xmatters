@@ -40,7 +40,7 @@ class Connection(object):
             r = self.session.request(method=method, url=url, timeout=self.timeout)
         data = r.json()
         if not r.ok or r.status_code == 204:
-            raise err.errors_factory(data)
+            raise err.ErrorFactory.compose(None, data, err.ApiError)
         return data
 
     @property
@@ -67,7 +67,7 @@ class ApiBridge(object):
     """ Base for api objects that need to make requests """
 
     def __init__(self, parent, data=None):
-        if not parent.con:
+        if hasattr(parent, 'con') and not parent.con:
             raise err.AuthorizationError('authentication not provided')
 
         self.con = parent.con

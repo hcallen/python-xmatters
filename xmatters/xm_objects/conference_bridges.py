@@ -1,8 +1,8 @@
-from xmatters.xm_objects.common import SelfLink
-from xmatters.connection import ApiBridge
+import xmatters.xm_objects.common
+import xmatters.connection
 
 
-class ConferenceBridge(ApiBridge):
+class ConferenceBridge(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(ConferenceBridge, self).__init__(parent, data)
         self.id = data.get('id')
@@ -16,12 +16,10 @@ class ConferenceBridge(ApiBridge):
         self.bridge_number = data.get('bridgeNumber')
         self.dial_after_bridge = data.get('dialAfterBridge')
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
+        self.links = xmatters.xm_objects.common.SelfLink(self, links) if links else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
-
-

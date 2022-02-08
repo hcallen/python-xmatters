@@ -1,7 +1,19 @@
-from xmatters.xm_objects.common import SelfLink
+import xmatters.xm_objects.common
 import xmatters.xm_objects.plans
 from xmatters.connection import ApiBridge
 import xmatters.factories
+
+
+class ServiceAuthentication(object):
+    def __init__(self, data):
+        self.username = data.get('username')
+        self.connection_status = data.get('connectionStatus')
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class BasicAuthentication(object):
@@ -40,9 +52,12 @@ class Endpoint(ApiBridge):
         self.endpoint_type = data.get('endpointType')
         self.authentication_type = data.get('authenticationType')
         auth = data.get('authentication')
-        self.authentication = xmatters.factories.auth(auth, self.authentication_type) if auth else None
+        self.authentication = xmatters.factories.AuthFactory.compose(self, data) if auth else None
         links = data.get('links')
-        self.links = SelfLink(self, data) if links else None
+        self.links = xmatters.xm_objects.common.SelfLink(self, data) if links else None
+        self.trust_self_signed = data.get('trustSelfSigned')
+        self.preemptive = data.get('preemptive')
+        self.data = data.get('data')
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

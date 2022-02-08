@@ -1,6 +1,6 @@
 import xmatters.utils as util
 import xmatters.factories
-from xmatters.xm_objects.common import Recipient, SelfLink, Pagination
+from xmatters.xm_objects.common import SelfLink, Pagination
 from xmatters.connection import ApiBridge
 from xmatters.xm_objects.shifts import GroupReference, Shift
 
@@ -28,7 +28,7 @@ class ShiftOccurrenceMember(ApiBridge):
     def __init__(self, parent, data):
         super(ShiftOccurrenceMember, self).__init__(parent, data)
         member = data.get('member')
-        self.member = xmatters.factories.recipient(self, member) if member else None
+        self.member = xmatters.factories.RecipientFactory.compose(self, member) if member else None
         self.position = data.get('position')
         self.delay = data.get('delay')
         self.escalation_type = data.get('escalationType')

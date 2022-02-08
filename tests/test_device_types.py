@@ -15,4 +15,4 @@ class TestDeviceTypes:
         devices = list(xm_test.devices().get_devices())
         assert len(devices) > 0
         for device in devices:
-            assert device.device_type in xmatters.factories.device_types_o.keys()
+            assert device.device_type in xmatters.factories.DeviceFactory.factory_objects.keys()

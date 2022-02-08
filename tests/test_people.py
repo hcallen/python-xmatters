@@ -79,7 +79,6 @@ class TestPeople:
         assert isinstance(new_person, xmatters.xm_objects.people.Person)
         assert new_person.target_name == 'mmcbride'
 
-
     @pytest.mark.order(2)
     def test_update_person(self, xm_sb):
         person = xm_sb.people().get_people_by_query(target_name='mmcbride')[0]

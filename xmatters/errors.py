@@ -1,4 +1,4 @@
-import xmatters.xm_objects.common as comm
+import xmatters.utils
 
 
 class ErrorObject(object):
@@ -88,18 +88,21 @@ class TooManyRequestsError(ApiError):
         super(TooManyRequestsError, self).__init__(data)
 
 
-_errors = {204: NoContentError,
-           400: BadRequestError,
-           401: UnauthorizedError,
-           403: ForbiddenError,
-           404: NotFoundError,
-           406: NotAcceptableError,
-           409: ConflictError,
-           415: UnsupportedMediaError,
-           429: TooManyRequestsError}
+class ErrorFactory(xmatters.utils.Factory):
+    needs_parent = False
+    identifier_field = 'code'
+    factory_objects = {204: NoContentError,
+                       400: BadRequestError,
+                       401: UnauthorizedError,
+                       403: ForbiddenError,
+                       404: NotFoundError,
+                       406: NotAcceptableError,
+                       409: ConflictError,
+                       415: UnsupportedMediaError,
+                       429: TooManyRequestsError}
 
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
 
-def errors_factory(data):
-    error_type = data.get('code')
-    o = _errors.get(error_type, ApiError)
-    return o(data)
+    def __str__(self):
+        return self.__repr__()

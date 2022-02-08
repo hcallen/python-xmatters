@@ -54,4 +54,4 @@ class TestAudits:
         for event in events_last_month:
             audits = list(xm_test.audits().get_audit(event_id=event.id))
             for audit in audits:
-                assert audit.type in xmatters.factories.audit_types_o.keys()
+                assert audit.type in xmatters.factories.AuditFactory.factory_objects.keys()

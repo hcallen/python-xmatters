@@ -72,7 +72,6 @@ def xm_prod(settings):
 
 
 @pytest.fixture(scope='session')
-@my_vcr.use_cassette('events_last_month.json')
 def events_last_month(xm_test):
     start_dt = (datetime.now() - relativedelta(months=1)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     end_dt = ((start_dt + relativedelta(months=1)) - timedelta(microseconds=1))
