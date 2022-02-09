@@ -75,10 +75,10 @@ class Pagination(xmatters.connection.ApiBridge):
             return self._get_object(item_data)
 
     def __len__(self):
-        return self.total
+        return self.limit if self.limit else self.total
 
     def __repr__(self):
-        return '<{} {} {} objects>'.format(self.__class__.__name__, self.total, self.constructor.__name__)
+        return '<{} {} {} objects>'.format(self.__class__.__name__, self.limit if self.limit else self.total, self.constructor.__name__)
 
     def __str__(self):
         return self.__repr__()
