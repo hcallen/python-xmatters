@@ -72,10 +72,11 @@ class TestAuth:
         base_url = settings.get('test_base_url')
         username = settings.get('test_username')
         password = settings.get('test_password')
-        xm = XMSession(base_url, timeout=1, max_retries=2).set_authentication(username=username,
-                                                                              password=password)
+        xm = XMSession(base_url, timeout=1, max_retries=2, limit_per_request=100).set_authentication(username=username,
+                                                                                                     password=password)
         assert xm.con.timeout == 1
         assert xm.con.max_retries == 2
+        assert xm.con.limit_per_request == 100
 
     def test_oauth2_kwargs(self, settings):
         base_url = settings.get('test_base_url')
@@ -83,10 +84,13 @@ class TestAuth:
         token_filepath = settings.get('test_token_filepath')
         ts = TokenFileStorage(token_filepath)
         try:
-            xm = XMSession(base_url, timeout=1, max_retries=2).set_authentication(client_id=client_id,
-                                                                                  token_storage=ts)
+            xm = XMSession(base_url, timeout=1, max_retries=2, limit_per_request=100).set_authentication(
+                client_id=client_id,
+                token_storage=ts)
         except TokenExpiredError:
-            xm = XMSession(base_url, timeout=1, max_retries=2).set_authentication(client_id=client_id,
-                                                                                  token_storage=ts)
+            xm = XMSession(base_url, timeout=1, max_retries=2, limit_per_request=100).set_authentication(
+                client_id=client_id,
+                token_storage=ts)
         assert xm.con.timeout == 1
         assert xm.con.max_retries == 2
+        assert xm.con.limit_per_request == 100

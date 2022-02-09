@@ -68,7 +68,7 @@ class TestGet:
             groups_memberships = person.get_groups()
             assert iter(groups_memberships)
             for membership in groups_memberships:
-                assert membership.id is not None
+                assert membership.member.id is not None
 
     @my_vcr.use_cassette('people_test_get_supervisors.json')
     def test_get_supervisors(self, xm_test):
@@ -87,6 +87,15 @@ class TestGet:
         people_by_first_name = list(xm_test.people().get_people_by_query(first_name='David'))
         assert iter(people_by_first_name)
         assert len(people_by_first_name) > 0
+
+    @my_vcr.use_cassette('people_test_get_pagination.json')
+    def test_get_pagination(self, xm_test):
+        people = xm_test.people().get_people()
+        total = people.total
+        i = 0
+        for _ in people:
+            i+= 1
+        assert i == total
 
 
 class TestParams:
@@ -117,7 +126,7 @@ class TestParams:
     @my_vcr.use_cassette('test_get_people_param_limit.json')
     def test_limit(self, settings, xm_test):
         people_limit = xm_test.people().get_people(limit=10)
-        people_no_limit = xm_test.people().get_people()[:10]
+        people_no_limit = list(list(xm_test.people().get_people())[:10])
         assert len(people_limit) == 10
         assert len(people_no_limit) == 10
         for p1, p2 in zip(people_no_limit, people_limit):
