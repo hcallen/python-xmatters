@@ -17,6 +17,8 @@ class Connection(object):
         self.timeout = kwargs.get('timeout')
         if kwargs.get('max_retries'):
             self.max_retries = kwargs.get('max_retries')
+        limit_per_request = kwargs.get('limit_per_request')
+        self.limit_per_request = limit_per_request if limit_per_request else util.MAX_API_LIMIT
 
     def get(self, url, params=None):
         return self.request('GET', url=url, params=params)
@@ -29,9 +31,9 @@ class Connection(object):
 
     def request(self, method, url, data=None, params=None):
         if params:
-            # use api max limit if one not specified
+            # set number of items returned per request
             if 'limit' in params.keys() and params.get('limit') is None:
-                params['limit'] = util.MAX_API_LIMIT
+                params['limit'] = self.limit_per_request
             r = self.session.request(method=method, url=url, params={k: v for k, v in params.items() if v},
                                      timeout=self.timeout)
         elif data:

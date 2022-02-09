@@ -8,6 +8,7 @@ import xmatters.endpoints
 class XMSession(object):
     """ Primary class used to interact with xMatters API """
 
+    # TODO: document kwargs
     def __init__(self, base_url, **kwargs):
         """
         :param base_url: xMatters instance url or xMatters instance base url
@@ -38,15 +39,12 @@ class XMSession(object):
         :return: self
         :rtype: :class:`xmatters.session.XMSession`
         """
-        timeout = self._kwargs.get('timeout')
-        max_retries = self._kwargs.get('max_retries')
+
         if client_id:
             self.con = xmatters.auth.OAuth2Auth(self._base_url, client_id, token, username, password, token_storage,
-                                                timeout=timeout,
-                                                max_retries=max_retries)
+                                                **self._kwargs)
         elif None not in (username, password):
-            self.con = xmatters.auth.BasicAuth(self._base_url, username, password, timeout=timeout,
-                                               max_retries=max_retries)
+            self.con = xmatters.auth.BasicAuth(self._base_url, username, password, **self._kwargs)
         else:
             raise ValueError('unable to determine authentication method')
 
