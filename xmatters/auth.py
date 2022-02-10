@@ -50,16 +50,22 @@ class OAuth2Auth(Connection):
 
         super(OAuth2Auth, self).__init__(base_url, self.session, **kwargs)
 
+    def refresh_token(self):
+        return self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=self._token,
+                                          timeout=3,
+                                          kwargs=self.session.auto_refresh_kwargs)
+
+    def fetch_token(self):
+        return self.session.fetch_token(token_url=self.session.auto_refresh_url, username=self.username,
+                                        password=self.password, include_client_id=True, timeout=3)
+
     def get_token(self):
         if self._token and isinstance(self._token, dict):
             return self._token
         elif self._token and isinstance(self._token, str):
-            return self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=self._token,
-                                              timeout=3,
-                                              kwargs=self.session.auto_refresh_kwargs)
+            return self.refresh_token()
         elif None not in (self.username, self.password):
-            return self.session.fetch_token(token_url=self.session.auto_refresh_url, username=self.username,
-                                            password=self.password, include_client_id=True, timeout=3)
+            return self.fetch_token()
         elif self.token_storage and self.token_storage.read_token():
             return self.token_storage.read_token()
         else:
