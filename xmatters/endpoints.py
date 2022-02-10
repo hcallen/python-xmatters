@@ -1,4 +1,5 @@
 # TODO: process boolean params
+# TODO: upper 'status' params
 
 import xmatters.factories as factory
 import xmatters.xm_objects.forms
