@@ -1,13 +1,14 @@
+import os
+
 from .conftest import my_vcr
 from datetime import datetime, timedelta
-from dateutil.relativedelta import relativedelta
 from dateutil import tz
 from xmatters.errors import NotFoundError
 
 
 class TestEvents:
 
-    @my_vcr.use_cassette('test_get_events.json')
+    @my_vcr.use_cassette('{}_test_get_events.json'.format(os.path.basename(__file__).removesuffix('.py')))
     def test_get_events(self, xm_test):
         events = xm_test.events().get_events()
         assert iter(events)
@@ -25,10 +26,13 @@ class TestEvents:
             except NotFoundError:
                 pass
 
-    @my_vcr.use_cassette('test_get_events_param_from_to.json')
-    def test_get_events_param_from_to(self, xm_test):
-        start_dt = (datetime.now() - relativedelta(months=1)).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-        end_dt = ((start_dt + relativedelta(months=1)) - timedelta(microseconds=1))
+
+class TestParams:
+
+    @my_vcr.use_cassette('{}_test_from_to.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    def test_from_to(self, xm_test):
+        start_dt = datetime.now() - timedelta(days=5)
+        end_dt = datetime.now()
         from_time = start_dt.isoformat()
         to_time = end_dt.isoformat()
         events = xm_test.events().get_events(from_time=from_time, to_time=to_time, sort_order='DESCENDING',
