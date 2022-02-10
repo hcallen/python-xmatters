@@ -1,6 +1,6 @@
 import xmatters.factories
 import xmatters.utils as utils
-from xmatters.xm_objects.common import Recipient, SelfLink, Pagination
+from xmatters.xm_objects.common import Recipient, SelfLink, Pagination, QuotaItem
 from xmatters.xm_objects.roles import Role
 from xmatters.connection import ApiBridge
 import xmatters.xm_objects.groups
@@ -91,6 +91,22 @@ class PersonReference(ApiBridge):
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+
+class UserQuota(object):
+    def __init__(self, data):
+        self.stakeholder_users_enabled = data.get('stakeholderUsersEnabled')
+        stakeholder_users = data.get('stakeholderUsers')
+        self.stakeholder_users = QuotaItem(stakeholder_users) if stakeholder_users else None
+        full_users = data.get('fullUsers')
+        self.full_users = QuotaItem(full_users) if full_users else None
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()

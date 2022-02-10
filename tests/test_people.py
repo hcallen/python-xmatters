@@ -1,6 +1,6 @@
 import pytest
 import xmatters.errors
-from xmatters.xm_objects.people import Person
+from xmatters.xm_objects.people import Person, UserQuota
 from .conftest import my_vcr
 
 
@@ -94,8 +94,12 @@ class TestGet:
         total = people.total
         i = 0
         for _ in people:
-            i+= 1
+            i += 1
         assert i == total
+
+    def test_get_quota(self, xm_test):
+        quotas = xm_test.people().get_license_quotas()
+        assert isinstance(quotas, UserQuota)
 
 
 class TestParams:

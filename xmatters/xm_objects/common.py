@@ -1,6 +1,7 @@
 import xmatters.connection
 import xmatters.utils
 
+
 class PaginationLinks(object):
     def __init__(self, data):
         self.next = data.get('next')
@@ -78,7 +79,8 @@ class Pagination(xmatters.connection.ApiBridge):
         return self.limit if self.limit else self.total
 
     def __repr__(self):
-        return '<{} {} {} objects>'.format(self.__class__.__name__, self.limit if self.limit else self.total, self.constructor.__name__)
+        return '<{} {} {} objects>'.format(self.__class__.__name__, self.limit if self.limit else self.total,
+                                           self.constructor.__name__)
 
     def __str__(self):
         return self.__repr__()
@@ -192,6 +194,19 @@ class PropertyDefinition(object):
 class RequestReference(object):
     def __init__(self, data):
         self.request_id = data.get('requestId')
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class QuotaItem(object):
+    def __init__(self, data):
+        self.total = data.get('total')
+        self.active = data.get('active')
+        self.unused = data.get('unused')
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

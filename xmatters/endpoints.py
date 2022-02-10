@@ -10,12 +10,12 @@ from xmatters.xm_objects.device_types import DeviceTypes
 from xmatters.xm_objects.dynamic_teams import DynamicTeam
 from xmatters.xm_objects.event_supressions import EventSuppression
 from xmatters.xm_objects.events import Event
-from xmatters.xm_objects.groups import Group
+from xmatters.xm_objects.groups import Group, GroupQuota
 from xmatters.xm_objects.import_jobs import Import
 from xmatters.xm_objects.incidents import Incident
 from xmatters.xm_objects.oncall import OnCall
 from xmatters.xm_objects.oncall_summary import OnCallSummary
-from xmatters.xm_objects.people import Person
+from xmatters.xm_objects.people import Person, UserQuota
 from xmatters.xm_objects.plans import Plan
 from xmatters.xm_objects.roles import Role
 from xmatters.xm_objects.scenarios import Scenario
@@ -422,7 +422,8 @@ class FormsEndpoint(ApiBridge):
 
 class GroupsEndpoint(ApiBridge):
     _endpoints = {'get_groups': '/groups',
-                  'get_group_by_id': '/groups/{group_id}'}
+                  'get_group_by_id': '/groups/{group_id}',
+                  'get_license_quotas': '/groups/license-quotas'}
 
     def __init__(self, parent):
         super(GroupsEndpoint, self).__init__(parent)
@@ -452,6 +453,11 @@ class GroupsEndpoint(ApiBridge):
         url = self.build_url(self._endpoints.get('get_group_by_id').format(group_id=group_id))
         data = self.con.get(url, params=params)
         return Group(self, data) if data else None
+
+    def get_license_quotas(self):
+        url = self.build_url(self._endpoints.get('get_license_quotas'))
+        data = self.con.get(url)
+        return GroupQuota(data) if data else None
 
     # TODO: Test
     def create_group(self, data):
@@ -609,7 +615,8 @@ class OnCallSummaryEndpoint(ApiBridge):
 
 class PeopleEndpoint(ApiBridge):
     _endpoints = {'get_people': '/people',
-                  'get_person_by_id': '/people/{person_id}'}
+                  'get_person_by_id': '/people/{person_id}',
+                  'get_license_quotas': '/people/license-quotas'}
 
     def __init__(self, parent):
         super(PeopleEndpoint, self).__init__(parent)
@@ -666,6 +673,11 @@ class PeopleEndpoint(ApiBridge):
         url = self.build_url(self._endpoints.get('get_people'))
         data = self.con.get(url, params=params)
         return Pagination(self, data, Person, limit=limit) if data.get('data') else []
+
+    def get_license_quotas(self):
+        url = self.build_url(self._endpoints.get('get_license_quotas'))
+        data = self.con.get(url)
+        return UserQuota(data) if data else None
 
     def create_person(self, data):
         url = self.build_url(self._endpoints.get('get_people'))

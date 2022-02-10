@@ -5,7 +5,8 @@ import xmatters.connection
 import xmatters.xm_objects.oncall
 import xmatters.xm_objects.roles
 import xmatters.xm_objects.shifts
-from xmatters.xm_objects.common import Pagination, SelfLink, RecipientReference, Recipient, ReferenceByIdAndSelfLink
+from xmatters.xm_objects.common import Pagination, SelfLink, RecipientReference, Recipient, ReferenceByIdAndSelfLink, \
+    QuotaItem
 
 
 class GroupMembershipShiftReference(xmatters.connection.ApiBridge):
@@ -137,6 +138,19 @@ class Group(Recipient):
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class GroupQuota(object):
+    def __init__(self, data):
+        self.group_quota_enabled = data.get('groupQuotaEnabled')
+        groups = data.get('groups')
+        self.stakeholder_users = QuotaItem(groups) if groups else None
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
