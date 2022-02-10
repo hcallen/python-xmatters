@@ -1,3 +1,5 @@
+# TODO: process boolean params
+
 import xmatters.factories as factory
 import xmatters.xm_objects.forms
 from xmatters.connection import ApiBridge
