@@ -48,6 +48,10 @@ class Person(Recipient):
     def supervisors(self):
         return self.get_supervisors()
 
+    @property
+    def full_name(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+
     def get_supervisors(self, offset=None, limit=None):
         params = {'offset': offset,
                   'limit': limit}
@@ -88,6 +92,10 @@ class PersonReference(ApiBridge):
         self.recipient_type = data.get('recipientType')
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
+
+    @property
+    def full_name(self):
+        return '{} {}'.format(self.first_name, self.last_name)
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)

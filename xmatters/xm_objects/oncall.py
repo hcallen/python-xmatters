@@ -17,6 +17,10 @@ class Replacer(ApiBridge):
         self.last_name = data.get('lastName')
         self.status = data.get('status')
 
+    @property
+    def full_name(self):
+        return '{} {}'.format(self.first_name, self.last_name)
+
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
 
