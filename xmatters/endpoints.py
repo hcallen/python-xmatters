@@ -138,7 +138,7 @@ class DeviceNamesEndpoint(ApiBridge):
     # TODO: Test params
     def get_device_names(self, device_types=None, search=None, sort_by=None, sort_order=None,
                          at_time=None, offset=None, limit=None):
-        params = {'search': ' '.join(search) if search else None,
+        params = {'search': self.process_search_param(search),
                   'sortBy': sort_by,
                   'sortOrder': sort_order,
                   'deviceTypes': device_types,
@@ -196,7 +196,7 @@ class DynamicTeamsEndpoint(ApiBridge):
     # TODO: Test params
     def get_dynamic_teams(self, search=None, operand=None, fields=None, supervisors=None, sort_by=None,
                           sort_order=None, offset=None, limit=None):
-        params = {'search': ' '.join(search) if search else None,
+        params = {'search': self.process_search_param(search),
                   'operand': operand,
                   'fields': fields,
                   'supervisors': supervisors,
@@ -266,7 +266,7 @@ class EventsEndpoint(ApiBridge):
                   'sortBy': sort_by,
                   'sortOrder': sort_order,
                   'submitterid': submitter_id,
-                  'search': ' '.join(search) if search else None,
+                  'search': self.process_search_param(search),
                   'targetedRecipients': targeted_recipients,
                   'resolvedUsers': resolved_users,
                   'from': self.process_time_param(from_time),
@@ -392,7 +392,7 @@ class FormsEndpoint(ApiBridge):
     # TODO: Test params
     def get_forms(self, search=None, operand=None, fields=None, enabled_for=None, plan_type=None, sort_by=None,
                   sort_order=None, trigger_type=None, offset=None, limit=None):
-        params = {'search': ' '.join(search) if search else None,
+        params = {'search': self.process_search_param(search),
                   'operand': operand,
                   'fields': fields,
                   'enabledFor': enabled_for,
@@ -431,7 +431,7 @@ class GroupsEndpoint(ApiBridge):
     # TODO: Test params
     def get_groups(self, search=None, operand=None, fields=None, sites=None, members=None, members_exists=None,
                    sort_by=None, sort_order=None, status=None, supervisors=None, offset=None, limit=None):
-        params = {'search': ' '.join(search) if search else None,
+        params = {'search': self.process_search_param(search),
                   'operand': operand,
                   'fields': fields,
                   'sites': sites,
@@ -524,7 +524,7 @@ class IncidentsEndpoint(ApiBridge):
     def get_incidents(self, request_id=None, search=None, operand=None, fields=None, sites=None, status=None,
                       severity=None, offset=None, limit=None):
         params = {'requestId': request_id,
-                  'search': ' '.join(search) if search else None,
+                  'search': self.process_search_param(search),
                   'operand': operand,
                   'fields': fields,
                   'sites': sites,
@@ -627,7 +627,7 @@ class PeopleEndpoint(ApiBridge):
                    groups=None, groups_exist=None, roles=None, supervisors=None, created_from_time=None,
                    created_to_time=None, created_before_time=None, created_after_time=None, sort_by=None,
                    sort_order=None, at_time=None, limit=None):
-        params = {'search': ' '.join(search) if search else None,
+        params = {'search': self.process_search_param(search),
                   'operand': operand,
                   'fields': fields,
                   'propertyNames': property_names,
@@ -714,7 +714,7 @@ class PlansEndpoint(ApiBridge):
         params = {'planType': plan_type,
                   'enabled': enabled,
                   'enabledFor': enabled_for,
-                  'search': ' '.join(search) if search else None,
+                  'search': self.process_search_param(search),
                   'operand': operand,
                   'fields': fields,
                   'sortBy': sort_by,
@@ -790,7 +790,7 @@ class ScenariosEndpoint(ApiBridge):
 
     # TODO: Test params
     def get_scenarios(self, search=None, operand=None, enabled_for=None, offset=None, limit=None):
-        params = {'search': ' '.join(search) if search else None,
+        params = {'search': self.process_search_param(search),
                   'operand': operand,
                   'enabledFor': enabled_for,
                   'offset': offset,
@@ -820,7 +820,7 @@ class ServicesEndpoint(ApiBridge):
 
     # TODO: Test params
     def get_services(self, search=None, operand=None, fields=None, owned_by=None, offset=None, limit=None):
-        params = {'search': ' '.join(search) if search else None,
+        params = {'search': self.process_search_param(search),
                   'operand': operand,
                   'fields': fields,
                   'ownedBy': owned_by,
@@ -870,7 +870,7 @@ class SitesEndpoint(ApiBridge):
     # TODO: Test params
     def get_sites(self, search=None, operand=None, fields=None, sort_by=None, sort_order=None, country=None,
                   geocoded=None, status=None, offset=None, limit=None):
-        params = {'search': ' '.join(search) if search else None,
+        params = {'search': self.process_search_param(search),
                   'operand': operand,
                   'fields': fields,
                   'sortBy': sort_by,

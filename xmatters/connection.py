@@ -34,7 +34,7 @@ class Connection(object):
             # set number of items returned per request
             if 'limit' in params.keys() and params.get('limit') is None:
                 params['limit'] = self.limit_per_request
-            r = self.session.request(method=method, url=url, params={k: v for k, v in params.items() if v},
+            r = self.session.request(method=method, url=url, params={k: v for k, v in params.items() if v is not None},
                                      timeout=self.timeout)
         elif data:
             r = self.session.request(method=method, url=url, json=data, timeout=self.timeout)
@@ -90,6 +90,7 @@ class ApiBridge(object):
             url_prefix = self.con.base_url
         return '{}{}'.format(url_prefix, endpoint)
 
+    # TODO: update to handle datetime objects
     @staticmethod
     def process_time_param(param):
         """
@@ -100,5 +101,9 @@ class ApiBridge(object):
         :return: date & time with utc offset applied
         :rtype: str or None
         """
-        if param:
-            return util.TimeAttribute(param).isoformat_utc()
+        return util.TimeAttribute(param).isoformat_utc() if isinstance(param, str) else param
+
+    # TODO: Test
+    @staticmethod
+    def process_search_param(param):
+        return ' '.join([str(p) for p in param]) if isinstance(param, list) else param

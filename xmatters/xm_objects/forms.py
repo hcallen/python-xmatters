@@ -251,7 +251,7 @@ class Form(xmatters.connection.ApiBridge):
 
     # TODO: Test params
     def get_scenarios(self, search=None, operand=None, enabled_for=None, offset=None, limit=None):
-        params = {'search': ' '.join(search) if search else None,
+        params = {'search': self.process_search_param(search),
                   'operand': operand,
                   'enabledFor': enabled_for,
                   'offset': offset,

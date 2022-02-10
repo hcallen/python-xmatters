@@ -3,10 +3,12 @@ import os
 from xmatters.xm_objects.groups import GroupQuota
 from .conftest import my_vcr
 
+fn = os.path.basename(__file__).removesuffix('.py')
+
 
 class TestGet:
 
-    @my_vcr.use_cassette('{}_test_get_groups.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_groups.json'.format(fn))
     def test_get_groups(self, xm_test):
         groups = xm_test.groups().get_groups()
         assert iter(groups)
@@ -18,7 +20,18 @@ class TestGet:
             assert iter(group.get_members())
             assert iter(group.observers)
 
-    @my_vcr.use_cassette('{}_test_get_supervisors.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_oncall.json'.format(fn))
+    def test_get_oncall(self, xm_test):
+        groups = xm_test.groups().get_groups(limit=10)
+        assert iter(groups)
+        assert len(groups) > 0
+        for group in groups:
+            oncalls =  group.get_oncall()
+            assert iter(oncalls)
+            for oncall in oncalls:
+                assert oncall.group.id is not None
+
+    @my_vcr.use_cassette('{}_test_get_supervisors.json'.format(fn))
     def test_get_supervisors(self, xm_test):
         groups = xm_test.groups().get_groups(limit=10)
         assert len(groups) > 0

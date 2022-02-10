@@ -5,6 +5,8 @@ import xmatters.errors
 from xmatters.xm_objects.people import Person, UserQuota
 from .conftest import my_vcr
 
+fn = os.path.basename(__file__).removesuffix('.py')
+
 
 class TestCreateUpdateDelete:
     @pytest.mark.order(1)
@@ -39,14 +41,14 @@ class TestCreateUpdateDelete:
 
 
 class TestGet:
-    @my_vcr.use_cassette('{}_test_get_people.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_people.json'.format(fn))
     def test_get_people(self, xm_test):
         people = xm_test.people().get_people()
         assert iter(people)
         for person in people:
             assert person.id is not None
 
-    @my_vcr.use_cassette('{}_test_get_roles.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_roles.json'.format(fn))
     def test_get_roles(self, xm_test):
         people = xm_test.people().get_people()
         for person in people:
@@ -55,7 +57,7 @@ class TestGet:
             for role in roles:
                 assert role.id is not None
 
-    @my_vcr.use_cassette('{}_test_get_devices.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_devices.json'.format(fn))
     def test_get_devices(self, xm_test):
         people = xm_test.people().get_people()
         for person in people:
@@ -64,7 +66,7 @@ class TestGet:
             for device in devices:
                 assert device.id is not None
 
-    @my_vcr.use_cassette('{}_test_get_groups.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_groups.json'.format(fn))
     def test_get_groups(self, xm_test):
         for person in xm_test.people().get_people():
             groups_memberships = person.get_groups()
@@ -72,40 +74,33 @@ class TestGet:
             for membership in groups_memberships:
                 assert membership.member.id is not None
 
-    @my_vcr.use_cassette('{}_test_get_supervisors.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_supervisors.json'.format(fn))
     def test_get_supervisors(self, xm_test):
         for person in xm_test.people().get_people():
             supervisors = person.get_supervisors()
             assert iter(supervisors)
 
-    @my_vcr.use_cassette('{}_test_get_person_by_id.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_person_by_id.json'.format(fn))
     def test_get_person_by_id(self, xm_test):
         for person in xm_test.people().get_people():
             person_by_id = xm_test.people().get_person_by_id(person.id)
             assert isinstance(person_by_id, Person)
 
-    @my_vcr.use_cassette('{}_test_get_by_query.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_by_query.json'.format(fn))
     def test_get_by_query(self, xm_test):
         people_by_first_name = list(xm_test.people().get_people_by_query(first_name='David'))
         assert iter(people_by_first_name)
         assert len(people_by_first_name) > 0
 
-    @my_vcr.use_cassette('{}_test_get_pagination.json'.format(os.path.basename(__file__).removesuffix('.py')))
-    def test_get_pagination(self, xm_test):
-        people = xm_test.people().get_people()
-        total = people.total
-        i = 0
-        for _ in people:
-            i += 1
-        assert i == total
-
+    @my_vcr.use_cassette('{}_test_get_quota.json'.format(fn))
     def test_get_quota(self, xm_test):
         quotas = xm_test.people().get_license_quotas()
         assert isinstance(quotas, UserQuota)
+        assert quotas.full_users is not None
 
 
 class TestParams:
-    @my_vcr.use_cassette('{}_test_properties.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_properties.json'.format(fn))
     def test_properties(self, settings, xm_test):
         person_property_name = settings.get('person_property_name')
         person_property_value = True
@@ -117,7 +112,7 @@ class TestParams:
             prop = person.properties.get(person_property_name)
             assert prop == person_property_value
 
-    @my_vcr.use_cassette('{}_test_groups.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_groups.json'.format(fn))
     def test_groups(self, settings, xm_test):
         group1_target_name = settings.get('group1_target_name')
         group2_target_name = settings.get('group2_target_name')
@@ -129,7 +124,7 @@ class TestParams:
             group_target_names = [mem.group.target_name.upper() for mem in person.get_groups()]
             assert group1_target_name.upper() in group_target_names or group2_target_name.upper() in group_target_names
 
-    @my_vcr.use_cassette('{}_test_limit.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_limit.json'.format(fn))
     def test_limit(self, settings, xm_test):
         people_limit = xm_test.people().get_people(limit=10)
         people_no_limit = list(list(xm_test.people().get_people())[:10])
@@ -137,3 +132,18 @@ class TestParams:
         assert len(people_no_limit) == 10
         for p1, p2 in zip(people_no_limit, people_limit):
             assert p1.id == p2.id
+
+    @my_vcr.use_cassette('{}_test_devices_exists_false.json'.format(fn))
+    def test_devices_exists_false(self, settings, xm_test):
+        people = xm_test.people().get_people(devices_exist=False)
+        assert len(people) > 0
+        for person in people:
+            assert len(person.get_devices()) == 0
+
+    @my_vcr.use_cassette('{}_test_devices_exists_true.json'.format(fn))
+    def test_devices_exists_false(self, settings, xm_test):
+        people = xm_test.people().get_people(devices_exist=True)
+        assert len(people) > 0
+        for person in people:
+            assert len(person.get_devices()) > 0
+
