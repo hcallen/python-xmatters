@@ -3,7 +3,7 @@ import os
 from xmatters.xm_objects.groups import GroupQuota
 from .conftest import my_vcr
 
-fn = os.path.basename(__file__).removesuffix('.py')
+fn = os.path.basename(__file__).replace('.py', '')
 
 
 class TestGet:

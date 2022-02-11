@@ -8,7 +8,7 @@ from xmatters.errors import NotFoundError
 
 class TestEvents:
 
-    @my_vcr.use_cassette('{}_test_get_events.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_events.json'.format(os.path.basename(__file__).replace('.py', '')))
     def test_get_events(self, xm_test):
         events = xm_test.events().get_events()
         assert iter(events)
@@ -29,7 +29,7 @@ class TestEvents:
 
 class TestParams:
 
-    @my_vcr.use_cassette('{}_test_from_to.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_from_to.json'.format(os.path.basename(__file__).replace('.py', '')))
     def test_from_to(self, xm_test):
         start_dt = datetime.now() - timedelta(days=5)
         end_dt = datetime.now()

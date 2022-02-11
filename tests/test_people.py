@@ -5,7 +5,7 @@ import xmatters.errors
 from xmatters.xm_objects.people import Person, UserQuota
 from .conftest import my_vcr
 
-fn = os.path.basename(__file__).removesuffix('.py')
+fn = os.path.basename(__file__).replace('.py', '')
 
 
 class TestCreateUpdateDelete:
@@ -146,4 +146,3 @@ class TestParams:
         assert len(people) > 0
         for person in people:
             assert len(person.get_devices()) > 0
-

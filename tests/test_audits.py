@@ -6,14 +6,14 @@ import xmatters.factories
 
 
 class TestGet:
-    @my_vcr.use_cassette('{}_test_get_audits.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_get_audits.json'.format(os.path.basename(__file__).replace('.py', '')))
     def test_get_audits(self, xm_test):
         audits = xm_test.audits().get_audit()
         assert len(audits) > 0
         for audit in audits:
             assert audit.id is not None
 
-    @my_vcr.use_cassette('{}_test_get_by_id.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    # @my_vcr.use_cassette('{}_test_get_by_id.json'.format(os.path.basename(__file__).replace('.py', '')))
     def test_get_by_id(self, xm_test):
         events = xm_test.events().get_events(limit=50)
         assert len(events) > 0
@@ -25,7 +25,7 @@ class TestGet:
 
 
 class TestParams:
-    @my_vcr.use_cassette('{}_test_audit_type.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_audit_type.json'.format(os.path.basename(__file__).replace('.py', '')))
     def test_audit_type(self, xm_test):
         events = xm_test.events().get_events(limit=50)
         assert len(events) > 0
@@ -35,7 +35,7 @@ class TestParams:
             for audit_object in audits:
                 assert audit_object.type == 'EVENT_CREATED'
 
-    @my_vcr.use_cassette('{}_test_sort_order.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_sort_order.json'.format(os.path.basename(__file__).replace('.py', '')))
     def test_sort_order(self, xm_test):
         events = xm_test.events().get_events(limit=50)
         assert len(events) > 0
@@ -47,7 +47,7 @@ class TestParams:
 
 
 class TestAccounting:
-    @my_vcr.use_cassette('{}_test_accounting.json'.format(os.path.basename(__file__).removesuffix('.py')))
+    @my_vcr.use_cassette('{}_test_accounting.json'.format(os.path.basename(__file__).replace('.py', '')))
     def test_accounting(self, xm_test):
         events = xm_test.events().get_events()
         assert len(events) > 0

@@ -47,8 +47,7 @@ def xm_test(settings):
     client_id = settings.get('test_client_id')
     token_filepath = settings.get('test_token_filepath')
     token_storage = TokenFileStorage(token_filepath)
-    return XMSession(base_url, timeout=30, max_retries=3).set_authentication(client_id=client_id,
-                                                                             token_storage=token_storage)
+    return XMSession(base_url).set_authentication(client_id=client_id, token_storage=token_storage)
 
 
 @pytest.fixture(scope='session')
@@ -57,8 +56,7 @@ def xm_sb(settings):
     client_id = settings.get('sb_client_id')
     token_filepath = settings.get('sb_token_filepath')
     token_storage = TokenFileStorage(token_filepath)
-    return XMSession(base_url, timeout=30, max_retries=3).set_authentication(client_id=client_id,
-                                                                             token_storage=token_storage)
+    return XMSession(base_url).set_authentication(client_id=client_id,token_storage=token_storage)
 
 
 @pytest.fixture(scope='session')
@@ -67,5 +65,4 @@ def xm_prod(settings):
     client_id = settings.get('prod_client_id')
     token_filepath = settings.get('prod_token_filepath')
     token_storage = TokenFileStorage(token_filepath)
-    return XMSession(base_url, timeout=30, max_retries=3).set_authentication(client_id=client_id,
-                                                                             token_storage=token_storage)
+    return XMSession(base_url).set_authentication(client_id=client_id,token_storage=token_storage)
