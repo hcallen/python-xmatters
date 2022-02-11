@@ -1,6 +1,3 @@
-# TODO: process boolean params
-# TODO: upper 'status' params
-
 import xmatters.factories as factory
 import xmatters.xm_objects.forms
 from xmatters.connection import ApiBridge
@@ -90,7 +87,7 @@ class DevicesEndpoint(ApiBridge):
 
     def get_devices(self, device_status=None, device_type=None, device_names=None, phone_number_format=None,
                     offset=None, limit=None):
-        params = {'deviceStatus': device_status,
+        params = {'deviceStatus': device_status.upper() if device_status else None,
                   'deviceType': device_type,
                   'phoneNumberFormat': phone_number_format,
                   'deviceNames': device_names,
@@ -139,8 +136,8 @@ class DeviceNamesEndpoint(ApiBridge):
     def get_device_names(self, device_types=None, search=None, sort_by=None, sort_order=None,
                          at_time=None, offset=None, limit=None):
         params = {'search': self.process_search_param(search),
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order,
+                  'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_order else None,
                   'deviceTypes': device_types,
                   'at': self.process_time_param(at_time),
                   'offset': offset,
@@ -200,8 +197,8 @@ class DynamicTeamsEndpoint(ApiBridge):
                   'operand': operand,
                   'fields': fields,
                   'supervisors': supervisors,
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order,
+                  'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_order else None,
                   'offset': offset,
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_dynamic_teams'))
@@ -257,14 +254,14 @@ class EventsEndpoint(ApiBridge):
         params = {'propertyName': property_name,
                   'propertyValue': property_value,
                   'propertyValueOperator': property_value_operator,
-                  'status': status,
+                  'status': status.upper() if status else None,
                   'priority': priority,
                   'plan': plan,
                   'form': form,
                   'requestId': request_id,
                   'eventType': event_type,
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order,
+                  'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_order else None,
                   'submitterid': submitter_id,
                   'search': self.process_search_param(search),
                   'targetedRecipients': targeted_recipients,
@@ -312,9 +309,9 @@ class EventSuppressionsEndpoint(ApiBridge):
     def __init__(self, parent):
         super(EventSuppressionsEndpoint, self).__init__(parent)
 
-    def get_suppressions_by_event_id(self, event_id, sort_by, sort_order, offset=None, limit=None):
-        params = {'sortBy': sort_by,
-                  'sortOrder': sort_order,
+    def get_suppressions_by_event_id(self, event_id, sort_by=None, sort_order=None, offset=None, limit=None):
+        params = {'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_order else None,
                   'offset': offset,
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_event_suppressions_by_event_id').format(event_id))
@@ -397,8 +394,8 @@ class FormsEndpoint(ApiBridge):
                   'fields': fields,
                   'enabledFor': enabled_for,
                   'plans.planType': plan_type,
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order,
+                  'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_order else None,
                   'triggerType': trigger_type,
                   'offset': offset,
                   'limit': limit}
@@ -436,10 +433,10 @@ class GroupsEndpoint(ApiBridge):
                   'fields': fields,
                   'sites': sites,
                   'members': members,
-                  'members.exists': members_exists,
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order,
-                  'status': status,
+                  'members.exists': members_exists.upper() if members_exists else None,
+                  'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_order else None,
+                  'status': status.upper() if status else None,
                   'supervisors': supervisors,
                   'offset': offset,
                   'limit': limit}
@@ -494,8 +491,8 @@ class ImportJobsEndpoint(ApiBridge):
     # TODO: Test params
     def get_import_jobs(self, transform_type=None, sort_by=None, sort_order=None):
         params = {'transformType': transform_type,
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order}
+                  'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_order else None}
 
         url = self.build_url(self._endpoints.get('get_import_jobs'))
         data = self.con.get(url, params=params).get('data', {})
@@ -528,8 +525,8 @@ class IncidentsEndpoint(ApiBridge):
                   'operand': operand,
                   'fields': fields,
                   'sites': sites,
-                  'status': status,
-                  'severity': severity,
+                  'status': status.upper() if status else None,
+                  'severity': severity.upper() if severity else None,
                   'offset': offset,
                   'limit': limit}
 
@@ -623,7 +620,8 @@ class PeopleEndpoint(ApiBridge):
 
     # TODO: Test params
     def get_people(self, search=None, operand=None, fields=None, property_names=None, property_values=None,
-                   devices_exist=None, devices_test_status=None, site=None, status=None, supervisors_exists=None,
+                   devices_exist=None, devices_test_status=None, license_type=None, site=None, status=None,
+                   supervisors_exists=None,
                    groups=None, groups_exist=None, roles=None, supervisors=None, created_from_time=None,
                    created_to_time=None, created_before_time=None, created_after_time=None, sort_by=None,
                    sort_order=None, at_time=None, limit=None):
@@ -633,9 +631,10 @@ class PeopleEndpoint(ApiBridge):
                   'propertyNames': property_names,
                   'propertyValues': property_values,
                   'devices.exists': devices_exist,
-                  'devices.testStatus': devices_test_status,
+                  'devices.testStatus': devices_test_status.upper() if devices_test_status else None,
+                  'licenseType': license_type.upper() if license_type else None,
                   'site': site,
-                  'status': status,
+                  'status': status.upper() if status else None,
                   'supervisors.exists': supervisors_exists,
                   'groups': groups,
                   'groups.exists': groups_exist,
@@ -645,8 +644,8 @@ class PeopleEndpoint(ApiBridge):
                   'createdTo': self.process_time_param(created_to_time),
                   'createdBefore': self.process_time_param(created_before_time),
                   'createdAfter': self.process_time_param(created_after_time),
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order,
+                  'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_by else None,
                   'at': self.process_time_param(at_time),
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_people'))
@@ -717,8 +716,8 @@ class PlansEndpoint(ApiBridge):
                   'search': self.process_search_param(search),
                   'operand': operand,
                   'fields': fields,
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order,
+                  'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_order else None,
                   'subscription-forms': subscription_forms,
                   'at': self.process_time_param(at),
                   'offset': offset,
@@ -873,11 +872,11 @@ class SitesEndpoint(ApiBridge):
         params = {'search': self.process_search_param(search),
                   'operand': operand,
                   'fields': fields,
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order,
+                  'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_order else None,
                   'country': country,
                   'geocoded': geocoded,
-                  'status': status,
+                  'status': status.upper() if status else None,
                   'offset': offset,
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_sites'))
@@ -993,8 +992,8 @@ class SubscriptionFormsEndpoint(ApiBridge):
 
     # TODO: Test params
     def get_subscription_forms(self, sort_by=None, sort_order=None, offset=None, limit=None):
-        params = {'sortBy': sort_by,
-                  'sortOrder': sort_order,
+        params = {'sortBy': sort_by.upper() if sort_by else None,
+                  'sortOrder': sort_order.upper() if sort_order else None,
                   'offset': offset,
                   'limit': limit}
         url = self.build_url(self._endpoints.get('get_subscription_forms'))
