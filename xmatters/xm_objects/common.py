@@ -1,4 +1,5 @@
 import xmatters.connection
+import xmatters.factories
 import xmatters.utils
 
 
@@ -50,7 +51,7 @@ class Pagination(xmatters.connection.ApiBridge):
         self.index = 0
 
     def _get_object(self, item_data):
-        if issubclass(self.constructor, xmatters.utils.Factory):
+        if issubclass(self.constructor, xmatters.factories.Factory):
             data_object = self.constructor.compose(self, item_data)
         elif issubclass(self.constructor, xmatters.connection.ApiBridge):
             data_object = self.constructor(self, item_data)

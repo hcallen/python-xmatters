@@ -1,24 +1,30 @@
+import json
+import warnings
 from urllib import parse
 
 from requests.adapters import HTTPAdapter
+from requests_oauthlib.oauth2_session import TokenUpdated
 from urllib3.util.retry import Retry
 
 import xmatters.errors as err
 import xmatters.utils as util
+import xmatters.auth
+
+# ignore TokenUpdated warning
+# only occurs when token_updater isn't defined in OAuth2Session
+warnings.simplefilter('always', TokenUpdated)
 
 
 class Connection(object):
-    def __init__(self, base_url, session, **kwargs):
-        self.base_url = base_url
-        self.session = session
+    def __init__(self, auth, **kwargs):
+        self.auth = auth
+        self.base_url = self.auth.base_url
         p_url = parse.urlparse(self.base_url)
         self.api_path = p_url.path
         self.instance_url = 'https://{}'.format(p_url.netloc)
-        self.timeout = kwargs.get('timeout')
-        if kwargs.get('max_retries'):
-            self.max_retries = kwargs.get('max_retries')
-        limit_per_request = kwargs.get('limit_per_request')
-        self.limit_per_request = limit_per_request if limit_per_request else util.MAX_API_LIMIT
+        self.timeout = kwargs.get('timeout', 1)
+        self.max_retries = kwargs.get('max_retries', 3)
+        self.limit_per_request = kwargs.get('limit_per_request', util.MAX_API_LIMIT)
 
     def get(self, url, params=None):
         return self.request('GET', url=url, params=params)
@@ -34,15 +40,24 @@ class Connection(object):
             # set number of items returned per request
             if 'limit' in params.keys() and params.get('limit') is None:
                 params['limit'] = self.limit_per_request
-            r = self.session.request(method=method, url=url, params={k: v for k, v in params.items() if v is not None},
-                                     timeout=self.timeout)
-        elif data:
-            r = self.session.request(method=method, url=url, json=data, timeout=self.timeout)
-        else:
-            r = self.session.request(method=method, url=url, timeout=self.timeout)
-        data = r.json()
+            # remove all None values
+            params = {k: v for k, v in params.items() if v is not None}
+
+        r = self.auth.session.request(method=method, url=url, params=params, json=data, timeout=self.timeout)
+
+        # xMatters token likely expired when preparing call
+        if r.status_code == 401 and isinstance(self.auth, xmatters.auth.OAuth2Auth):
+            self.auth.refresh_token()
+            r = self.auth.session.request(method=method, url=url, params=params, json=data, timeout=self.timeout)
+
         if not r.ok or r.status_code == 204:
-            raise err.ErrorFactory.compose(None, data, err.ApiError)
+            raise err.ErrorFactory.compose(r.status_code, data)
+
+        try:
+            data = r.json()
+        except json.decoder.JSONDecodeError:
+            raise err.ApiError(r.status_code, r.text)
+
         return data
 
     @property
@@ -53,10 +68,10 @@ class Connection(object):
     def max_retries(self, retries):
         self._max_retries = retries
         retry = Retry(total=retries,
-                      backoff_factor=0.1,
+                      backoff_factor=0.5,
                       status_forcelist=[500, 502, 503, 504])
         retry_adapter = HTTPAdapter(max_retries=retry)
-        self.session.mount('https://', retry_adapter)
+        self.auth.session.mount('https://', retry_adapter)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

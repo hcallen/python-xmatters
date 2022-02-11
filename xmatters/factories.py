@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 import xmatters.xm_objects.groups
 import xmatters.xm_objects.audits
 import xmatters.xm_objects.people
@@ -11,7 +13,36 @@ import xmatters.xm_objects.devices
 import xmatters.utils
 
 
-class DeviceFactory(xmatters.utils.Factory):
+class Factory(ABC):
+
+    @property
+    @abstractmethod
+    def needs_parent(self):
+        pass
+
+    @property
+    @abstractmethod
+    def identifier_field(self):
+        pass
+
+    @property
+    @abstractmethod
+    def factory_objects(self):
+        pass
+
+    @classmethod
+    def compose(cls, parent, item_data, default=None):
+        identifier = item_data.get(cls.identifier_field)
+        # noinspection PyUnresolvedReferences
+        constructor = cls.factory_objects.get(identifier, default)
+
+        if cls.needs_parent:
+            return constructor(parent, item_data) if constructor else None
+        else:
+            return constructor(item_data) if constructor else None
+
+
+class DeviceFactory(Factory):
     needs_parent = True
     identifier_field = 'deviceType'
     factory_objects = {'EMAIL': xmatters.xm_objects.devices.EmailDevice,
@@ -31,7 +62,7 @@ class DeviceFactory(xmatters.utils.Factory):
         return self.__repr__()
 
 
-class RecipientFactory(xmatters.utils.Factory):
+class RecipientFactory(Factory):
     needs_parent = True
     identifier_field = 'recipientType'
     factory_objects = {'GROUP': xmatters.xm_objects.groups.Group,
@@ -46,7 +77,7 @@ class RecipientFactory(xmatters.utils.Factory):
         return self.__repr__()
 
 
-class AuditFactory(xmatters.utils.Factory):
+class AuditFactory(Factory):
     needs_parent = True
     identifier_field = 'type'
     factory_objects = {'EVENT_ANNOTATED': xmatters.xm_objects.audits.AuditAnnotation,
@@ -66,7 +97,7 @@ class AuditFactory(xmatters.utils.Factory):
         return self.__repr__()
 
 
-class SectionFactory(xmatters.utils.Factory):
+class SectionFactory(Factory):
     needs_parent = True
     identifier_field = 'type'
     factory_objects = {'CONFERENCE_BRIDGE': xmatters.xm_objects.forms.ConferenceBridgeSection,
@@ -87,7 +118,7 @@ class SectionFactory(xmatters.utils.Factory):
         return self.__repr__()
 
 
-class AuthFactory(xmatters.utils.Factory):
+class AuthFactory(Factory):
     needs_parent = False
     identifier_field = 'authenticationType'
     factory_objects = {'NO_AUTH': None,
@@ -105,7 +136,7 @@ class AuthFactory(xmatters.utils.Factory):
         return self.__repr__()
 
 
-class PropertiesFactory(xmatters.utils.Factory):
+class PropertiesFactory(Factory):
     needs_parent = False
     identifier_field = 'propertyType'
     factory_objects = {'BOOLEAN': xmatters.xm_objects.plan_properties.Boolean,
@@ -123,7 +154,7 @@ class PropertiesFactory(xmatters.utils.Factory):
         return self.__repr__()
 
 
-class ScenarioPermFactory(xmatters.utils.Factory):
+class ScenarioPermFactory(Factory):
     needs_parent = True
     identifier_field = 'permissibleType'
     factory_objects = {'PERSON': xmatters.xm_objects.scenarios.ScenarioPermissionPerson,
@@ -136,7 +167,7 @@ class ScenarioPermFactory(xmatters.utils.Factory):
         return self.__repr__()
 
 
-class DeviceNameFactory(xmatters.utils.Factory):
+class DeviceNameFactory(Factory):
     needs_parent = False
     identifier_field = 'deviceType'
     factory_objects = {
