@@ -3,6 +3,7 @@ import urllib.parse
 import xmatters.auth
 import xmatters.connection
 import xmatters.endpoints
+import xmatters.errors
 
 
 class XMSession(object):
@@ -13,6 +14,14 @@ class XMSession(object):
         """
         :param base_url: xMatters instance url or xMatters instance base url
         :type base_url: str
+        :keyword timeout: timeout (in seconds) for requests, should be int
+        :keyword max_retries: maximum number of request retries to attempt, should be int.
+            See :py:func:`xmatters.connection.Connection.max_retries` for HTTP status codes that trigger a retry.
+        :keyword limit_per_request: maximum number of items returned from API request.
+            defaults to :py:const:`xmatters.utils.MAX_API_LIMIT`, should be int
+        :return: None
+        :rtype: None
+
         """
         p_url = urllib.parse.urlparse(base_url)
         instance_url = 'https://{}'.format(p_url.netloc) if p_url.netloc else 'https://{}'.format(p_url.path)
@@ -46,8 +55,9 @@ class XMSession(object):
         elif None not in (username, password):
             self.con = xmatters.auth.BasicAuth(self._base_url, username, password, **self._kwargs)
         else:
-            raise ValueError('unable to determine authentication method')
+            raise xmatters.errors.AuthorizationError('unable to determine authentication method')
 
+        # return self so method can be chained
         return self
 
     def audits(self):

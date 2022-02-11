@@ -71,10 +71,25 @@ class Connection(object):
 
     @max_retries.setter
     def max_retries(self, retries):
+        """
+        Specifies the maximum number of retries to attempt.
+
+        Retries are attempted for the following status codes:
+            * *429* -- Rate limit exceeded
+            * *500* -- Internal server error
+            * *502* -- Bad gateway
+            * *503* -- Service unavailable
+            * *504* -- Gateway timeout
+
+        :param retries: maximum number of retries to attempt
+        :type retries: int
+        :return: None
+        :rtype: None
+        """
         self._max_retries = retries
         retry = Retry(total=retries,
                       backoff_factor=1,
-                      status_forcelist=[500, 502, 503, 504])
+                      status_forcelist=[429, 500, 502, 503, 504])
         retry_adapter = HTTPAdapter(max_retries=retry)
         self.auth.session.mount('https://', retry_adapter)
 
