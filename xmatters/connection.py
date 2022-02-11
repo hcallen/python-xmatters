@@ -45,18 +45,23 @@ class Connection(object):
 
         r = self.auth.session.request(method=method, url=url, params=params, json=data, timeout=self.timeout)
 
-        # xMatters token likely expired when preparing call
+        # token likely expired while preparing call; refresh token and retry
         if r.status_code == 401 and isinstance(self.auth, xmatters.auth.OAuth2Auth):
             self.auth.refresh_token()
             r = self.auth.session.request(method=method, url=url, params=params, json=data, timeout=self.timeout)
-
-        if not r.ok or r.status_code == 204:
-            raise err.ErrorFactory.compose(r.status_code, data)
 
         try:
             data = r.json()
         except json.decoder.JSONDecodeError:
             raise err.ApiError(r.status_code, r.text)
+
+        # 400 <= status code <= 600
+        if not r.ok:
+            raise err.ErrorFactory.compose(r.status_code, data)
+
+        # a resource was not found in response to a DELETE request.
+        if r.status_code == 204 and r.request.method == 'DELETE':
+            raise err.NoContentError(r.status_code, data)
 
         return data
 
@@ -68,7 +73,7 @@ class Connection(object):
     def max_retries(self, retries):
         self._max_retries = retries
         retry = Retry(total=retries,
-                      backoff_factor=0.5,
+                      backoff_factor=1,
                       status_forcelist=[500, 502, 503, 504])
         retry_adapter = HTTPAdapter(max_retries=retry)
         self.auth.session.mount('https://', retry_adapter)
