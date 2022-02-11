@@ -22,7 +22,7 @@ class Connection(object):
         p_url = parse.urlparse(self.base_url)
         self.api_path = p_url.path
         self.instance_url = 'https://{}'.format(p_url.netloc)
-        self.timeout = kwargs.get('timeout', 1)
+        self.timeout = kwargs.get('timeout', 5)
         self.max_retries = kwargs.get('max_retries', 3)
         self.limit_per_request = kwargs.get('limit_per_request', util.MAX_API_LIMIT)
 

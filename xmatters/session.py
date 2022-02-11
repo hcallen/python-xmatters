@@ -14,11 +14,11 @@ class XMSession(object):
         """
         :param base_url: xMatters instance url or xMatters instance base url
         :type base_url: str
-        :keyword timeout: timeout (in seconds) for requests, should be int
-        :keyword max_retries: maximum number of request retries to attempt, should be int.
+        :keyword timeout: timeout (in seconds) for requests, should be int. Defaults to 5.
+        :keyword max_retries: maximum number of request retries to attempt, should be int. Defaults to 3.
             See :py:func:`xmatters.connection.Connection.max_retries` for HTTP status codes that trigger a retry.
-        :keyword limit_per_request: maximum number of items returned from API request.
-            defaults to :py:const:`xmatters.utils.MAX_API_LIMIT`, should be int
+        :keyword limit_per_request: maximum number of items returned from API request, should be int.
+            Defaults to :py:const:`xmatters.utils.MAX_API_LIMIT`
         :return: None
         :rtype: None
 
