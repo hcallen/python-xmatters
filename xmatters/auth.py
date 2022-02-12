@@ -49,15 +49,17 @@ class OAuth2Auth(Connection):
 
     def refresh_token(self):
         # session token automatically set
-        self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=self._token,
-                                   timeout=3, kwargs=self.session.auto_refresh_kwargs)
+        token = self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=self._token,
+                                           timeout=3, kwargs=self.session.auto_refresh_kwargs)
         self._update_storage()
+        return token
 
     def fetch_token(self):
         # session token automatically set
-        self.session.fetch_token(token_url=self.session.auto_refresh_url, username=self.username,
-                                 password=self.password, include_client_id=True, timeout=3)
+        token = self.session.fetch_token(token_url=self.session.auto_refresh_url, username=self.username,
+                                         password=self.password, include_client_id=True, timeout=3)
         self._update_storage()
+        return token
 
     def _update_storage(self):
         if self.token_storage:
