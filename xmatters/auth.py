@@ -43,21 +43,21 @@ class OAuth2Auth(Connection):
         self.session = OAuth2Session(client=client, auto_refresh_url=token_url,
                                      auto_refresh_kwargs=auto_refresh_kwargs,
                                      token_updater=token_updater)
-        self._set_token()
-        self._update_storage()
+        # OAuth2Session must be initiated before inheritance inorder to process passed XMSession kwargs
         super(OAuth2Auth, self).__init__(self, **kwargs)
+        self._set_token()
 
     def refresh_token(self):
         # session token automatically set
         token = self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=self._token,
-                                           timeout=3, kwargs=self.session.auto_refresh_kwargs)
+                                           kwargs=self.session.auto_refresh_kwargs)
         self._update_storage()
         return token
 
     def fetch_token(self):
         # session token automatically set
         token = self.session.fetch_token(token_url=self.session.auto_refresh_url, username=self.username,
-                                         password=self.password, include_client_id=True, timeout=3)
+                                         password=self.password, include_client_id=True)
         self._update_storage()
         return token
 

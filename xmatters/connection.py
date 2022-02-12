@@ -15,6 +15,7 @@ import xmatters.auth
 warnings.simplefilter('always', TokenUpdated)
 
 
+# TODO: Test kwargs
 class Connection(object):
     def __init__(self, auth, **kwargs):
         self.auth = auth
