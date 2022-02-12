@@ -35,13 +35,38 @@ class AuditsEndpoint(ApiBridge):
 
         self._endpoints = {'get_audit': '/audits'}
 
-    # TODO: update docstring
     def get_audit(self, event_id=None, audit_type=None, sort_order=None, at_time=None, from_time=None, to_time=None,
-                  after_time=None, before_time=None, offset=None, limit=None, **param_kwargs):
+                  after_time=None, before_time=None, offset=None, limit=None, **kwargs):
         """
         Perform an audit
 
-        See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid parameters.
+        See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for more information on parameters.
+
+        :param event_id: event id or event uuid.
+        :type event_id: str
+        :param audit_type: Types of audit records to retrieve.
+        :type audit_type: str or list
+        :param sort_order: Whether to sort the results in 'ASCENDING' or 'DESCENDING' order. Sorting is based on audit
+            creation timestamp.
+        :type sort_order: str
+        :param at_time: ISO-8601 formatted timestamp.
+        :type at_time: str
+        :param from_time: ISO-8601 formatted timestamp.
+        :type from_time: str
+        :param to_time: ISO-8601 formatted timestamp.
+        :type to_time: str
+        :param after_time: ISO-8601 formatted timestamp.
+        :type after_time: str
+        :param before_time: ISO-8601 formatted timestamp.
+        :type before_time: str
+        :param offset: Number of items to skip before returning results.
+        :type offset: int
+        :param limit: Number of results to return
+        :type limit: int
+        :param kwargs: Additional parameters to apply to the request.
+        :type kwargs: Any
+        :return: Iterable of audit objects
+        :rtype: :class:`xmatters.xm_objects.common.Pagination` or list
         """
         params = {'eventId': event_id,
                   'auditType': audit_type,
@@ -53,7 +78,7 @@ class AuditsEndpoint(ApiBridge):
                   'before': self.process_time_param(before_time),
                   'offset': offset,
                   'limit': limit}
-        params.update(param_kwargs)
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_audit'))
         data = self.con.get(url=url, params=params)
         return Pagination(self, data, xmatters.factories.AuditFactory, limit=limit) if data.get('data') else []

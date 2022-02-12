@@ -105,6 +105,8 @@ class ApiBridge(object):
     """ Base for api objects that need to make requests """
 
     def __init__(self, parent, data=None):
+
+        # parent passed without a connection
         if hasattr(parent, 'con') and not parent.con:
             raise err.AuthorizationError('authentication not provided')
 
@@ -126,20 +128,20 @@ class ApiBridge(object):
             url_prefix = self.con.base_url
         return '{}{}'.format(url_prefix, endpoint)
 
-    # TODO: update to handle datetime objects
     @staticmethod
-    def process_time_param(param):
+    def process_time_param(timestamp):
         """
-        Formats iso-formatted date (or date and time) from provided timezone to UTC timezone.
+        Formats ISO-8601 formatted timestamp from provided timezone to UTC timezone.
         If no timezone is specified, local timezone is used.
-        :param param: iso-formatted date, or date and time
-        :type param: str
-        :return: date & time with utc offset applied
+        
+        :param timestamp: ISO-8601 formatted timestamp
+        :type timestamp: str
+        :return: ISO-8601 formatted timestamp with utc offset applied
         :rtype: str or None
         """
-        return util.TimeAttribute(param).isoformat_utc() if isinstance(param, str) else param
+        return util.TimeAttribute(timestamp).isoformat_utc() if isinstance(timestamp, str) else timestamp
 
     # TODO: Test
     @staticmethod
-    def process_search_param(param):
-        return ' '.join([str(p) for p in param]) if isinstance(param, list) else param
+    def process_search_param(search_param):
+        return ' '.join([str(p) for p in search_param]) if isinstance(search_param, list) else search_param

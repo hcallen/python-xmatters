@@ -18,8 +18,6 @@ class XMSession(object):
             See :py:func:`xmatters.connection.Connection.max_retries` for HTTP status codes that trigger a retry.
         :keyword limit_per_request: maximum number of items returned from API request, should be int.
             Defaults to :py:const:`xmatters.utils.MAX_API_LIMIT`
-        :return: None
-        :rtype: None
 
         """
         p_url = urllib.parse.urlparse(base_url)
@@ -60,72 +58,210 @@ class XMSession(object):
         return self
 
     def audits(self):
+        """
+        Select the '/audits' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.AuditsEndpoint`
+        """
         return xmatters.endpoints.AuditsEndpoint(self)
 
     def conference_bridges(self):
+        """
+        Select the '/conference-bridges' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.ConferenceBridgesEndpoint`
+        """
         return xmatters.endpoints.ConferenceBridgesEndpoint(self)
 
     def device_names(self):
+        """
+        Select the '/device-names' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.DeviceNamesEndpoint`
+        """
         return xmatters.endpoints.DeviceNamesEndpoint(self)
 
     def device_types(self):
+        """
+        Select the '/device-types' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.DeviceTypesEndpoint`
+        """
         return xmatters.endpoints.DeviceTypesEndpoint(self)
 
     def devices(self):
+        """
+        Select the '/device' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.DevicesEndpoint`
+        """
         return xmatters.endpoints.DevicesEndpoint(self)
 
     def dynamic_teams(self):
+        """
+        Select the '/dynamic-teams' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.DynamicTeamsEndpoint`
+        """
         return xmatters.endpoints.DynamicTeamsEndpoint(self)
 
     def events(self):
+        """
+        Select the '/events' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.EventsEndpoint`
+        """
         return xmatters.endpoints.EventsEndpoint(self)
 
     def event_suppressions(self):
+        """
+        Select the '/event-suppressions' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.EventSuppressionsEndpoint`
+        """
         return xmatters.endpoints.EventSuppressionsEndpoint(self)
 
     def forms(self):
+        """
+        Select the '/forms' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.FormsEndpoint`
+        """
         return xmatters.endpoints.FormsEndpoint(self)
 
     def import_jobs(self):
+        """
+        Select the '/import-jobs' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.ImportJobsEndpoint`
+        """
         return xmatters.endpoints.ImportJobsEndpoint(self)
 
     def groups(self):
+        """
+        Select the '/groups' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.GroupsEndpoint`
+        """
         return xmatters.endpoints.GroupsEndpoint(self)
 
     def incidents(self):
+        """
+        Select the '/incidents' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.IncidentsEndpoint`
+        """
         return xmatters.endpoints.IncidentsEndpoint(self)
 
     def oncall(self):
+        """
+        Select the '/oncall' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.OnCallEndpoint`
+        """
         return xmatters.endpoints.OnCallEndpoint(self)
 
     def oncall_summary(self):
+        """
+        Select the '/oncall-summary' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.OnCallSummaryEndpoint`
+        """
         return xmatters.endpoints.OnCallSummaryEndpoint(self)
 
     def people(self):
+        """
+        Select the '/people' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.PeopleEndpoint`
+        """
         return xmatters.endpoints.PeopleEndpoint(self)
 
     def plans(self):
+        """
+        Select the '/plans' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.PlansEndpoint`
+        """
         return xmatters.endpoints.PlansEndpoint(self)
 
     def roles(self):
+        """
+        Select the '/roles' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.RolesEndpoint`
+        """
         return xmatters.endpoints.RolesEndpoint(self)
 
     def scenarios(self):
+        """
+        Select the '/scenarios' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.ScenariosEndpoint`
+        """
         return xmatters.endpoints.ScenariosEndpoint(self)
 
     def services(self):
+        """
+        Select the '/services' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.ServicesEndpoint`
+        """
         return xmatters.endpoints.ServicesEndpoint(self)
 
     def sites(self):
+        """
+        Select the '/sites' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.SitesEndpoint`
+        """
         return xmatters.endpoints.SitesEndpoint(self)
 
     def subscriptions(self):
+        """
+        Select the '/subscriptions' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.SubscriptionsEndpoint`
+        """
         return xmatters.endpoints.SubscriptionsEndpoint(self)
 
     def subscription_forms(self):
+        """
+        Select the '/subscription-forms' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.SubscriptionsEndpoint`
+        """
         return xmatters.endpoints.SubscriptionFormsEndpoint(self)
 
     def temporary_absences(self):
+        """
+        Select the '/temporary-absences' endpoint to interact with.
+
+        :return: Class used to interact with endpoint.
+        :rtype: :class:`xmatters.endpoints.TemporaryAbsencesEndpoint`
+        """
         return xmatters.endpoints.TemporaryAbsencesEndpoint(self)
 
     # TODO
