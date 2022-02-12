@@ -9,7 +9,6 @@ import xmatters.errors
 class XMSession(object):
     """ Primary class used to interact with xMatters API """
 
-    # TODO: document kwargs
     def __init__(self, base_url, **kwargs):
         """
         :param base_url: xMatters instance url or xMatters instance base url

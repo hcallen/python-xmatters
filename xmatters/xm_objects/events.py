@@ -284,17 +284,18 @@ class Event(ApiBridge):
         return Pagination(self, recipients, Message) if recipients.get('data') else []
 
     # TODO: Test params
-    def get_audit(self, audit_type=None, sort_order=None):
+    def get_audit(self, audit_type=None, sort_order=None, **kwargs):
         audit_type = ','.join(audit_type) if isinstance(audit_type, list) else audit_type
         params = {'eventId': self.id, 'auditType': audit_type, 'sortOrder': sort_order}
+        params.update(kwargs)
         url = self._endpoints.get('get_audit').format(base_url=self.con.base_url)
         data = self.con.get(url, params=params)
         return Pagination(self, data, xmatters.factories.AuditFactory) if data.get('data') else []
 
-    # TODO: Test datetime w/ at
-    def get_user_delivery_data(self, at_time):
+    def get_user_delivery_data(self, at_time, **kwargs):
         params = {'eventId': self.id,
                   'at': self.process_time_param(at_time)}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_user_delivery_data'))
         data = self.con.get(url, params=params)
         return Pagination(self, data, UserDeliveryData) if data.get('data') else []
@@ -328,12 +329,13 @@ class Event(ApiBridge):
         return Event(self, data) if data else None
 
     # TODO: Test
-    def get_suppressions(self, sort_by=None, sort_order=None, offset=None, limit=None):
+    def get_suppressions(self, sort_by=None, sort_order=None, offset=None, limit=None, **kwargs):
         params = {'event': self.id,
                   'sortBy': sort_by,
                   'sortOrder': sort_order,
                   'offset': offset,
                   'limit': limit}
+        params.update(kwargs)
         url = self._endpoints.get('get_suppressions').format(base_url=self.con.base_url)
         suppressions = self.con.get(url, params=params)
         return Pagination(self, suppressions, EventSuppression) if suppressions.get('data') else []

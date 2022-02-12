@@ -241,21 +241,23 @@ class Form(xmatters.connection.ApiBridge):
         return Pagination(self, options, events.ResponseOption) if options.get(
             'data') else []
 
-    def get_sections(self, offset=None, limit=None):
+    def get_sections(self, offset=None, limit=None, **kwargs):
         params = {'offset': offset,
                   'limit': limit}
+        params.update(kwargs)
         url = self._endpoints.get('get_sections').format(base_url=self.con.base_url, form_id=self.id)
         s = self.con.get(url, params=params)
         return Pagination(self, s, factory.SectionFactory, limit=limit) if s.get(
             'data') else []
 
     # TODO: Test params
-    def get_scenarios(self, search=None, operand=None, enabled_for=None, offset=None, limit=None):
+    def get_scenarios(self, search=None, operand=None, enabled_for=None, offset=None, limit=None, **kwargs):
         params = {'search': self.process_search_param(search),
                   'operand': operand,
                   'enabledFor': enabled_for,
                   'offset': offset,
                   'limit': limit}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_scenarios'))
         s = self.con.get(url, params=params)
         return Pagination(self, s, xmatters.xm_objects.scenarios.Scenario) if s.get(

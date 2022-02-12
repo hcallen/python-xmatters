@@ -3,3 +3,4 @@
 /tests/.pytest_cache/
 /tests/cassettes/
 /scratch.py
+/.pytest_cache/

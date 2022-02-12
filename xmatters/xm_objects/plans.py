@@ -65,19 +65,21 @@ class Plan(ApiBridge):
         self.links = SelfLink(self, links) if links else None
         self.position = data.get('position')
 
-    def get_forms(self, enabled_for=None, sort_by=None, sort_order=None, trigger_type=None):
+    def get_forms(self, enabled_for=None, sort_by=None, sort_order=None, trigger_type=None, **kwargs):
 
         params = {'enabledFor': enabled_for,
                   'sortBy': sort_by,
                   'sortOrder': sort_order,
                   'triggerType': trigger_type}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_forms'))
         fs = self.con.get(url, params=params)
         return Pagination(self, fs, xmatters.xm_objects.forms.Form) if fs.get('data') else []
 
     # TODO: Test
-    def get_form_by_id(self, form_id, recipients=None):
+    def get_form_by_id(self, form_id, recipients=None, **kwargs):
         params = {'recipients': recipients}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_form_by_id').format(form_id=form_id))
         data = self.con.get(url, params=params)
         return xmatters.xm_objects.forms.Form(self, data) if data else None
@@ -117,9 +119,10 @@ class Plan(ApiBridge):
         data = self.con.delete(url)
         return PlanConstant(self, data) if data else None
 
-    def get_integrations(self, integration_type=None, deployed=None):
+    def get_integrations(self, integration_type=None, deployed=None, **kwargs):
         params = {'integrationType': integration_type,
                   'deployed': deployed}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_integrations'))
         ints = self.con.get(url, params=params)
         return Pagination(self, ints, Integration) if ints.get('data') else []
@@ -172,9 +175,10 @@ class Plan(ApiBridge):
         return factory.PropertiesFactory.compose(self, data) if data else None
 
     # TODO: Test param
-    def get_shared_libraries(self, offset=None, limit=None):
+    def get_shared_libraries(self, offset=None, limit=None, **kwargs):
         params = {'offset': offset,
                   'limit': limit}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_libraries'))
         libs = self.con.get(url, params=params)
         return Pagination(self, libs, SharedLibrary, limit=limit) if libs.get('data') else []
@@ -227,11 +231,12 @@ class Plan(ApiBridge):
         return xmatters.xm_objects.plan_endpoints.Endpoint(self, data) if data else None
 
     # TODO: Test params
-    def get_subscription_forms(self, sort_by=None, sort_order=None, offset=None, limit=None):
+    def get_subscription_forms(self, sort_by=None, sort_order=None, offset=None, limit=None, **kwargs):
         params = {'sortBy': sort_by,
                   'sortOrder': sort_order,
                   'offset': offset,
                   'limit': limit}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_subscription_forms'))
         sub_forms = self.con.get(url, params=params)
         return Pagination(self, sub_forms, SubscriptionForm, limit=limit) if sub_forms.get('data') else []

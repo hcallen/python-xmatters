@@ -48,6 +48,12 @@ class OAuth2Auth(Connection):
         self._set_token()
 
     def refresh_token(self):
+        """
+        Refreshes the session token.
+        Token is automatically applied to the session and stored in token_storage (if defined).
+        :return: token object
+        :rtype: dict
+        """
         # session token automatically set
         token = self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=self._token,
                                            kwargs=self.session.auto_refresh_kwargs)
@@ -55,7 +61,12 @@ class OAuth2Auth(Connection):
         return token
 
     def fetch_token(self):
-        # session token automatically set
+        """
+        Fetches session token.
+        Token is automatically applied to the session and stored in token_storage (if defined).
+        :return: token object
+        :rtype: dict
+        """
         token = self.session.fetch_token(token_url=self.session.auto_refresh_url, username=self.username,
                                          password=self.password, include_client_id=True)
         self._update_storage()

@@ -92,14 +92,16 @@ class Group(Recipient):
         data = self.con.get(url, params=params)
         return Pagination(self, data, xmatters.xm_objects.oncall.OnCall) if data.get('data') else []
 
-    def get_shifts(self, at=None):
+    def get_shifts(self, at=None, **kwargs):
         params = {'at': self.process_time_param(at)}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_shifts'))
         data = self.con.get(url, params)
         return Pagination(self, data, xmatters.xm_objects.shifts.Shift) if data.get('data') else []
 
-    def get_shift_by_id(self, shift_id, at=None):
+    def get_shift_by_id(self, shift_id, at=None, **kwargs):
         params = {'at': self.process_time_param(at)}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
         data = self.con.get(url, params=params)
         return xmatters.xm_objects.shifts.Shift(self, data) if data else None

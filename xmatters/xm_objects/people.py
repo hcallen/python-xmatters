@@ -52,25 +52,28 @@ class Person(Recipient):
     def full_name(self):
         return '{} {}'.format(self.first_name, self.last_name)
 
-    def get_supervisors(self, offset=None, limit=None):
+    def get_supervisors(self, offset=None, limit=None, **kwargs):
         params = {'offset': offset,
                   'limit': limit}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_supervisors'))
         s = self.con.get(url, params=params)
         return Pagination(self, s, Person) if s.get('data') else []
 
-    def get_devices(self, offset=None, limit=None, phone_number_format=None, at=None):
+    def get_devices(self, offset=None, limit=None, phone_number_format=None, at=None, **kwargs):
         params = {'phoneNumberFormat': phone_number_format,
                   'at': self.process_time_param(at),
                   'offset': offset,
                   'limit': limit}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_devices'))
         devices = self.con.get(url, params=params)
         return Pagination(self, devices, xmatters.factories.DeviceFactory) if devices.get('data') else []
 
-    def get_groups(self, offset=None, limit=None):
+    def get_groups(self, offset=None, limit=None, **kwargs):
         params = {'offset': offset,
                   'limit': limit}
+        params.update(kwargs)
         url = self.build_url(self._endpoints.get('get_groups'))
         groups = self.con.get(url, params=params)
         return Pagination(self, groups, xmatters.xm_objects.groups.GroupMembership) if groups.get('data') else []
