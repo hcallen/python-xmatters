@@ -40,9 +40,9 @@ class Import(xmatters.connection.ApiBridge):
         links = data.get('links')
         self.links = xmatters.xm_objects.common.SelfLink(parent, links)
 
-    def get_messages(self, params=None):
-        url = self.build_url(self._endpoints.get('get_messages'))
-        messages = self.con.get(url, params).get('data', None)
+    def get_messages(self, params=None, **kwargs):
+        url = self.get_url(self._endpoints.get('get_messages'))
+        messages = self.con.get(url, params=params, **kwargs).get('data', None)
         return [ImportMessage(m) for m in messages] if messages else []
 
     def __repr__(self):

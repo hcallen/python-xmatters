@@ -74,7 +74,7 @@ class Group(Recipient):
 
     @property
     def observers(self):
-        url = self.build_url(self._endpoints.get('observers'))
+        url = self.get_url(self._endpoints.get('observers'))
         observers = self.con.get(url).get('observers', {}).get('data')
         return [xmatters.xm_objects.roles.Role(role) for role in observers] if observers else []
 
@@ -83,55 +83,52 @@ class Group(Recipient):
         return self.get_supervisors()
 
     def get_supervisors(self):
-        url = self.build_url(self._endpoints.get('get_supervisors'))
+        url = self.get_url(self._endpoints.get('get_supervisors'))
         data = self.con.get(url)
         return Pagination(self, data, xmatters.xm_objects.people.Person) if data.get('data') else []
 
-    def get_oncall(self, params=None):
-        url = self._endpoints.get('get_oncall').format(base_url=self.con.base_url, group_id=self.id)
-        data = self.con.get(url, params=params)
+    def get_oncall(self, params=None, **kwargs):
+        url = self._endpoints.get('get_oncall').format(base_url=self.con.api_base_url, group_id=self.id)
+        data = self.con.get(url, params=params, **kwargs)
         return Pagination(self, data, xmatters.xm_objects.oncall.OnCall) if data.get('data') else []
 
-    def get_shifts(self, at=None, **kwargs):
-        params = {'at': self.process_time_param(at)}
-        params.update(kwargs)
-        url = self.build_url(self._endpoints.get('get_shifts'))
-        data = self.con.get(url, params)
+    def get_shifts(self, params=None, **kwargs):
+        
+        url = self.get_url(self._endpoints.get('get_shifts'))
+        data = self.con.get(url, params=params, **kwargs)
         return Pagination(self, data, xmatters.xm_objects.shifts.Shift) if data.get('data') else []
 
-    def get_shift_by_id(self, shift_id, at=None, **kwargs):
-        params = {'at': self.process_time_param(at)}
-        params.update(kwargs)
-        url = self.build_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
-        data = self.con.get(url, params=params)
+    def get_shift_by_id(self, shift_id, params=None, **kwargs):
+        url = self.get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
+        data = self.con.get(url, params=params, **kwargs)
         return xmatters.xm_objects.shifts.Shift(self, data) if data else None
 
-    # TODO: Test
+    
     def create_shift(self, data):
-        url = self.build_url(self._endpoints.get('get_shifts'))
+        url = self.get_url(self._endpoints.get('get_shifts'))
         data = self.con.post(url, data=data)
         return xmatters.xm_objects.shifts.Shift(self, data) if data else None
 
-    # TODO: Test
+    
     def delete_shift(self, shift_id):
-        url = self.build_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
+        url = self.get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
         data = self.con.delete(url)
         return xmatters.xm_objects.shifts.Shift(self, data) if data else None
 
     def get_members(self):
-        url = self.build_url(self._endpoints.get('get_members'))
+        url = self.get_url(self._endpoints.get('get_members'))
         data = self.con.get(url)
         return Pagination(self, data, GroupMembership) if data.get('data') else []
 
-    # TODO: Test
+    
     def add_member(self, data):
-        url = self.build_url(self._endpoints.get('add_member'))
+        url = self.get_url(self._endpoints.get('add_member'))
         data = self.con.post(url, data=data)
         return xmatters.factories.RecipientFactory.compose(self, data) if data else None
 
-    # TODO: Test
+    
     def remove_member(self, member_id):
-        url = self.build_url(self._endpoints.get('remove_member').format(member_id=member_id))
+        url = self.get_url(self._endpoints.get('remove_member').format(member_id=member_id))
         data = self.con.delete(url)
         return GroupMembership(self, data) if data else None
 

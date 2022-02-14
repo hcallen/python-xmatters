@@ -14,7 +14,6 @@ class Provider(object):
 
 
 class Device(Recipient):
-    _endpoints = {'timeframes': '?embed=timeframes'}
 
     def __init__(self, parent, data):
         super(Device, self).__init__(parent, data)
@@ -33,7 +32,10 @@ class Device(Recipient):
 
     @property
     def timeframes(self):
-        url = self.build_url(self._endpoints.get('timeframes'))
+        return self.get_timeframes()
+
+    def get_timeframes(self):
+        url = self.get_url('?embed=timeframes')
         data = self.con.get(url).get('timeframes', {}).get('data', [])
         return [DeviceTimeframe(timeframe) for timeframe in data]
 

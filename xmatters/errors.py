@@ -1,16 +1,8 @@
+import json
+
+
 class Error(Exception):
     pass
-
-
-class XMSessionError(Error):
-    def __init__(self, msg):
-        super(XMSessionError, self).__init__(msg)
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()
 
 
 class AuthorizationError(Error):
@@ -19,58 +11,59 @@ class AuthorizationError(Error):
 
 
 class ApiError(Error):
-    def __init__(self, status_code, data):
-        if isinstance(data, dict):
+    def __init__(self, request):
+        try:
+            data = request.json()
             error_attributes = ' '.join(['{}: {}'.format(k, v) for k, v in data.items()])
-        else:
-            error_attributes = data
-        msg = 'status_code:{} {}'.format(status_code, error_attributes)
+        except json.decoder.JSONDecodeError:
+            error_attributes = request.text
+        msg = 'status_code:{} {}'.format(request.status_code, error_attributes)
         super(ApiError, self).__init__(msg)
 
 
 class NoContentError(ApiError):
-    def __init__(self, status_code, data):
-        super(NoContentError, self).__init__(status_code, data)
+    def __init__(self, request):
+        super(NoContentError, self).__init__(request)
 
 
 class BadRequestError(ApiError):
-    def __init__(self, status_code, data):
-        super(BadRequestError, self).__init__(status_code, data)
+    def __init__(self, request):
+        super(BadRequestError, self).__init__(request)
 
 
 class UnauthorizedError(ApiError):
-    def __init__(self, status_code, data):
-        super(UnauthorizedError, self).__init__(status_code, data)
+    def __init__(self, request):
+        super(UnauthorizedError, self).__init__(request)
 
 
 class ForbiddenError(ApiError):
-    def __init__(self, status_code, data):
-        super(ForbiddenError, self).__init__(status_code, data)
+    def __init__(self, request):
+        super(ForbiddenError, self).__init__(request)
 
 
 class NotFoundError(ApiError):
-    def __init__(self, status_code, data):
-        super(NotFoundError, self).__init__(status_code, data)
+    def __init__(self, request):
+        super(NotFoundError, self).__init__(request)
 
 
 class NotAcceptableError(ApiError):
-    def __init__(self, status_code, data):
-        super(NotAcceptableError, self).__init__(status_code, data)
+    def __init__(self, request):
+        super(NotAcceptableError, self).__init__(request)
 
 
 class ConflictError(ApiError):
-    def __init__(self, status_code, data):
-        super(ConflictError, self).__init__(status_code, data)
+    def __init__(self, request):
+        super(ConflictError, self).__init__(request)
 
 
 class UnsupportedMediaError(ApiError):
-    def __init__(self, status_code, data):
-        super(UnsupportedMediaError, self).__init__(status_code, data)
+    def __init__(self, request):
+        super(UnsupportedMediaError, self).__init__(request)
 
 
 class TooManyRequestsError(ApiError):
-    def __init__(self, status_code, data):
-        super(TooManyRequestsError, self).__init__(status_code, data)
+    def __init__(self, request):
+        super(TooManyRequestsError, self).__init__(request)
 
 
 class ErrorFactory(object):
@@ -85,9 +78,9 @@ class ErrorFactory(object):
                        429: TooManyRequestsError}
 
     @classmethod
-    def compose(cls, status_code, item_data):
-        constructor = cls.factory_objects.get(status_code, ApiError)
-        return constructor(status_code, item_data) if constructor else None
+    def compose(cls, request):
+        constructor = cls.factory_objects.get(request.status_code, ApiError)
+        return constructor(request) if constructor else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

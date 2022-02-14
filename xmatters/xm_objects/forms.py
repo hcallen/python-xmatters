@@ -230,48 +230,35 @@ class Form(xmatters.connection.ApiBridge):
         return self.get_response_options()
 
     @property
-    def recipients(self, params=None):
-        url = self.build_url(self._endpoints.get('recipients'))
-        recipients = self.con.get(url, params).get('recipients', {})
-        return Pagination(self, recipients, factory.RecipientFactory) if recipients.get( 'data') else []
+    def recipients(self, params=None, **kwargs):
+        url = self.get_url(self._endpoints.get('recipients'))
+        recipients = self.con.get(url, params=params, **kwargs).get('recipients', {})
+        return Pagination(self, recipients, factory.RecipientFactory) if recipients.get('data') else []
 
-    def get_response_options(self, params=None):
-        url = self.build_url(self._endpoints.get('get_response_options'))
-        options = self.con.get(url, params)
+    def get_response_options(self, params=None, **kwargs):
+        url = self.get_url(self._endpoints.get('get_response_options'))
+        options = self.con.get(url, params=params, **kwargs)
         return Pagination(self, options, events.ResponseOption) if options.get(
             'data') else []
 
-    def get_sections(self, offset=None, limit=None, **kwargs):
-        params = {'offset': offset,
-                  'limit': limit}
-        params.update(kwargs)
-        url = self._endpoints.get('get_sections').format(base_url=self.con.base_url, form_id=self.id)
-        s = self.con.get(url, params=params)
-        return Pagination(self, s, factory.SectionFactory, limit=limit) if s.get(
+    def get_sections(self, params=None, **kwargs):
+        url = self._endpoints.get('get_sections').format(base_url=self.con.api_base_url, form_id=self.id)
+        s = self.con.get(url, params=params, **kwargs)
+        return Pagination(self, s, factory.SectionFactory) if s.get(
             'data') else []
 
-    # TODO: Test params
-    def get_scenarios(self, search=None, operand=None, enabled_for=None, offset=None, limit=None, **kwargs):
-        params = {'search': self.process_search_param(search),
-                  'operand': operand,
-                  'enabledFor': enabled_for,
-                  'offset': offset,
-                  'limit': limit}
-        params.update(kwargs)
-        url = self.build_url(self._endpoints.get('get_scenarios'))
-        s = self.con.get(url, params=params)
-        return Pagination(self, s, xmatters.xm_objects.scenarios.Scenario) if s.get(
-            'data') else []
+    def get_scenarios(self, params=None, **kwargs):
+        url = self.get_url(self._endpoints.get('get_scenarios'))
+        s = self.con.get(url, params=params, **kwargs)
+        return Pagination(self, s, xmatters.xm_objects.scenarios.Scenario) if s.get('data') else []
 
-    # TODO: Test
     def create_scenario(self, data):
-        url = self.build_url(self._endpoints.get('get_scenarios'))
+        url = self.get_url(self._endpoints.get('get_scenarios'))
         data = self.con.post(url, data=data)
         return xmatters.xm_objects.scenarios.Scenario(self, data) if data else None
 
-    # TODO: Test
     def update_scenario(self, data):
-        url = self.build_url(self._endpoints.get('get_scenarios'))
+        url = self.get_url(self._endpoints.get('get_scenarios'))
         data = self.con.post(url, data=data)
         return xmatters.xm_objects.scenarios.Scenario(self, data) if data else None
 

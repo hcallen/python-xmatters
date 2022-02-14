@@ -6,7 +6,7 @@ import xmatters.errors as err
 class TestPlans:
     @my_vcr.use_cassette('test_plans.json')
     def test_plans(self, xm_test):
-        plans = list(xm_test.plans().get_plans())
+        plans = list(xm_test.plans_endpoint().get_plans())
         assert iter(plans)
         assert len(plans) > 0
         for plan in plans:

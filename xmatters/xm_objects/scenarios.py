@@ -84,25 +84,25 @@ class Scenario(xmatters.connection.ApiBridge):
 
     @property
     def properties(self):
-        url = self.build_url(self._endpoints.get('properties'))
+        url = self.get_url(self._endpoints.get('properties'))
         data = self.con.get(url)
         return data.get('properties', {})
 
     @property
     def plan(self):
-        url = self.build_url(self._endpoints.get('plan'))
+        url = self.get_url(self._endpoints.get('plan'))
         plan = self.con.get(url).get('plan', {})
         return xmatters.xm_objects.plans.Plan(self, plan) if plan else None
 
     @property
     def form(self):
-        url = self.build_url(self._endpoints.get('form'))
+        url = self.get_url(self._endpoints.get('form'))
         form = self.con.get(url).get('form', {})
         return xmatters.xm_objects.forms.Form(self, form) if form else None
 
     @property
     def properties_translations(self):
-        url = self.build_url(self._endpoints.get('properties_translations'))
+        url = self.get_url(self._endpoints.get('properties_translations'))
         data = self.con.get(url)
         return data.get('properties', {})
 

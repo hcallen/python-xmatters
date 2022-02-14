@@ -14,13 +14,13 @@ class TestCreateGetUpdateDelete:
                 "tollFreeNumber": "1-888-223-4343",
                 "preferredConnectionType": "TOLL_FREE",
                 "pauseBeforeBridgePrompt": "3"}
-        bridge = xm_sb.conference_bridges().create_conference_bridge(data)
+        bridge = xm_sb.conference_bridges_endpoint().create_conference_bridge(data)
         assert isinstance(bridge, xmatters.xm_objects.conference_bridges.ConferenceBridge)
         assert bridge.name == "INC-211 Zoom Conference"
 
     @pytest.mark.order(2)
     def test_get(self, xm_sb):
-        bridges = xm_sb.conference_bridges().get_conference_bridges()
+        bridges = xm_sb.conference_bridges_endpoint().get_conference_bridges()
         assert len(bridges) > 0
         assert iter(bridges)
         for bridge in bridges:
@@ -28,18 +28,18 @@ class TestCreateGetUpdateDelete:
 
     @pytest.mark.order(3)
     def test_update(self, xm_sb):
-        bridge = xm_sb.conference_bridges().get_conference_bridges(name="INC-211 Zoom Conference").list()[0]
+        bridge = xm_sb.conference_bridges_endpoint().get_conference_bridges(name="INC-211 Zoom Conference").list()[0]
         data = {"id": bridge.id,
                 "name": "INC-211 Zoom Conference Updated"}
-        mod_bridge = xm_sb.conference_bridges().update_conference_bridge(data)
+        mod_bridge = xm_sb.conference_bridges_endpoint().update_conference_bridge(data)
         assert isinstance(mod_bridge, xmatters.xm_objects.conference_bridges.ConferenceBridge)
         assert mod_bridge.name == "INC-211 Zoom Conference Updated"
 
     @pytest.mark.order(4)
     def test_delete(self, xm_sb):
-        bridge = xm_sb.conference_bridges().get_conference_bridges(name="INC-211 Zoom Conference Updated").list()[0]
-        del_bridge = xm_sb.conference_bridges().delete_conference_bridge(bridge_id=bridge.id)
+        bridge = xm_sb.conference_bridges_endpoint().get_conference_bridges(name="INC-211 Zoom Conference Updated").list()[0]
+        del_bridge = xm_sb.conference_bridges_endpoint().delete_conference_bridge(bridge_id=bridge.id)
         assert isinstance(del_bridge, xmatters.xm_objects.conference_bridges.ConferenceBridge)
         assert del_bridge.name == "INC-211 Zoom Conference Updated"
         with pytest.raises(xmatters.errors.NotFoundError):
-            xm_sb.conference_bridges().get_conference_bridge_by_id(del_bridge.id)
+            xm_sb.conference_bridges_endpoint().get_conference_bridge_by_id(del_bridge.id)

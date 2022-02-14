@@ -10,7 +10,7 @@ class TestGet:
 
     @my_vcr.use_cassette('{}_test_get_groups.json'.format(fn))
     def test_get_groups(self, xm_test):
-        groups = xm_test.groups().get_groups()
+        groups = xm_test.groups_endpoint().get_groups()
         assert iter(groups)
         assert len(groups) > 0
         for group in groups:
@@ -22,7 +22,7 @@ class TestGet:
 
     @my_vcr.use_cassette('{}_test_get_oncall.json'.format(fn))
     def test_get_oncall(self, xm_test):
-        groups = xm_test.groups().get_groups(limit=10)
+        groups = xm_test.groups_endpoint().get_groups(limit=10)
         assert iter(groups)
         assert len(groups) > 0
         for group in groups:
@@ -33,7 +33,7 @@ class TestGet:
 
     @my_vcr.use_cassette('{}_test_get_supervisors.json'.format(fn))
     def test_get_supervisors(self, xm_test):
-        groups = xm_test.groups().get_groups(limit=10)
+        groups = xm_test.groups_endpoint().get_groups(limit=10)
         assert len(groups) > 0
         for group in groups:
             supervisors = group.get_supervisors()
@@ -43,5 +43,5 @@ class TestGet:
                 assert supervisor.id is not None
 
     def test_get_license_quota(self, xm_test):
-        quotas = xm_test.groups().get_license_quotas()
+        quotas = xm_test.groups_endpoint().get_license_quotas()
         assert isinstance(quotas, GroupQuota)

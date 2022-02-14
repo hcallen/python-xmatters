@@ -1,4 +1,5 @@
-from xmatters import XMSession, TokenFileStorage
+from xmatters.session import XMSession
+from xmatters.utils import TokenFileStorage
 
 
 # TODO: properly test
@@ -6,7 +7,7 @@ class TestErrors:
 
     def test_401_error(self, xm_test):
         xm_test.con.session.access_token = 'invalid-token'
-        groups = xm_test.groups().get_groups()
+        groups = xm_test.groups_endpoint().get_groups()
         assert iter(groups)
         assert xm_test.con.auth.session.token['access_token'] != 'invalid-token'
 
@@ -22,7 +23,6 @@ class TestKwargs:
                                                                                                       password=password)
         assert xm.con.timeout == 11
         assert xm.con.max_retries == 22
-        assert xm.con.limit_per_request == 33
 
     def test_oauth2_kwargs(self, settings):
         base_url = settings.get('test_base_url')
@@ -34,4 +34,3 @@ class TestKwargs:
             token_storage=ts)
         assert xm.con.timeout == 11
         assert xm.con.max_retries == 22
-        assert xm.con.limit_per_request == 33

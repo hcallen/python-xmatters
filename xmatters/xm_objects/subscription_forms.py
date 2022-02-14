@@ -32,28 +32,28 @@ class SubscriptionForm(xmatters.connection.ApiBridge):
 
     @property
     def target_device_names(self):
-        url = self.build_url(self._endpoints.get('target_device_names'))
+        url = self.get_url(self._endpoints.get('target_device_names'))
         data = self.con.get(url)
         tdns = data.get('targetDeviceNames', {})
         return Pagination(self, tdns, xmatters.factories.DeviceNameFactory) if tdns.get('data') else []
 
     @property
     def visible_target_device_names(self):
-        url = self.build_url(self._endpoints.get('visible_target_device_names'))
+        url = self.get_url(self._endpoints.get('visible_target_device_names'))
         data = self.con.get(url)
         vtdns = data.get('visibleTargetDeviceNames', {})
         return Pagination(self, vtdns, xmatters.factories.DeviceNameFactory) if vtdns.get('data') else []
 
     @property
     def property_definitions(self):
-        url = self.build_url(self._endpoints.get('property_definitions'))
+        url = self.get_url(self._endpoints.get('property_definitions'))
         data = self.con.get(url)
         ps = data.get('propertyDefinitions', {})
         return Pagination(self, ps, xmatters.factories.PropertiesFactory) if ps.get('data') else []
 
     @property
     def roles(self):
-        url = self.build_url(self._endpoints.get('roles'))
+        url = self.get_url(self._endpoints.get('roles'))
         data = self.con.get(url).get('roles')
         roles = data.get('roles')
         return Pagination(self, roles, xmatters.xm_objects.roles.Role) if roles else []

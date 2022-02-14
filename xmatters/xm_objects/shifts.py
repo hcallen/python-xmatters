@@ -109,13 +109,13 @@ class Shift(xmatters.connection.ApiBridge):
         self.recurrence = ShiftRecurrence(recurrence) if recurrence else None
 
     def get_members(self):
-        url = self.build_url(self._endpoints.get('get_members'))
+        url = self.get_url(self._endpoints.get('get_members'))
         members = self.con.get(url)
         return xmatters.xm_objects.common.Pagination(self, members, ShiftMember) if members.get('data') else []
 
-    # TODO: Test
+    
     def add_member(self, data):
-        url = self.build_url(self._endpoints.get('get_members'))
+        url = self.get_url(self._endpoints.get('get_members'))
         data = self.con.post(url, data=data)
         return ShiftMember(self, data) if data else None
 

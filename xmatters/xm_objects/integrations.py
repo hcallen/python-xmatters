@@ -68,10 +68,10 @@ class Integration(ApiBridge):
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
 
-    # TODO: Test
+    
     def get_logs(self):
-        endpoint = self.build_url(self._endpoints.get('get_logs'))
-        url = self.build_url(endpoint)
+        endpoint = self.get_url(self._endpoints.get('get_logs'))
+        url = self.get_url(endpoint)
         logs = self.con.get(url)
         return Pagination(self, logs, IntegrationLog) if logs.get('data') else []
 

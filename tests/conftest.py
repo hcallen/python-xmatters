@@ -14,11 +14,11 @@ def skip_token_calls(request):
         return request
 
 
-def skip_timeouts(request):
-    if request.get('status', {}).get('code') == 504:
-        return None
-    else:
-        return request
+# def skip_timeouts(request):
+#     if request.get('status', {}).get('code') == 504:
+#         return None
+#     else:
+#         return request
 
 
 my_vcr = vcr.VCR(
@@ -26,8 +26,7 @@ my_vcr = vcr.VCR(
     cassette_library_dir='../tests/cassettes',
     record_mode='new_episodes',
     match_on=['uri', 'method'],
-    before_record_request=skip_token_calls,
-    before_record_response=skip_timeouts
+    before_record_request=skip_token_calls
 )
 
 
@@ -47,7 +46,8 @@ def xm_test(settings):
     client_id = settings.get('test_client_id')
     token_filepath = settings.get('test_token_filepath')
     token_storage = TokenFileStorage(token_filepath)
-    return XMSession(base_url).set_authentication(client_id=client_id, token_storage=token_storage)
+    xm = XMSession(base_url, timeout=60, max_retries=3)
+    return xm.set_authentication(client_id=client_id, token_storage=token_storage)
 
 
 @pytest.fixture(scope='session')

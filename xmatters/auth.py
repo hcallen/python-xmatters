@@ -9,34 +9,17 @@ from xmatters.connection import Connection
 class OAuth2Auth(Connection):
     _endpoints = {'token': '/oauth2/token'}
 
-    def __init__(self, base_url, client_id, token=None, username=None, password=None, token_storage=None, **kwargs):
-        """
-        Class used to authentication requests using OAuth2 authentication.
+    def __init__(self, api_base_url, client_id, username=None, password=None, **kwargs):
 
-        The method used to obtain a token are used in the following order:  token, username & password, token_storage.
-
-        :param base_url: xMatters instance url or xMatters instance base url
-        :type base_url: str
-        :param client_id: xMatters instance client id
-        :type client_id: str
-        :param token: Authentication token. Can be just a refresh token (as a str) or a token object (as a dict)
-        :type token: str or dict, optional
-         :param username: xMatters username
-        :type username: str, optional
-        :param password: xMatters password
-        :type password: str, optional
-        :param token_storage: Class instance used to store token returned during a refresh.
-            Any class instance will be accepted as long as it has "read_token" and "write_token" methods.
-        :type token_storage: :class:`xmatters.utils.TokenFileStorage`, optional
-        """
-        self.base_url = base_url
+        self.api_base_url = api_base_url
         self.client_id = client_id
-        self.token_storage = token_storage
         self.username = username
         self.password = password
-        self._token = token
+        self._token = kwargs.get('token')
+        self._refresh_token = kwargs.get('refresh_token')
+        self.token_storage = kwargs.get('token_storage')
         self.session = None
-        token_url = '{}{}'.format(self.base_url, self._endpoints.get('token'))
+        token_url = '{}{}'.format(self.api_base_url, self._endpoints.get('token'))
         client = LegacyApplicationClient(client_id=self.client_id)
         auto_refresh_kwargs = {'client_id': self.client_id}
         token_updater = self.token_storage.write_token if self.token_storage else None
@@ -54,10 +37,12 @@ class OAuth2Auth(Connection):
         :return: token object
         :rtype: dict
         """
-        # session token automatically set
-        token = self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=self._token,
+
+        refresh_token = self._refresh_token or self.token.get('refresh_token')
+        token = self.session.refresh_token(token_url=self.session.auto_refresh_url, refresh_token=refresh_token,
                                            kwargs=self.session.auto_refresh_kwargs)
         self._update_storage()
+        # Return in-case user wants it
         return token
 
     def fetch_token(self):
@@ -70,6 +55,7 @@ class OAuth2Auth(Connection):
         token = self.session.fetch_token(token_url=self.session.auto_refresh_url, username=self.username,
                                          password=self.password, include_client_id=True)
         self._update_storage()
+        # Return in-case user wants it
         return token
 
     def _update_storage(self):
@@ -77,17 +63,17 @@ class OAuth2Auth(Connection):
             self.token_storage.write_token(self.token)
 
     def _set_token(self):
-        if self._token and isinstance(self._token, dict):
+        if self._token:
             self.token = self._token
             self._update_storage()
-        elif self._token and isinstance(self._token, str):
+        elif self._refresh_token:
             self.refresh_token()
         elif None not in (self.username, self.password):
             self.fetch_token()
         elif self.token_storage and self.token_storage.read_token():
             self.token = self.token_storage.read_token()
         else:
-            raise err.XMSessionError('Unable to obtain token with provided arguments')
+            raise err.AuthorizationError('Unable to obtain token with provided arguments')
 
     @property
     def token(self):
@@ -108,21 +94,22 @@ class OAuth2Auth(Connection):
 
 
 class BasicAuth(Connection):
-    def __init__(self, base_url, username, password, **kwargs):
-        """
-        Class used to authentication requests using basic authentication
+    """
+    Used to authentication requests using basic authentication
 
-        :param base_url: xMatters instance url or xMatters instance base url
-        :type base_url: str
-        :param username: xMatters username
-        :type username: str
-        :param password: xMatters password
-        :type password: str
-        """
+    :param base_url: xMatters instance url or xMatters instance base url
+    :type base_url: str
+    :param username: xMatters username
+    :type username: str
+    :param password: xMatters password
+    :type password: str
+    """
+
+    def __init__(self, api_base_url, username, password, **kwargs):
         self.username = username
         self.password = password
         self.session = requests.Session()
-        self.base_url = base_url
+        self.api_base_url = api_base_url
         self.session.auth = (self.username, self.password)
         super(BasicAuth, self).__init__(self, **kwargs)
 

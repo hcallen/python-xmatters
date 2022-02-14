@@ -5,7 +5,7 @@ class TestGet:
 
     @my_vcr.use_cassette('test_dynamic_teams.json')
     def test_get(self, xm_test):
-        dts = xm_test.dynamic_teams().get_dynamic_teams()
+        dts = xm_test.dynamic_teams_endpoint().get_dynamic_teams()
         assert iter(dts)
         for team in dts:
             assert iter(team.observers)

@@ -17,12 +17,21 @@ class PaginationLinks(object):
 
 
 class Pagination(xmatters.connection.ApiBridge):
+    """
+    Iterator to handle returned pagination objects from the xMatters API.
 
-    def __init__(self, parent, data, constructor, limit=None):
+    :param parent: class that initialized Pagination
+    :type parent: subclass of :class:`xmatters.connection.ApiBridge`
+    :param data: request return data
+    :type data: request return data
+    :param constructor: class used to process request data into representation of an API object.
+    :type constructor: class
+    """
+    def __init__(self, parent, data, constructor):
+
         super(Pagination, self).__init__(parent, data)
         self.parent = parent
         self.constructor = constructor
-        self.limit = limit
         self.state = 0  # count of items iterated
         self.total = None
         self._init_data = data
@@ -34,12 +43,9 @@ class Pagination(xmatters.connection.ApiBridge):
         self.index = None
         self._set_pagination_properties(data)
 
-    def list(self):
-        return list(self)
-
     def goto_next_page(self):
-        url = self.build_url(self.links.next)
-        data = self.con.get(url)
+        url = self.get_url(self.links.next)
+        data = self.con.get(url, params=None)
         self._set_pagination_properties(data)
 
     def _set_pagination_properties(self, data):
@@ -64,7 +70,7 @@ class Pagination(xmatters.connection.ApiBridge):
 
     def __next__(self):
 
-        if (self.state == self.total) or (self.limit is not None and self.state == self.limit):
+        if self.state == self.total:
             raise StopIteration()
 
         if self.index == self.count and self.links and self.links.next:
@@ -77,11 +83,10 @@ class Pagination(xmatters.connection.ApiBridge):
             return self._get_object(item_data)
 
     def __len__(self):
-        return self.limit if self.limit else self.total
+        return self.total
 
     def __repr__(self):
-        return '<{} {} {} objects>'.format(self.__class__.__name__, self.limit if self.limit else self.total,
-                                           self.constructor.__name__)
+        return '<{} {} {} objects>'.format(self.__class__.__name__, self.total, self.constructor.__name__)
 
     def __str__(self):
         return self.__repr__()

@@ -1,33 +1,34 @@
-import json
 import warnings
 from urllib import parse
 
+import requests.exceptions
+from dateutil import tz, parser
 from requests.adapters import HTTPAdapter
 from requests_oauthlib.oauth2_session import TokenUpdated
 from urllib3.util.retry import Retry
 
-import xmatters.errors as err
-import xmatters.utils as util
 import xmatters.auth
+import xmatters.errors as err
 
 # ignore TokenUpdated warning
 # only occurs when token_updater isn't defined in OAuth2Session
 warnings.simplefilter('always', TokenUpdated)
 
+TIME_PARAMETERS = ('at', 'from', 'to', 'after', 'before', 'createdFrom', 'createdTo', 'createdBefore', 'createdAfter')
 
-# TODO: Test kwargs
+
 class Connection(object):
     def __init__(self, auth, **kwargs):
         self.auth = auth
-        self.base_url = self.auth.base_url
-        p_url = parse.urlparse(self.base_url)
+        self.api_base_url = self.auth.api_base_url
+        p_url = parse.urlparse(self.api_base_url)
         self.api_path = p_url.path
         self.instance_url = 'https://{}'.format(p_url.netloc)
         self.timeout = kwargs.get('timeout', 5)
         self.max_retries = kwargs.get('max_retries', 3)
-        self.limit_per_request = kwargs.get('limit_per_request', util.MAX_API_LIMIT)
 
-    def get(self, url, params=None):
+    def get(self, url, params=None, **kwargs):
+        params = self._process_params(params, kwargs)
         return self.request('GET', url=url, params=params)
 
     def post(self, url, data):
@@ -37,34 +38,23 @@ class Connection(object):
         return self.request('DELETE', url=url)
 
     def request(self, method, url, data=None, params=None):
-        if params:
-            # set number of items returned per request
-            if 'limit' in params.keys() and params.get('limit') is None:
-                params['limit'] = self.limit_per_request
-            # remove all None values
-            params = {k: v for k, v in params.items() if v is not None}
-
         r = self.auth.session.request(method=method, url=url, params=params, json=data, timeout=self.timeout)
 
-        # token likely expired while preparing call; refresh token and retry
+        # token expired in OAuth2 session and not caught by automatic refresh
         if r.status_code == 401 and isinstance(self.auth, xmatters.auth.OAuth2Auth):
             self.auth.refresh_token()
             r = self.auth.session.request(method=method, url=url, params=params, json=data, timeout=self.timeout)
 
         try:
-            data = r.json()
-        except json.decoder.JSONDecodeError:
-            raise err.ApiError(r.status_code, r.text)
-
-        # 400 <= status code <= 600
-        if not r.ok:
-            raise err.ErrorFactory.compose(r.status_code, data)
+            r.raise_for_status()
+        except requests.exceptions.HTTPError:
+            raise err.ErrorFactory.compose(r)
 
         # a resource was not found in response to a DELETE request.
         if r.status_code == 204 and r.request.method == 'DELETE':
-            raise err.NoContentError(r.status_code, data)
+            raise err.NoContentError(r)
 
-        return data
+        return r.json()
 
     @property
     def max_retries(self):
@@ -76,6 +66,7 @@ class Connection(object):
         Specifies the maximum number of retries to attempt.
 
         Retries are attempted for the following status codes:
+
             * *429* -- Rate limit exceeded
             * *500* -- Internal server error
             * *502* -- Bad gateway
@@ -94,6 +85,32 @@ class Connection(object):
         retry_adapter = HTTPAdapter(max_retries=retry)
         self.auth.session.mount('https://', retry_adapter)
 
+    @staticmethod
+    def _process_params(params, kwargs):
+
+        params = params if params else {}
+        params.update(kwargs)
+
+        # update keys for 'dot' params
+        for k in list(params.keys()):
+            if '_dot_' in k:
+                v = params.pop(k)
+                k = k.replace('_dot_', '.')
+                params[k] = v
+        # convert snakecase keys to camelcase
+        for k in list(params.keys()):
+            if '_' in k:
+                v = params.pop(k)
+                k_parts = k.split('_')
+                k = k_parts[0].lower() + ''.join(part.title() for part in k_parts[1:])
+                params[k] = v
+
+        # apply utc offset to timestamp parameters
+        for k, v in params.items():
+            if k in TIME_PARAMETERS:
+                params[k] = parser.isoparse(v).astimezone(tz.tzutc()).isoformat()
+        return params
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
@@ -104,44 +121,36 @@ class Connection(object):
 class ApiBridge(object):
     """ Base for api objects that need to make requests """
 
-    def __init__(self, parent, data=None):
-
+    def __init__(self, parent, resource=None):
         # parent passed without a connection
-        if hasattr(parent, 'con') and not parent.con:
+        if not hasattr(parent, 'con') or not parent.con:
             raise err.AuthorizationError('authentication not provided')
 
         self.con = parent.con
-        self.self_url = None
-        self_link = data.get('links', {}).get('self') if data else None
-        self.self_url = '{}{}'.format(self.con.instance_url, self_link) if self_link else None
 
-    def build_url(self, endpoint):
+        if isinstance(resource, dict):
+            self_link = resource.get('links', {}).get('self')
+            self.base_resource = '{}{}'.format(self.con.instance_url, self_link) if self_link else None
+        elif isinstance(resource, str):
+            self.base_resource = '{}{}'.format(self.con.api_base_url, resource)
+        else:
+            self.base_resource = self.con.api_base_url
+
+    def get_url(self, endpoint=None):
+        if not endpoint:
+            return self.base_resource
+
         # don't do anything if endpoint is full path
-        if self.con.instance_url in endpoint:
+        if endpoint and endpoint.startswith(self.con.instance_url):
             return endpoint
+
+        # if not a query parameter (starts with '?') and missing prepended '/', prepend '/'
+        endpoint = '/' + endpoint if (not endpoint.startswith('/') and not endpoint.startswith('?')) else endpoint
 
         if endpoint.startswith(self.con.api_path):
             url_prefix = self.con.instance_url
-        elif self.self_url:
-            url_prefix = self.self_url
+        elif self.base_resource:
+            url_prefix = self.base_resource
         else:
-            url_prefix = self.con.base_url
+            url_prefix = self.con.api_base_url
         return '{}{}'.format(url_prefix, endpoint)
-
-    @staticmethod
-    def process_time_param(timestamp):
-        """
-        Formats ISO-8601 formatted timestamp from provided timezone to UTC timezone.
-        If no timezone is specified, local timezone is used.
-        
-        :param timestamp: ISO-8601 formatted timestamp
-        :type timestamp: str
-        :return: ISO-8601 formatted timestamp with utc offset applied
-        :rtype: str or None
-        """
-        return util.TimeAttribute(timestamp).isoformat_utc() if isinstance(timestamp, str) else timestamp
-
-    # TODO: Test
-    @staticmethod
-    def process_search_param(search_param):
-        return ' '.join([str(p) for p in search_param]) if isinstance(search_param, list) else search_param

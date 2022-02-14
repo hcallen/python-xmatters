@@ -47,11 +47,11 @@ class Incident(ApiBridge):
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
 
-    # TODO: Test
+    
     def add_timeline_note(self, text):
         data = {'entryType': 'TIMELINE_NOTE',
                 'text': text}
-        url = self.build_url(self._endpoints.get('add_timeline_note'))
+        url = self.get_url(self._endpoints.get('add_timeline_note'))
         data = self.con.post(url, data=data)
         return IncidentNote(self, data) if data else None
 

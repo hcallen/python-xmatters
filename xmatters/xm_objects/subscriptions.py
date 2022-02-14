@@ -45,13 +45,10 @@ class Subscription(xmatters.connection.ApiBridge):
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
 
-    def get_subscribers(self, offset=None, limit=None, **kwargs):
-        params = {'offset': offset,
-                  'limit': limit}
-        params.update(kwargs)
-        url = self.build_url(self._endpoints.get('get_subscribers'))
-        subscribers = self.con.get(url, params=params)
-        return Pagination(self, subscribers, Person, limit=limit) if subscribers.get('data') else []
+    def get_subscribers(self, params=None, **kwargs):
+        url = self.get_url(self._endpoints.get('get_subscribers'))
+        subscribers = self.con.get(url, params=params, **kwargs)
+        return Pagination(self, subscribers, Person) if subscribers.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

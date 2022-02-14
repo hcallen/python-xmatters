@@ -244,100 +244,80 @@ class Event(ApiBridge):
 
     @property
     def messages(self):
-        url = self.build_url(self._endpoints.get('messages'))
+        url = self.get_url(self._endpoints.get('messages'))
         data = self.con.get(url)
         messages = data.get('messages')
         return Pagination(self, messages, Message) if messages.get('data') else []
 
     @property
     def properties(self):
-        url = self.build_url(self._endpoints.get('properties'))
+        url = self.get_url(self._endpoints.get('properties'))
         data = self.con.get(url)
         return data.get('properties', {})
 
     @property
     def recipients(self):
-        url = self.build_url(self._endpoints.get('recipients'))
+        url = self.get_url(self._endpoints.get('recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
         return Pagination(self, recipients, Message) if recipients.get('data') else []
 
-    # TODO: Test
     @property
     def response_options(self):
-        url = self.build_url(self._endpoints.get('response_options'))
+        url = self.get_url(self._endpoints.get('response_options'))
         data = self.con.get(url)
         response_options = data.get('responseOptions', {}).get('data')
         return [ResponseOption(r) for r in response_options] if response_options else []
 
-    # TODO: Test
     @property
     def suppressions(self):
         return self.get_suppressions()
 
-    # TODO: Test
     @property
     def targeted_recipients(self):
-        url = self.build_url(self._endpoints.get('targeted_recipients'))
+        url = self.get_url(self._endpoints.get('targeted_recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
         return Pagination(self, recipients, Message) if recipients.get('data') else []
 
-    # TODO: Test params
-    def get_audit(self, audit_type=None, sort_order=None, **kwargs):
-        audit_type = ','.join(audit_type) if isinstance(audit_type, list) else audit_type
-        params = {'eventId': self.id, 'auditType': audit_type, 'sortOrder': sort_order}
-        params.update(kwargs)
-        url = self._endpoints.get('get_audit').format(base_url=self.con.base_url)
-        data = self.con.get(url, params=params)
+    def get_audit(self, params=None, **kwargs):
+        url = self._endpoints.get('get_audit').format(base_url=self.con.api_base_url)
+        data = self.con.get(url, params=params, **kwargs)
         return Pagination(self, data, xmatters.factories.AuditFactory) if data.get('data') else []
 
-    def get_user_delivery_data(self, at_time, **kwargs):
-        params = {'eventId': self.id,
-                  'at': self.process_time_param(at_time)}
-        params.update(kwargs)
-        url = self.build_url(self._endpoints.get('get_user_delivery_data'))
-        data = self.con.get(url, params=params)
+    def get_user_delivery_data(self, params=None, **kwargs):
+        url = self.get_url(self._endpoints.get('get_user_delivery_data'))
+        data = self.con.get(url, params=params, **kwargs)
         return Pagination(self, data, UserDeliveryData) if data.get('data') else []
 
-    def get_annotations(self, params=None):
-        url = self.build_url(self._endpoints.get('get_annotations'))
-        data = self.con.get(url, params)
+    def get_annotations(self, params=None, **kwargs):
+        url = self.get_url(self._endpoints.get('get_annotations'))
+        data = self.con.get(url, params=params, **kwargs)
         annotations = data.get('annotations', {})
         return Pagination(self, annotations, Annotation) if annotations.get('data') else []
 
-    # TODO: Test
     def get_annotation_by_id(self, annotation_id):
-        url = self.build_url(self._endpoints.get('get_annotation_by_id').format(ann_id=annotation_id))
+        url = self.get_url(self._endpoints.get('get_annotation_by_id').format(ann_id=annotation_id))
         data = self.con.get(url)
         return Annotation(self, data) if data else None
 
-    # TODO: Test
     def add_annotation(self, comment):
         data = {'comment': comment}
-        url = self.build_url(self._endpoints.get('get_annotations'))
+        url = self.get_url(self._endpoints.get('get_annotations'))
         data = self.con.post(url, data=data)
         return Annotation(self, data) if data else None
 
-    # TODO: Test
     def update_status(self, status):
         data = {'id': self.id,
                 'status': status}
 
-        url = self._endpoints.get('update_status').format(base_url=self.con.base_url)
+        url = self._endpoints.get('update_status').format(base_url=self.con.api_base_url)
         data = self.con.post(url, data=data)
         return Event(self, data) if data else None
 
-    # TODO: Test
-    def get_suppressions(self, sort_by=None, sort_order=None, offset=None, limit=None, **kwargs):
-        params = {'event': self.id,
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order,
-                  'offset': offset,
-                  'limit': limit}
-        params.update(kwargs)
-        url = self._endpoints.get('get_suppressions').format(base_url=self.con.base_url)
-        suppressions = self.con.get(url, params=params)
+    def get_suppressions(self, params=None, **kwargs):
+        url = self._endpoints.get('get_suppressions').format(base_url=self.con.api_base_url)
+        suppressions = self.con.get(url, params=params, **kwargs)
         return Pagination(self, suppressions, EventSuppression) if suppressions.get('data') else []
 
     def __repr__(self):

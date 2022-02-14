@@ -7,11 +7,6 @@ import xmatters.xm_objects.groups
 
 
 class Person(Recipient):
-    _endpoints = {'get_devices': '/devices',
-                  'roles': '?embed=roles',
-                  'get_supervisors': '/supervisors',
-                  'supervisors': '?embed=supervisors',
-                  'get_groups': '/group-memberships'}
 
     def __init__(self, parent, data):
         super(Person, self).__init__(parent, data)
@@ -34,11 +29,18 @@ class Person(Recipient):
         self.links = SelfLink(self, data) if links else None
 
     @property
+    def full_name(self):
+        """
+        Get person's full name
+
+        :return: person's full name
+        :rtype: str
+        """
+        return '{} {}'.format(self.first_name, self.last_name)
+
+    @property
     def roles(self):
-        url = self.build_url(self._endpoints.get('roles'))
-        data = self.con.get(url)
-        roles = data.get('roles', {})
-        return Pagination(self, roles, Role) if roles.get('data') else []
+        return self.get_roles()
 
     @property
     def devices(self):
@@ -48,34 +50,25 @@ class Person(Recipient):
     def supervisors(self):
         return self.get_supervisors()
 
-    @property
-    def full_name(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+    def get_roles(self):
+        url = self.get_url('?embed=roles')
+        data = self.con.get(url)
+        roles = data.get('roles', {})
+        return Pagination(self, roles, Role) if roles.get('data') else []
 
-    def get_supervisors(self, offset=None, limit=None, **kwargs):
-        params = {'offset': offset,
-                  'limit': limit}
-        params.update(kwargs)
-        url = self.build_url(self._endpoints.get('get_supervisors'))
-        s = self.con.get(url, params=params)
+    def get_supervisors(self, params=None, **kwargs):
+        url = self.get_url('/supervisors')
+        s = self.con.get(url, params=params, **kwargs)
         return Pagination(self, s, Person) if s.get('data') else []
 
-    def get_devices(self, offset=None, limit=None, phone_number_format=None, at=None, **kwargs):
-        params = {'phoneNumberFormat': phone_number_format,
-                  'at': self.process_time_param(at),
-                  'offset': offset,
-                  'limit': limit}
-        params.update(kwargs)
-        url = self.build_url(self._endpoints.get('get_devices'))
-        devices = self.con.get(url, params=params)
+    def get_devices(self, params=None, **kwargs):
+        url = self.get_url('/devices')
+        devices = self.con.get(url, params=params, **kwargs)
         return Pagination(self, devices, xmatters.factories.DeviceFactory) if devices.get('data') else []
 
-    def get_groups(self, offset=None, limit=None, **kwargs):
-        params = {'offset': offset,
-                  'limit': limit}
-        params.update(kwargs)
-        url = self.build_url(self._endpoints.get('get_groups'))
-        groups = self.con.get(url, params=params)
+    def get_groups(self, params=None, **kwargs):
+        url = self.get_url('/group-memberships')
+        groups = self.con.get(url, params=params, **kwargs)
         return Pagination(self, groups, xmatters.xm_objects.groups.GroupMembership) if groups.get('data') else []
 
     def __repr__(self):

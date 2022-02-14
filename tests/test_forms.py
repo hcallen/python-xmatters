@@ -1,10 +1,11 @@
 from tests.conftest import my_vcr
 import xmatters.errors as err
 
+
 class TestForms:
     @my_vcr.use_cassette('test_forms.json')
     def test_forms(self, xm_test):
-        forms = xm_test.forms().get_forms()
+        forms = xm_test.forms_endpoint().get_forms()
         assert len(forms) > 0
         for form in forms:
             assert form.id is not None
