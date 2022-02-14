@@ -30,7 +30,8 @@ class AuditsEndpoint(ApiBridge):
 
     def get_audits(self, params=None, **kwargs):
         """
-        Get audit information.
+        | Get audit information.
+        | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
 
         :return: Pagination of audit objects
         :rtype: :class:`xmatters.xm_objects.common.Pagination`
@@ -53,16 +54,37 @@ class DevicesEndpoint(ApiBridge):
         super(DevicesEndpoint, self).__init__(parent, '/devices')
 
     def get_devices(self, params=None, **kwargs):
+        """
+        | Get devices.
+        | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
+
+        :return: Pagination of device objects
+        :rtype: :class:`xmatters.xm_objects.common.Pagination`
+        """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
         return Pagination(self, data, xmatters.factories.DeviceFactory) if data.get('data') else []
 
     def get_device_by_id(self, device_id, params=None, **kwargs):
+        """
+        | Get device by device's id.
+        | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
+
+        :return: Pagination of device objects
+        :rtype: :class:`xmatters.xm_objects.common.Pagination`
+        """
         url = self.get_url(device_id)
         data = self.con.get(url=url, params=params, **kwargs)
         return xmatters.factories.DeviceFactory.compose(self, data) if data else None
 
     def create_device(self, data):
+        """
+        | Create a device.
+        | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for expected data.
+
+        :return: device object
+        :rtype: Dependent on device type
+        """
         url = self.get_url()
         data = self.con.post(url, data=data)
         return xmatters.factories.DeviceFactory.compose(self, data) if data else None

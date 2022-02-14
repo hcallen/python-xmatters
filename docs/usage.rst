@@ -225,7 +225,7 @@ Example:
 Kwargs
 ^^^^^^
 
-Query parameters can also be passed as a kwarg.
+Query parameters can also be passed as kwargs.
 
 Example:
 
@@ -239,10 +239,9 @@ Example:
 
 .. note::
 
-    Parameters that use a Python reserved keyword for their name by appending (or prepending)
-    an underscore to their name.
-
-    Example: *from* parameter can be passed as a *from_* kwargs argument
+    | Parameters that use a Python reserved keyword for their name by appending (or prepending)
+        an underscore to their name.
+    | Example: *from* parameter can be a kwarg as *from_*
 
 
 Parameter Casing
@@ -262,10 +261,9 @@ Example:
 
 .. note::
 
-    Parameters containing a period can be passed as snake-case by replacing the period
-    with '_dot_'
-
-    Example: *devices.exists* parameter can be passed as a *devices_dot_exists* kwargs argument
+    | Parameters containing a period can be passed as snake-case by replacing the period
+        with '_dot_'
+    | Example: *devices.exists* parameter can be a kwarg as *devices_dot_exists*
 
 Timestamp Parameters
 ^^^^^^^^^^^^^^^^^^^^
