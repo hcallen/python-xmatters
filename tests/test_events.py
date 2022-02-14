@@ -15,7 +15,7 @@ class TestEvents:
         assert len(events) > 0
         for event in events:
             try:
-                assert iter(event.get_audit())
+                assert iter(event.get_audits())
                 assert iter(event.get_user_delivery_data(at=datetime.utcnow().isoformat()))
                 assert iter((event.get_annotations()))
                 assert iter(event.messages)

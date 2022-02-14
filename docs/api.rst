@@ -6,8 +6,6 @@ XMSession
 
 .. autoclass:: xmatters.XMSession
    :members:
-   :undoc-members:
-   :show-inheritance:
 
 
 Endpoints
@@ -15,42 +13,14 @@ Endpoints
 
 .. automodule:: xmatters.endpoints
    :members:
-   :undoc-members:
-   :show-inheritance:
 
 
 
 xMatters API Objects
 --------------------
 
-Audits
-^^^^^^
+Only classes that have user-callable methods are documented.
+Refer to the `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ and source code for object attributes.
 
-.. automodule:: xmatters.xm_objects.audits
+.. autoclass:: xmatters.xm_objects.devices.Device
    :members:
-   :undoc-members:
-   :show-inheritance:
-
-Conference Bridges
-^^^^^^^^^^^^^^^^^^
-
-.. automodule:: xmatters.xm_objects.conference_bridges
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Device Names
-^^^^^^^^^^^^
-
-.. automodule:: xmatters.xm_objects.device_names
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Device Types
-^^^^^^^^^^^^
-
-.. automodule:: xmatters.xm_objects.device_types
-   :members:
-   :undoc-members:
-   :show-inheritance:

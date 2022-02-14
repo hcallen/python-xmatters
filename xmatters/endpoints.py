@@ -28,11 +28,12 @@ class AuditsEndpoint(ApiBridge):
     def __init__(self, parent):
         super(AuditsEndpoint, self).__init__(parent, '/audits')
 
-    def get_audit(self, params=None, **kwargs):
+    def get_audits(self, params=None, **kwargs):
         """
+        Get audit information.
 
-        :return:
-        :rtype:
+        :return: Pagination of audit objects
+        :rtype: :class:`xmatters.xm_objects.common.Pagination`
         """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
@@ -46,6 +47,7 @@ class AuditsEndpoint(ApiBridge):
 
 
 class DevicesEndpoint(ApiBridge):
+    """ Used to interact with '/devices' top-level endpoint """
 
     def __init__(self, parent):
         super(DevicesEndpoint, self).__init__(parent, '/devices')

@@ -60,11 +60,10 @@ Example using OAuth2 authentication with refresh token:
 .. note::
 
     | The use of OAuth2 authentication is implied if client_id is provided.
-    | See :ref:`OAuth2 Authentication` for more OAuth2 authentication mechanisms.
 
 
 User Guide
-=================================
+===========
 
 Initial Setup
 _____________

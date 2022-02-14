@@ -35,6 +35,12 @@ class Device(Recipient):
         return self.get_timeframes()
 
     def get_timeframes(self):
+        """
+        Get device timeframes
+
+        :return: list
+        :rtype: list[:class:`xmatters.xm_objects.devices.DeviceTimeframe`]
+        """
         url = self.get_url('?embed=timeframes')
         data = self.con.get(url).get('timeframes', {}).get('data', [])
         return [DeviceTimeframe(timeframe) for timeframe in data]
