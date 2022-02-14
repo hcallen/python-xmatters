@@ -1,6 +1,6 @@
 import xmatters.utils as utils
-from xmatters.xm_objects.common import SelfLink
-from xmatters.xm_objects.people import PersonReference
+from xmatters.objects.common import SelfLink
+from xmatters.objects.people import PersonReference
 from xmatters.connection import ApiBridge
 
 

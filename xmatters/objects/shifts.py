@@ -1,6 +1,6 @@
 import xmatters.utils
 import xmatters.connection
-import xmatters.xm_objects.common
+import xmatters.objects.common
 
 
 class GroupReference(xmatters.connection.ApiBridge):
@@ -11,7 +11,7 @@ class GroupReference(xmatters.connection.ApiBridge):
         self.recipient_type = data.get('recipientType')
         self.group_type = data.get('groupType')
         links = data.get('links')
-        self.links = xmatters.xm_objects.common.SelfLink(self, links) if links else None
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -78,9 +78,9 @@ class ShiftMember(xmatters.connection.ApiBridge):
         self.escalation_type = data.get('escalationType')
         self.in_rotation = data.get('inRotation')
         recipient = data.get('recipient')
-        self.recipient = xmatters.xm_objects.common.Recipient(self, recipient) if recipient else None
+        self.recipient = xmatters.objects.common.Recipient(self, recipient) if recipient else None
         shift = data.get('shift')
-        self.shift = xmatters.xm_objects.common.ReferenceByIdAndSelfLink(self, shift) if shift else None
+        self.shift = xmatters.objects.common.ReferenceByIdAndSelfLink(self, shift) if shift else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -98,7 +98,7 @@ class Shift(xmatters.connection.ApiBridge):
         group = data.get('group')
         self.group = GroupReference(self, group) if group else None
         links = data.get('links')
-        self.links = xmatters.xm_objects.common.SelfLink(self, links) if links else None
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None
         self.name = data.get('name')
         start = data.get('start')
         self.start = xmatters.utils.TimeAttribute(start) if start else None
@@ -111,7 +111,7 @@ class Shift(xmatters.connection.ApiBridge):
     def get_members(self):
         url = self.get_url(self._endpoints.get('get_members'))
         members = self.con.get(url)
-        return xmatters.xm_objects.common.Pagination(self, members, ShiftMember) if members.get('data') else []
+        return xmatters.objects.common.Pagination(self, members, ShiftMember) if members.get('data') else []
 
     
     def add_member(self, data):

@@ -1,5 +1,5 @@
-import xmatters.xm_objects.common
-import xmatters.xm_objects.plans
+import xmatters.objects.common
+import xmatters.objects.plans
 import xmatters.connection
 
 
@@ -8,12 +8,12 @@ class PlanConstant(xmatters.connection.ApiBridge):
         super(PlanConstant, self).__init__(parent, data)
         self.id = data.get('id')
         plan = data.get('plan')
-        self.plan = xmatters.xm_objects.plans.PlanPointer(plan) if plan else None
+        self.plan = xmatters.objects.plans.PlanPointer(plan) if plan else None
         self.name = data.get('name')
         self.value = data.get('value')
         self.description = data.get('description')
         links = data.get('links')
-        self.links = xmatters.xm_objects.common.SelfLink(self, links) if links else None
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

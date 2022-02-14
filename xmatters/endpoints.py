@@ -1,26 +1,26 @@
 import xmatters.factories as factory
-import xmatters.xm_objects.forms
+import xmatters.objects.forms
 from xmatters.connection import ApiBridge
-from xmatters.xm_objects.common import Pagination
-from xmatters.xm_objects.conference_bridges import ConferenceBridge
-from xmatters.xm_objects.device_types import DeviceTypes
-from xmatters.xm_objects.dynamic_teams import DynamicTeam
-from xmatters.xm_objects.event_supressions import EventSuppression
-from xmatters.xm_objects.events import Event
-from xmatters.xm_objects.groups import Group, GroupQuota
-from xmatters.xm_objects.import_jobs import Import
-from xmatters.xm_objects.incidents import Incident
-from xmatters.xm_objects.oncall import OnCall
-from xmatters.xm_objects.oncall_summary import OnCallSummary
-from xmatters.xm_objects.people import Person, UserQuota
-from xmatters.xm_objects.plans import Plan
-from xmatters.xm_objects.roles import Role
-from xmatters.xm_objects.scenarios import Scenario
-from xmatters.xm_objects.services import Service
-from xmatters.xm_objects.sites import Site
-from xmatters.xm_objects.subscription_forms import SubscriptionForm
-from xmatters.xm_objects.subscriptions import Subscription
-from xmatters.xm_objects.temporary_absences import TemporaryAbsence
+from xmatters.objects.common import Pagination
+from xmatters.objects.conference_bridges import ConferenceBridge
+from xmatters.objects.device_types import DeviceTypes
+from xmatters.objects.dynamic_teams import DynamicTeam
+from xmatters.objects.event_supressions import EventSuppression
+from xmatters.objects.events import Event
+from xmatters.objects.groups import Group, GroupQuota
+from xmatters.objects.import_jobs import Import
+from xmatters.objects.incidents import Incident
+from xmatters.objects.oncall import OnCall
+from xmatters.objects.oncall_summary import OnCallSummary
+from xmatters.objects.people import Person, UserQuota
+from xmatters.objects.plans import Plan
+from xmatters.objects.roles import Role
+from xmatters.objects.scenarios import Scenario
+from xmatters.objects.services import Service
+from xmatters.objects.sites import Site
+from xmatters.objects.subscription_forms import SubscriptionForm
+from xmatters.objects.subscriptions import Subscription
+from xmatters.objects.temporary_absences import TemporaryAbsence
 
 
 class AuditsEndpoint(ApiBridge):
@@ -34,7 +34,7 @@ class AuditsEndpoint(ApiBridge):
         | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
 
         :return: Pagination of audit objects
-        :rtype: :class:`xmatters.xm_objects.common.Pagination`
+        :rtype: :class:`xmatters.objects.common.Pagination`
         """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
@@ -59,7 +59,7 @@ class DevicesEndpoint(ApiBridge):
         | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
 
         :return: Pagination of device objects
-        :rtype: :class:`xmatters.xm_objects.common.Pagination`
+        :rtype: :class:`xmatters.objects.common.Pagination`
         """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
@@ -71,7 +71,7 @@ class DevicesEndpoint(ApiBridge):
         | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
 
         :return: Pagination of device objects
-        :rtype: :class:`xmatters.xm_objects.common.Pagination`
+        :rtype: :class:`xmatters.objects.common.Pagination`
         """
         url = self.get_url(device_id)
         data = self.con.get(url=url, params=params, **kwargs)
@@ -90,11 +90,26 @@ class DevicesEndpoint(ApiBridge):
         return xmatters.factories.DeviceFactory.compose(self, data) if data else None
 
     def update_device(self, data):
+        """
+        | Update a device.
+        | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for expected data.
+
+        :return: device object
+        :rtype: Dependent on device type
+        """
         url = self.get_url()
         data = self.con.post(url=url, data=data)
         return xmatters.factories.DeviceFactory.compose(self, data) if data else None
 
     def delete_device(self, device_id):
+        """
+        | Delete a device.
+
+        :param device_id: device id
+        :type device_id: str
+        :return: device object
+        :rtype: Dependent on device type
+        """
         url = self.get_url(device_id)
         data = self.con.delete(url=url)
         return xmatters.factories.DeviceFactory.compose(self, data) if data else None
@@ -107,6 +122,9 @@ class DevicesEndpoint(ApiBridge):
 
 
 class DeviceNamesEndpoint(ApiBridge):
+
+    """ Used to interact with '/device-names' top-level endpoint """
+
     def __init__(self, parent):
         super(DeviceNamesEndpoint, self).__init__(parent, '/device-names')
 
@@ -280,12 +298,12 @@ class FormsEndpoint(ApiBridge):
     def get_forms(self, params=None, **kwargs):
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
-        return Pagination(self, data, xmatters.xm_objects.forms.Form) if data.get('data') else []
+        return Pagination(self, data, xmatters.objects.forms.Form) if data.get('data') else []
 
     def get_form_by_id(self, form_id, params=None, **kwargs):
         url = self.get_url(form_id)
         data = self.con.get(url, params=params, **kwargs)
-        return xmatters.xm_objects.forms.Form(self, data) if data else None
+        return xmatters.objects.forms.Form(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

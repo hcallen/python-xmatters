@@ -1,5 +1,5 @@
-from xmatters.xm_objects.common import Recipient, ReferenceById
-from xmatters.xm_objects.people import PersonReference
+from xmatters.objects.common import Recipient, ReferenceById
+from xmatters.objects.people import PersonReference
 
 
 class Provider(object):
@@ -39,7 +39,7 @@ class Device(Recipient):
         Get device timeframes
 
         :return: list
-        :rtype: list[:class:`xmatters.xm_objects.devices.DeviceTimeframe`]
+        :rtype: list[:class:`xmatters.objects.devices.DeviceTimeframe`]
         """
         url = self.get_url('?embed=timeframes')
         data = self.con.get(url).get('timeframes', {}).get('data', [])

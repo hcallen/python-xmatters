@@ -1,5 +1,5 @@
 from .conftest import my_vcr
-import xmatters.xm_objects.shifts
+import xmatters.objects.shifts
 
 class TestOnCall:
 
@@ -10,6 +10,6 @@ class TestOnCall:
             for o in oncall:
                 shift_occurrence_members = o.members
                 assert iter(shift_occurrence_members)
-                assert isinstance(o.shift, xmatters.xm_objects.shifts.Shift) or o.shift is None
+                assert isinstance(o.shift, xmatters.objects.shifts.Shift) or o.shift is None
                 for m in shift_occurrence_members:
                     assert m.member.id is not None

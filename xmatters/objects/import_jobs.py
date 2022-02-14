@@ -1,7 +1,7 @@
 import xmatters.utils
 import xmatters.connection
-import xmatters.xm_objects.people
-import xmatters.xm_objects.common
+import xmatters.objects.people
+import xmatters.objects.common
 
 
 class ImportMessage(object):
@@ -32,13 +32,13 @@ class Import(xmatters.connection.ApiBridge):
         self.started = xmatters.utils.TimeAttribute(started) if started else None
         self.last_updated_at = data.get('lastUpdatedAt')
         by = data.get('by')
-        self.by = xmatters.xm_objects.people.PersonReference(parent, by) if by else None
+        self.by = xmatters.objects.people.PersonReference(parent, by) if by else None
         self.total_count = data.get('totalCount')
         self.processed_count = data.get('processedCount')
         finished_at = data.get('finishedAt')
         self.finished_at = xmatters.utils.TimeAttribute(finished_at) if finished_at else None
         links = data.get('links')
-        self.links = xmatters.xm_objects.common.SelfLink(parent, links)
+        self.links = xmatters.objects.common.SelfLink(parent, links)
 
     def get_messages(self, params=None, **kwargs):
         url = self.get_url(self._endpoints.get('get_messages'))

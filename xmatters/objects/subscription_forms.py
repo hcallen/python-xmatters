@@ -1,10 +1,10 @@
 import xmatters.factories
-import xmatters.xm_objects.forms
+import xmatters.objects.forms
 import xmatters.utils
 import xmatters.connection
-import xmatters.xm_objects.plans
-import xmatters.xm_objects.roles
-from xmatters.xm_objects.common import Pagination, SelfLink
+import xmatters.objects.plans
+import xmatters.objects.roles
+from xmatters.objects.common import Pagination, SelfLink
 
 class SubscriptionForm(xmatters.connection.ApiBridge):
     _endpoints = {'target_device_names': '?embed=deviceNames',
@@ -18,10 +18,10 @@ class SubscriptionForm(xmatters.connection.ApiBridge):
         self.name = data.get('name')
         self.description = data.get('description')
         plan = data.get('plan')
-        self.plan = xmatters.xm_objects.plans.PlanReference(data) if plan else None
+        self.plan = xmatters.objects.plans.PlanReference(data) if plan else None
         self.scope = data.get('scope')
         form = data.get('form')
-        self.form = xmatters.xm_objects.forms.FormReference(form) if form else None
+        self.form = xmatters.objects.forms.FormReference(form) if form else None
         created = data.get('created')
         self.created = xmatters.utils.TimeAttribute(created) if created else None
         self.one_way = data.get('oneWay')
@@ -56,7 +56,7 @@ class SubscriptionForm(xmatters.connection.ApiBridge):
         url = self.get_url(self._endpoints.get('roles'))
         data = self.con.get(url).get('roles')
         roles = data.get('roles')
-        return Pagination(self, roles, xmatters.xm_objects.roles.Role) if roles else []
+        return Pagination(self, roles, xmatters.objects.roles.Role) if roles else []
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.name)
@@ -70,7 +70,7 @@ class SubscriptionFormReference(object):
         self.id = data.get('id')
         self.name = data.get('name')
         plan = data.get('plan')
-        self.plan = xmatters.xm_objects.plans.PlanReference(plan) if plan else None
+        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

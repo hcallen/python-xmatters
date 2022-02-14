@@ -2,7 +2,7 @@ import os
 
 import pytest
 import xmatters.errors
-from xmatters.xm_objects.people import Person, UserQuota
+from xmatters.objects.people import Person, UserQuota
 from .conftest import my_vcr
 
 fn = os.path.basename(__file__).replace('.py', '')
@@ -20,7 +20,7 @@ class TestCreateUpdateDelete:
                 "status": "ACTIVE",
                 "roles": ["Standard User"]}
         new_person = xm_sb.people_endpoint().create_person(data)
-        assert isinstance(new_person, xmatters.xm_objects.people.Person)
+        assert isinstance(new_person, xmatters.objects.people.Person)
         assert new_person.target_name == 'mmcbride'
 
     @pytest.mark.order(2)
@@ -29,7 +29,7 @@ class TestCreateUpdateDelete:
         data = {"id": person.id,
                 "firstName": "John"}
         mod_person = xm_sb.people_endpoint().update_person(data)
-        assert isinstance(mod_person, xmatters.xm_objects.people.Person)
+        assert isinstance(mod_person, xmatters.objects.people.Person)
         assert mod_person.first_name == 'John'
 
     @pytest.mark.order(3)

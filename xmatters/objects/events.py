@@ -1,11 +1,11 @@
 import xmatters.factories
 import xmatters.utils as util
-import xmatters.xm_objects.forms as forms
+import xmatters.objects.forms as forms
 from xmatters.connection import ApiBridge
-from xmatters.xm_objects.common import Recipient, Pagination, SelfLink
-from xmatters.xm_objects.event_supressions import EventSuppression
-from xmatters.xm_objects.people import PersonReference
-from xmatters.xm_objects.plans import PlanReference
+from xmatters.objects.common import Recipient, Pagination, SelfLink
+from xmatters.objects.event_supressions import EventSuppression
+from xmatters.objects.people import PersonReference
+from xmatters.objects.plans import PlanReference
 
 
 class Message(object):
@@ -199,7 +199,7 @@ class Event(ApiBridge):
                   'recipients': '?embed=recipients',
                   'response_options': '?embed=responseOptions&responseOptions.translations',
                   'get_user_delivery_data': '/user-deliveries',
-                  'get_audit': '{base_url}/audits',
+                  'get_audits': '{base_url}/audits',
                   'update_status': '{base_url}/events',
                   'targeted_recipients': '?embed=recipients&targeted=true',
                   'get_suppressions': '{base_url}/event-suppressions'}
@@ -244,30 +244,19 @@ class Event(ApiBridge):
 
     @property
     def messages(self):
-        url = self.get_url(self._endpoints.get('messages'))
-        data = self.con.get(url)
-        messages = data.get('messages')
-        return Pagination(self, messages, Message) if messages.get('data') else []
+        return self.get_messages()
 
     @property
     def properties(self):
-        url = self.get_url(self._endpoints.get('properties'))
-        data = self.con.get(url)
-        return data.get('properties', {})
+        return self.get_properties()
 
     @property
     def recipients(self):
-        url = self.get_url(self._endpoints.get('recipients'))
-        data = self.con.get(url)
-        recipients = data.get('recipients')
-        return Pagination(self, recipients, Message) if recipients.get('data') else []
+        return self.get_recipients()
 
     @property
     def response_options(self):
-        url = self.get_url(self._endpoints.get('response_options'))
-        data = self.con.get(url)
-        response_options = data.get('responseOptions', {}).get('data')
-        return [ResponseOption(r) for r in response_options] if response_options else []
+        return self.get_response_options()
 
     @property
     def suppressions(self):
@@ -275,13 +264,39 @@ class Event(ApiBridge):
 
     @property
     def targeted_recipients(self):
+        return self.get_targeted_recipients()
+
+    def get_recipients(self):
+        url = self.get_url(self._endpoints.get('recipients'))
+        data = self.con.get(url)
+        recipients = data.get('recipients')
+        return Pagination(self, recipients, Message) if recipients.get('data') else []
+
+    def get_response_options(self):
+        url = self.get_url(self._endpoints.get('response_options'))
+        data = self.con.get(url)
+        response_options = data.get('responseOptions', {}).get('data')
+        return [ResponseOption(r) for r in response_options] if response_options else []
+
+    def get_targeted_recipients(self):
         url = self.get_url(self._endpoints.get('targeted_recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
         return Pagination(self, recipients, Message) if recipients.get('data') else []
 
-    def get_audit(self, params=None, **kwargs):
-        url = self._endpoints.get('get_audit').format(base_url=self.con.api_base_url)
+    def get_properties(self):
+        url = self.get_url(self._endpoints.get('properties'))
+        data = self.con.get(url)
+        return data.get('properties', {})
+
+    def get_messages(self):
+        url = self.get_url(self._endpoints.get('messages'))
+        data = self.con.get(url)
+        messages = data.get('messages')
+        return Pagination(self, messages, Message) if messages.get('data') else []
+
+    def get_audits(self, params=None, **kwargs):
+        url = self._endpoints.get('get_audits').format(base_url=self.con.api_base_url)
         data = self.con.get(url, params=params, **kwargs)
         return Pagination(self, data, xmatters.factories.AuditFactory) if data.get('data') else []
 

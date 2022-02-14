@@ -1,13 +1,13 @@
 import xmatters.factories as factory
-import xmatters.xm_objects.forms
-from xmatters.xm_objects.plan_endpoints import Endpoint
+import xmatters.objects.forms
+from xmatters.objects.plan_endpoints import Endpoint
 from xmatters.connection import ApiBridge
-from xmatters.xm_objects.common import Pagination, SelfLink
-from xmatters.xm_objects.integrations import Integration
-from xmatters.xm_objects.people import Person
-from xmatters.xm_objects.plan_constants import PlanConstant
-from xmatters.xm_objects.shared_libraries import SharedLibrary
-from xmatters.xm_objects.subscription_forms import SubscriptionForm
+from xmatters.objects.common import Pagination, SelfLink
+from xmatters.objects.integrations import Integration
+from xmatters.objects.people import Person
+from xmatters.objects.plan_constants import PlanConstant
+from xmatters.objects.shared_libraries import SharedLibrary
+from xmatters.objects.subscription_forms import SubscriptionForm
 
 
 class PlanPointer(object):
@@ -73,24 +73,24 @@ class Plan(ApiBridge):
 
         url = self.get_url(self._endpoints.get('get_forms'))
         fs = self.con.get(url, params=params, **kwargs)
-        return Pagination(self, fs, xmatters.xm_objects.forms.Form) if fs.get('data') else []
+        return Pagination(self, fs, xmatters.objects.forms.Form) if fs.get('data') else []
 
     def get_form_by_id(self, form_id, recipients=None, **kwargs):
         params = {'recipients': recipients}
 
         url = self.get_url(self._endpoints.get('get_form_by_id').format(form_id=form_id))
         data = self.con.get(url, params=params, **kwargs)
-        return xmatters.xm_objects.forms.Form(self, data) if data else None
+        return xmatters.objects.forms.Form(self, data) if data else None
 
     def create_form(self, data):
         url = self.get_url(self._endpoints.get('get_forms'))
         data = self.con.post(url, data=data)
-        return xmatters.xm_objects.forms.Form(self, data) if data else None
+        return xmatters.objects.forms.Form(self, data) if data else None
 
     def update_form(self, data):
         url = self.get_url(self._endpoints.get('get_forms'))
         data = self.con.post(url, data=data)
-        return xmatters.xm_objects.forms.Form(self, data) if data else None
+        return xmatters.objects.forms.Form(self, data) if data else None
 
     def get_constants(self):
         url = self.get_url(self._endpoints.get('get_constants'))
@@ -188,22 +188,22 @@ class Plan(ApiBridge):
     def get_endpoints(self):
         url = self.get_url(self._endpoints.get('get_endpoints'))
         endpoints = self.con.get(url)
-        return Pagination(self, endpoints, xmatters.xm_objects.plan_endpoints.Endpoint) if endpoints.get('data') else []
+        return Pagination(self, endpoints, xmatters.objects.plan_endpoints.Endpoint) if endpoints.get('data') else []
 
     def create_endpoint(self, data):
         url = self.get_url(self._endpoints.get('get_endpoints'))
         data = self.con.post(url, data=data)
-        return xmatters.xm_objects.plan_endpoints.Endpoint(self, data) if data else None
+        return xmatters.objects.plan_endpoints.Endpoint(self, data) if data else None
 
     def update_endpoint(self, data):
         url = self.get_url(self._endpoints.get('get_endpoints'))
         data = self.con.post(url, data=data)
-        return xmatters.xm_objects.plan_endpoints.Endpoint(self, data) if data else None
+        return xmatters.objects.plan_endpoints.Endpoint(self, data) if data else None
 
     def delete_endpoint(self, endpoint_id):
         url = self.get_url(self._endpoints.get('delete_endpoint').format(end_id=endpoint_id))
         data = self.con.delete(url)
-        return xmatters.xm_objects.plan_endpoints.Endpoint(self, data) if data else None
+        return xmatters.objects.plan_endpoints.Endpoint(self, data) if data else None
 
     def get_subscription_forms(self, params=None, **kwargs):
         url = self.get_url(self._endpoints.get('get_subscription_forms'))

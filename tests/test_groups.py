@@ -1,6 +1,6 @@
 import os
 
-from xmatters.xm_objects.groups import GroupQuota
+from xmatters.objects.groups import GroupQuota
 from .conftest import my_vcr
 
 fn = os.path.basename(__file__).replace('.py', '')

@@ -1,8 +1,8 @@
 from xmatters import factories as factory
 from xmatters.connection import ApiBridge
-from xmatters.xm_objects.oncall import ShiftReference
-from xmatters.xm_objects.people import PersonReference
-from xmatters.xm_objects.shifts import GroupReference
+from xmatters.objects.oncall import ShiftReference
+from xmatters.objects.people import PersonReference
+from xmatters.objects.shifts import GroupReference
 
 
 class OnCallSummary(ApiBridge):

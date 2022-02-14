@@ -1,7 +1,7 @@
-from xmatters.xm_objects.common import Recipient, Pagination, SelfLink
-from xmatters.xm_objects.people import Person
-from xmatters.xm_objects.roles import Role
-from xmatters.xm_objects.subscriptions import SubscriptionCriteriaReference
+from xmatters.objects.common import Recipient, Pagination, SelfLink
+from xmatters.objects.people import Person
+from xmatters.objects.roles import Role
+from xmatters.objects.subscriptions import SubscriptionCriteriaReference
 
 
 class DynamicTeam(Recipient):

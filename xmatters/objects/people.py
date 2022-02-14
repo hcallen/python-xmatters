@@ -1,9 +1,9 @@
 import xmatters.factories
 import xmatters.utils as utils
-from xmatters.xm_objects.common import Recipient, SelfLink, Pagination, QuotaItem
-from xmatters.xm_objects.roles import Role
+from xmatters.objects.common import Recipient, SelfLink, Pagination, QuotaItem
+from xmatters.objects.roles import Role
 from xmatters.connection import ApiBridge
-import xmatters.xm_objects.groups
+import xmatters.objects.groups
 
 
 class Person(Recipient):
@@ -69,7 +69,7 @@ class Person(Recipient):
     def get_groups(self, params=None, **kwargs):
         url = self.get_url('/group-memberships')
         groups = self.con.get(url, params=params, **kwargs)
-        return Pagination(self, groups, xmatters.xm_objects.groups.GroupMembership) if groups.get('data') else []
+        return Pagination(self, groups, xmatters.objects.groups.GroupMembership) if groups.get('data') else []
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)

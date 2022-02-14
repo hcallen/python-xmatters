@@ -1,6 +1,6 @@
 from .conftest import my_vcr
-import xmatters.xm_objects.forms
-import xmatters.xm_objects.plans
+import xmatters.objects.forms
+import xmatters.objects.plans
 
 
 class TestScenarios:
@@ -13,5 +13,5 @@ class TestScenarios:
             assert scenario.id is not None
             assert isinstance(scenario.properties, dict)
             assert isinstance(scenario.properties_translations, dict)
-            assert isinstance(scenario.plan, xmatters.xm_objects.plans.Plan)
-            assert isinstance(scenario.form, xmatters.xm_objects.forms.Form)
+            assert isinstance(scenario.plan, xmatters.objects.plans.Plan)
+            assert isinstance(scenario.form, xmatters.objects.forms.Form)

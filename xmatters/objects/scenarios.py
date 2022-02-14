@@ -1,13 +1,13 @@
-import xmatters.xm_objects.events
-import xmatters.xm_objects.forms
+import xmatters.objects.events
+import xmatters.objects.forms
 import xmatters.factories as factory
 import xmatters.utils
 import xmatters.connection
-import xmatters.xm_objects.people
-import xmatters.xm_objects.plans
-import xmatters.xm_objects.roles
+import xmatters.objects.people
+import xmatters.objects.plans
+import xmatters.objects.roles
 
-from xmatters.xm_objects.common import Pagination, SelfLink
+from xmatters.objects.common import Pagination, SelfLink
 
 
 class ScenarioPermission(xmatters.connection.ApiBridge):
@@ -27,7 +27,7 @@ class ScenarioPermissionPerson(ScenarioPermission):
     def __init__(self, parent, data):
         super(ScenarioPermissionPerson, self).__init__(parent, data)
         person = data.get('person')
-        self.person = xmatters.xm_objects.people.PersonReference(self, person) if person else None
+        self.person = xmatters.objects.people.PersonReference(self, person) if person else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -40,7 +40,7 @@ class ScenarioPermissionRole(ScenarioPermission):
     def __init__(self, parent, data):
         super(ScenarioPermissionRole, self).__init__(parent, data)
         role = data.get('role')
-        self.role = xmatters.xm_objects.roles.Role(role) if role else None
+        self.role = xmatters.objects.roles.Role(role) if role else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -68,9 +68,9 @@ class Scenario(xmatters.connection.ApiBridge):
         self.override_device_restrictions = data.get('overrideDeviceRestrictions')
         self.require_phone_password = data.get('requirePhonePassword')
         sos = data.get('senderOverrides')
-        self.sender_overrides = xmatters.xm_objects.forms.SenderOverrides(sos) if sos else None
+        self.sender_overrides = xmatters.objects.forms.SenderOverrides(sos) if sos else None
         vm_opts = data.get('voicemailOptions')
-        self.voicemail_options = xmatters.xm_objects.events.VoicemailOptions(vm_opts) if vm_opts else None
+        self.voicemail_options = xmatters.objects.events.VoicemailOptions(vm_opts) if vm_opts else None
         tdns = data.get('targetDeviceNames', {})
         self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []
         created = data.get('created')
@@ -92,13 +92,13 @@ class Scenario(xmatters.connection.ApiBridge):
     def plan(self):
         url = self.get_url(self._endpoints.get('plan'))
         plan = self.con.get(url).get('plan', {})
-        return xmatters.xm_objects.plans.Plan(self, plan) if plan else None
+        return xmatters.objects.plans.Plan(self, plan) if plan else None
 
     @property
     def form(self):
         url = self.get_url(self._endpoints.get('form'))
         form = self.con.get(url).get('form', {})
-        return xmatters.xm_objects.forms.Form(self, form) if form else None
+        return xmatters.objects.forms.Form(self, form) if form else None
 
     @property
     def properties_translations(self):

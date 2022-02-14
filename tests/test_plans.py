@@ -1,4 +1,4 @@
-from xmatters.xm_objects.people import Person
+from xmatters.objects.people import Person
 from .conftest import my_vcr
 import xmatters.errors as err
 

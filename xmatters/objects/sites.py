@@ -1,5 +1,5 @@
 import xmatters.connection
-import xmatters.xm_objects.common
+import xmatters.objects.common
 
 
 class Site(xmatters.connection.ApiBridge):
@@ -15,7 +15,7 @@ class Site(xmatters.connection.ApiBridge):
         self.language = data.get('language')
         self.latitude = data.get('latitude')
         links = data.get('links')
-        self.links = xmatters.xm_objects.common.SelfLink(self, links) if links else None
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None
         self.longitude = data.get('longitude')
         self.name = data.get('name')
         self.postal_code = data.get('postalCode')

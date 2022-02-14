@@ -1,5 +1,5 @@
-import xmatters.xm_objects.common
-import xmatters.xm_objects.plans
+import xmatters.objects.common
+import xmatters.objects.plans
 from xmatters.connection import ApiBridge
 import xmatters.factories
 
@@ -47,14 +47,14 @@ class Endpoint(ApiBridge):
         super(Endpoint, self).__init__(parent, data)
         self.id = data.get('id')
         plan = data.get('plan')
-        self.plan = xmatters.xm_objects.plans.PlanReference(plan) if plan else None
+        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None
         self.url = data.get('url')
         self.endpoint_type = data.get('endpointType')
         self.authentication_type = data.get('authenticationType')
         auth = data.get('authentication')
         self.authentication = xmatters.factories.AuthFactory.compose(self, data) if auth else None
         links = data.get('links')
-        self.links = xmatters.xm_objects.common.SelfLink(self, data) if links else None
+        self.links = xmatters.objects.common.SelfLink(self, data) if links else None
         self.trust_self_signed = data.get('trustSelfSigned')
         self.preemptive = data.get('preemptive')
         self.data = data.get('data')

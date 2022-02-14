@@ -1,9 +1,9 @@
 import xmatters.connection
 import xmatters.utils
 import xmatters.factories as factory
-import xmatters.xm_objects.forms
-from xmatters.xm_objects.common import Pagination, SelfLink
-from xmatters.xm_objects.people import Person
+import xmatters.objects.forms
+from xmatters.objects.common import Pagination, SelfLink
+from xmatters.objects.people import Person
 
 
 class SubscriptionCriteriaReference(object):
@@ -29,10 +29,10 @@ class Subscription(xmatters.connection.ApiBridge):
         self.name = data.get('name')
         self.description = data.get('description')
         form = data.get('form')
-        self.form = xmatters.xm_objects.forms.FormReference(form) if form else None
+        self.form = xmatters.objects.forms.FormReference(form) if form else None
         owner = data.get('owner')
 
-        self.owner = xmatters.xm_objects.people.PersonReference(self, owner)
+        self.owner = xmatters.objects.people.PersonReference(self, owner)
         created = data.get('created')
         self.created = xmatters.utils.TimeAttribute(created) if created else None
         self.notification_delay = data.get('notificationDelay')

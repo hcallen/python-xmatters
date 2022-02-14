@@ -1,4 +1,4 @@
-import xmatters.xm_objects.plans
+import xmatters.objects.plans
 
 
 class SharedLibrary(object):
@@ -7,4 +7,4 @@ class SharedLibrary(object):
         self.name = data.get('name')
         self.script = data.get('script')
         plan = data.get('plan')
-        self.plan = xmatters.xm_objects.plans.PlanReference(plan) if plan else None
+        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None

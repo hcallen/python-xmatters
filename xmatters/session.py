@@ -104,7 +104,7 @@ class XMSession(object):
 
     def audits_endpoint(self):
         """
-        Get the '/audits' endpoint.
+        Get the '/audits' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.AuditsEndpoint`
@@ -113,7 +113,7 @@ class XMSession(object):
 
     def conference_bridges_endpoint(self):
         """
-        Get the '/conference-bridges' endpoint.
+        Get the '/conference-bridges' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.ConferenceBridgesEndpoint`
@@ -122,7 +122,7 @@ class XMSession(object):
 
     def device_names_endpoint(self):
         """
-        Get the '/device-names' endpoint.
+        Get the '/device-names' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.DeviceNamesEndpoint`
@@ -131,7 +131,7 @@ class XMSession(object):
 
     def device_types_endpoint(self):
         """
-        Get the '/device-types' endpoint.
+        Get the '/device-types' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.DeviceTypesEndpoint`
@@ -140,7 +140,7 @@ class XMSession(object):
 
     def devices_endpoint(self):
         """
-        Get the '/device' endpoint.
+        Get the '/device' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.DevicesEndpoint`
@@ -149,7 +149,7 @@ class XMSession(object):
 
     def dynamic_teams_endpoint(self):
         """
-        Get the '/dynamic-teams' endpoint.
+        Get the '/dynamic-teams' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.DynamicTeamsEndpoint`
@@ -158,7 +158,7 @@ class XMSession(object):
 
     def events_endpoint(self):
         """
-        Get the '/events' endpoint.
+        Get the '/events' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.EventsEndpoint`
@@ -167,7 +167,7 @@ class XMSession(object):
 
     def event_suppressions_endpoint(self):
         """
-        Get the '/event-suppressions' endpoint.
+        Get the '/event-suppressions' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.EventSuppressionsEndpoint`
@@ -176,7 +176,7 @@ class XMSession(object):
 
     def forms_endpoint(self):
         """
-        Get the '/forms' endpoint.
+        Get the '/forms' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.FormsEndpoint`
@@ -185,7 +185,7 @@ class XMSession(object):
 
     def imports_endpoint(self):
         """
-        Get the '/import-jobs' endpoint.
+        Get the '/import-jobs' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.ImportsEndpoint`
@@ -194,7 +194,7 @@ class XMSession(object):
 
     def groups_endpoint(self):
         """
-        Get the '/groups' endpoint.
+        Get the '/groups' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.GroupsEndpoint`
@@ -203,7 +203,7 @@ class XMSession(object):
 
     def incidents_endpoint(self):
         """
-        Get the '/incidents' endpoint.
+        Get the '/incidents' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.IncidentsEndpoint`
@@ -212,7 +212,7 @@ class XMSession(object):
 
     def oncall_endpoint(self):
         """
-        Get the '/on-call' endpoint.
+        Get the '/on-call' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.OnCallEndpoint`
@@ -221,7 +221,7 @@ class XMSession(object):
 
     def oncall_summary_endpoint(self):
         """
-        Get the '/on-call-summary' endpoint.
+        Get the '/on-call-summary' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.OnCallSummaryEndpoint`
@@ -230,7 +230,7 @@ class XMSession(object):
 
     def people_endpoint(self):
         """
-        Get the '/people' endpoint.
+        Get the '/people' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.PeopleEndpoint`
@@ -239,7 +239,7 @@ class XMSession(object):
 
     def plans_endpoint(self):
         """
-        Get the '/plans' endpoint.
+        Get the '/plans' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.PlansEndpoint`
@@ -248,7 +248,7 @@ class XMSession(object):
 
     def roles_endpoint(self):
         """
-        Get the '/roles' endpoint.
+        Get the '/roles' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.RolesEndpoint`
@@ -257,7 +257,7 @@ class XMSession(object):
 
     def scenarios_endpoint(self):
         """
-        Get the '/scenarios' endpoint.
+        Get the '/scenarios' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.ScenariosEndpoint`
@@ -266,7 +266,7 @@ class XMSession(object):
 
     def services_endpoint(self):
         """
-        Get the '/services' endpoint.
+        Get the '/services' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.ServicesEndpoint`
@@ -275,7 +275,7 @@ class XMSession(object):
 
     def sites_endpoint(self):
         """
-        Get the '/sites' endpoint.
+        Get the '/sites' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.SitesEndpoint`
@@ -284,7 +284,7 @@ class XMSession(object):
 
     def subscriptions_endpoint(self):
         """
-        Get the '/subscriptions' endpoint.
+        Get the '/subscriptions' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.SubscriptionsEndpoint`
@@ -293,7 +293,7 @@ class XMSession(object):
 
     def subscription_forms_endpoint(self):
         """
-        Get the '/subscription-forms' endpoint.
+        Get the '/subscription-forms' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.SubscriptionFormsEndpoint`
@@ -302,7 +302,7 @@ class XMSession(object):
 
     def temporary_absences_endpoint(self):
         """
-        Get the '/temporary-absences' endpoint.
+        Get the '/temporary-absences' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`xmatters.endpoints.TemporaryAbsencesEndpoint`

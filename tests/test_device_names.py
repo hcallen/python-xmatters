@@ -1,6 +1,6 @@
 import pytest
 
-import xmatters.xm_objects.device_names
+import xmatters.objects.device_names
 from .conftest import my_vcr
 
 
@@ -11,7 +11,7 @@ class TestCreateUpdateDelete:
                 'name': 'Another Email Device',
                 'description': 'Another Email Device'}
         new_device_name = xm_sb.device_names_endpoint().create_device_name(data)
-        assert isinstance(new_device_name, xmatters.xm_objects.device_names.DeviceName)
+        assert isinstance(new_device_name, xmatters.objects.device_names.DeviceName)
         assert new_device_name.name == 'Another Email Device'
 
     @pytest.mark.order(2)
@@ -26,7 +26,7 @@ class TestCreateUpdateDelete:
                 'name': 'Another Email Device Modified',
                 'id': to_modify.id}
         mod_device_name = xm_sb.device_names_endpoint().update_device_name(data)
-        assert isinstance(mod_device_name, xmatters.xm_objects.device_names.DeviceName)
+        assert isinstance(mod_device_name, xmatters.objects.device_names.DeviceName)
         assert mod_device_name.name == 'Another Email Device Modified'
 
     @pytest.mark.order(3)
@@ -38,7 +38,7 @@ class TestCreateUpdateDelete:
             if to_delete.name == 'Another Email Device Modified':
                 break
         del_device_name = xm_sb.device_names_endpoint().delete_device_name(to_delete.id)
-        assert isinstance(del_device_name, xmatters.xm_objects.device_names.DeviceName)
+        assert isinstance(del_device_name, xmatters.objects.device_names.DeviceName)
         device_names = xm_sb.device_names_endpoint().get_device_names()
         for device_name in device_names:
             assert device_name.id != to_delete.id

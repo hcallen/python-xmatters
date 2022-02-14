@@ -3,7 +3,7 @@ import pytest
 import xmatters.errors
 import xmatters.factories
 from tests.conftest import my_vcr
-import xmatters.xm_objects.devices
+import xmatters.objects.devices
 
 
 class TestGet:
@@ -25,7 +25,7 @@ class TestGet:
         for device in devices:
             device_by_id = xm_test.devices_endpoint().get_device_by_id(device.id)
             assert device.id is not None
-            assert isinstance(device_by_id, xmatters.xm_objects.devices.Device)
+            assert isinstance(device_by_id, xmatters.objects.devices.Device)
 
 
 class TestParams:
@@ -72,7 +72,7 @@ class TestCreateUpdateDelete:
                 'privileged': False,
                 'emailAddress': 'test@test.com'}
         new_device = xm_sb.devices_endpoint().create_device(data=data)
-        assert isinstance(new_device, xmatters.xm_objects.devices.EmailDevice)
+        assert isinstance(new_device, xmatters.objects.devices.EmailDevice)
         assert new_device.email_address == 'test@test.com'
 
     @pytest.mark.order(2)
@@ -84,7 +84,7 @@ class TestCreateUpdateDelete:
                 'privileged': False,
                 'emailAddress': 'test2@test.com'}
         mod_device = xm_sb.devices_endpoint().update_device(data=data)
-        assert isinstance(mod_device, xmatters.xm_objects.devices.EmailDevice)
+        assert isinstance(mod_device, xmatters.objects.devices.EmailDevice)
         assert mod_device.email_address == 'test2@test.com'
 
     @pytest.mark.order(3)

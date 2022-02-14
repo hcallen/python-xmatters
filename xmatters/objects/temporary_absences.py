@@ -1,6 +1,6 @@
 import xmatters.utils
-import xmatters.xm_objects.people
-import xmatters.xm_objects.shifts
+import xmatters.objects.people
+import xmatters.objects.shifts
 import xmatters.connection
 
 
@@ -10,15 +10,15 @@ class TemporaryAbsence(xmatters.connection.ApiBridge):
         self.id = data.get('id')
         self.absence_type = data.get('absenceType')
         member = data.get('member')
-        self.member = xmatters.xm_objects.people.PersonReference(self, member) if member else None
+        self.member = xmatters.objects.people.PersonReference(self, member) if member else None
         start = data.get('start')
         self.start = xmatters.utils.TimeAttribute(start) if start else None
         end = data.get('end')
         self.end = xmatters.utils.TimeAttribute(end) if end else None
         group = data.get('group')
-        self.group = xmatters.xm_objects.shifts.GroupReference(self, group) if group else None
+        self.group = xmatters.objects.shifts.GroupReference(self, group) if group else None
         replacement = data.get('replacement')
-        self.replacement = xmatters.xm_objects.people.PersonReference(self, replacement) if replacement else None
+        self.replacement = xmatters.objects.people.PersonReference(self, replacement) if replacement else None
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.member.target_name)

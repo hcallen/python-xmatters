@@ -1,10 +1,10 @@
 import xmatters.connection
 import xmatters.factories as factory
-import xmatters.xm_objects.events as events
-import xmatters.xm_objects.plans as plans
-import xmatters.xm_objects.scenarios
-from xmatters.xm_objects.device_names import TargetDeviceNameSelector
-from xmatters.xm_objects.common import Pagination, Recipient, PropertyDefinition, SelfLink
+import xmatters.objects.events as events
+import xmatters.objects.plans as plans
+import xmatters.objects.scenarios
+from xmatters.objects.device_names import TargetDeviceNameSelector
+from xmatters.objects.common import Pagination, Recipient, PropertyDefinition, SelfLink
 
 
 class FormReference(object):
@@ -250,17 +250,17 @@ class Form(xmatters.connection.ApiBridge):
     def get_scenarios(self, params=None, **kwargs):
         url = self.get_url(self._endpoints.get('get_scenarios'))
         s = self.con.get(url, params=params, **kwargs)
-        return Pagination(self, s, xmatters.xm_objects.scenarios.Scenario) if s.get('data') else []
+        return Pagination(self, s, xmatters.objects.scenarios.Scenario) if s.get('data') else []
 
     def create_scenario(self, data):
         url = self.get_url(self._endpoints.get('get_scenarios'))
         data = self.con.post(url, data=data)
-        return xmatters.xm_objects.scenarios.Scenario(self, data) if data else None
+        return xmatters.objects.scenarios.Scenario(self, data) if data else None
 
     def update_scenario(self, data):
         url = self.get_url(self._endpoints.get('get_scenarios'))
         data = self.con.post(url, data=data)
-        return xmatters.xm_objects.scenarios.Scenario(self, data) if data else None
+        return xmatters.objects.scenarios.Scenario(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

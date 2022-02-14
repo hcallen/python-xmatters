@@ -1,5 +1,5 @@
 import xmatters.connection
-import xmatters.xm_objects.shifts
+import xmatters.objects.shifts
 
 
 class Service(xmatters.connection.ApiBridge):
@@ -10,7 +10,7 @@ class Service(xmatters.connection.ApiBridge):
         self.recipients_type = data.get('recipientType')
         self.description = data.get('description')
         owned_by = data.get('ownedBy')
-        self.owned_by = xmatters.xm_objects.shifts.GroupReference(self, owned_by) if owned_by else None
+        self.owned_by = xmatters.objects.shifts.GroupReference(self, owned_by) if owned_by else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

@@ -1,11 +1,11 @@
 import xmatters.utils
-import xmatters.xm_objects.people
+import xmatters.objects.people
 import xmatters.factories
 import xmatters.connection
-import xmatters.xm_objects.oncall
-import xmatters.xm_objects.roles
-import xmatters.xm_objects.shifts
-from xmatters.xm_objects.common import Pagination, SelfLink, RecipientReference, Recipient, ReferenceByIdAndSelfLink, \
+import xmatters.objects.oncall
+import xmatters.objects.roles
+import xmatters.objects.shifts
+from xmatters.objects.common import Pagination, SelfLink, RecipientReference, Recipient, ReferenceByIdAndSelfLink, \
     QuotaItem
 
 
@@ -16,7 +16,7 @@ class GroupMembershipShiftReference(xmatters.connection.ApiBridge):
         super(GroupMembershipShiftReference, self).__init__(parent, data)
         self.id = data.get('id')
         group = data.get('group')
-        self.group = xmatters.xm_objects.shifts.GroupReference(self, group) if group else None
+        self.group = xmatters.objects.shifts.GroupReference(self, group) if group else None
         self.name = data.get('name')
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None
@@ -34,7 +34,7 @@ class GroupMembership(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(GroupMembership, self).__init__(parent, data)
         group = data.get('group')
-        self.group = xmatters.xm_objects.shifts.GroupReference(self, group) if group else None
+        self.group = xmatters.objects.shifts.GroupReference(self, group) if group else None
         member = data.get('member')
         self.member = RecipientReference(self, member) if member else None
         shifts = data.get('shifts', {})
@@ -76,7 +76,7 @@ class Group(Recipient):
     def observers(self):
         url = self.get_url(self._endpoints.get('observers'))
         observers = self.con.get(url).get('observers', {}).get('data')
-        return [xmatters.xm_objects.roles.Role(role) for role in observers] if observers else []
+        return [xmatters.objects.roles.Role(role) for role in observers] if observers else []
 
     @property
     def supervisors(self):
@@ -85,35 +85,35 @@ class Group(Recipient):
     def get_supervisors(self):
         url = self.get_url(self._endpoints.get('get_supervisors'))
         data = self.con.get(url)
-        return Pagination(self, data, xmatters.xm_objects.people.Person) if data.get('data') else []
+        return Pagination(self, data, xmatters.objects.people.Person) if data.get('data') else []
 
     def get_oncall(self, params=None, **kwargs):
         url = self._endpoints.get('get_oncall').format(base_url=self.con.api_base_url, group_id=self.id)
         data = self.con.get(url, params=params, **kwargs)
-        return Pagination(self, data, xmatters.xm_objects.oncall.OnCall) if data.get('data') else []
+        return Pagination(self, data, xmatters.objects.oncall.OnCall) if data.get('data') else []
 
     def get_shifts(self, params=None, **kwargs):
         
         url = self.get_url(self._endpoints.get('get_shifts'))
         data = self.con.get(url, params=params, **kwargs)
-        return Pagination(self, data, xmatters.xm_objects.shifts.Shift) if data.get('data') else []
+        return Pagination(self, data, xmatters.objects.shifts.Shift) if data.get('data') else []
 
     def get_shift_by_id(self, shift_id, params=None, **kwargs):
         url = self.get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
         data = self.con.get(url, params=params, **kwargs)
-        return xmatters.xm_objects.shifts.Shift(self, data) if data else None
+        return xmatters.objects.shifts.Shift(self, data) if data else None
 
     
     def create_shift(self, data):
         url = self.get_url(self._endpoints.get('get_shifts'))
         data = self.con.post(url, data=data)
-        return xmatters.xm_objects.shifts.Shift(self, data) if data else None
+        return xmatters.objects.shifts.Shift(self, data) if data else None
 
     
     def delete_shift(self, shift_id):
         url = self.get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
         data = self.con.delete(url)
-        return xmatters.xm_objects.shifts.Shift(self, data) if data else None
+        return xmatters.objects.shifts.Shift(self, data) if data else None
 
     def get_members(self):
         url = self.get_url(self._endpoints.get('get_members'))
