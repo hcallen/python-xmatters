@@ -22,38 +22,34 @@ def main():
         source_lines = inspect.getsourcelines(module)
         for line in source_lines[0]:
 
-            is_instance_attr = re.match('\s+[^#]self\.[a-z_]+\s=\s', line)
+            is_ivar = re.match('\s+[^#]self\.[a-z_]+\s=\s', line)
             has_comment = re.match('^.*\s+#:(?P<comment>.*)\n$', line)
             has_comment_text = has_comment.group('comment').strip() if has_comment else None
 
-            if is_instance_attr:
+            if is_ivar:
 
                 if not has_comment:
                     outline = line.rstrip() + '    #:'
                 else:
                     outline = line
 
+                is_assigned_from_dict = re.match('\s+[^#](?P<attr_name>self\.[a-z_]+)\s=\s[a-z_]+\.get\(\'', line)
+                is_assigned_class = re.match('\s+[^#]self\.\w+\s=\s[a-z\.]*[A-Z]\w+\(.*\)', line)
+                is_assigned_list = re.match('\s+[^#]self\.\w+\s=\s\[[a-z\.]*(?P<class_name>[A-Z]\w+)\(.*\).*\]', line)
 
-                is_dict_assigned = re.match('\s+[^#](?P<attr_name>self\.[a-z_]+)\s=\s[a-z_]+\.get\(\'', line)
-                is_class_assigned = re.match('\s+[^#]self\.\w+\s=\s[a-z\.]*(?P<class_name>[A-Z]\w+)\(.*\)', line)
-                is_list_assigned = re.match('\s+[^#]self\.\w+\s=\s\[[a-z\.]*(?P<class_name>[A-Z]\w+)\(.*\).*\]', line)
+                if is_assigned_class or is_assigned_list:
+                    class_match = re.match('\s+[^#]self\.\w+\s=\s\[?[a-z\.]*(?P<class_name>[A-Z]\w+)\(.*\).*\]?', line)
+                    class_name = class_match.group('class_name') if class_match else None
 
-                if is_class_assigned:
-                    class_name = is_class_assigned.group('class_name').strip()
-                elif is_list_assigned:
-                    class_name = is_list_assigned.group('class_name').strip()
-                else:
-                    class_name = None
+                    if class_name not in class_names:
+                        class_name = None
 
-                if class_name not in class_names:
-                    class_name = None
+                if not has_comment_text and not is_assigned_from_dict:
 
-                if not has_comment_text and not is_dict_assigned:
-
-                    if is_class_assigned:
-                        outline = outline.rstrip() + ' :class:`{}`'.format(class_name)
-                    elif is_list_assigned:
-                        outline = outline.rstrip() + ' [:class:`{}`]'.format(class_name)
+                    if is_assigned_class:
+                        outline = outline.rstrip() + ' :vartype: :class:`{}`'.format(class_name)
+                    elif is_assigned_list:
+                        outline = outline.rstrip() + ' :vartype: [:class:`{}`]'.format(class_name)
 
                 outline = outline + '\n' if not outline.endswith('\n') else outline
 
