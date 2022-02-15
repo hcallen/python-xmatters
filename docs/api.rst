@@ -75,3 +75,11 @@ Devices
    :inherited-members:
    :show-inheritance:
 
+Dynamic Teams
+^^^^^^^^^^^^^
+
+.. automodule:: xmatters.objects.dynamic_teams
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

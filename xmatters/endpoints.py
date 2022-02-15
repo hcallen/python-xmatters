@@ -34,7 +34,7 @@ class AuditsEndpoint(ApiBridge):
         | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
 
         :return: Pagination of audit objects
-        :rtype: :class:`xmatters.objects.common.Pagination`
+        :rtype: :class:`Pagination`
         """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
@@ -59,7 +59,7 @@ class DevicesEndpoint(ApiBridge):
         | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
 
         :return: Pagination of device objects
-        :rtype: :class:`xmatters.objects.common.Pagination`
+        :rtype: :class:`Pagination`
         """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
@@ -71,7 +71,7 @@ class DevicesEndpoint(ApiBridge):
         | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
 
         :return: Pagination of device objects
-        :rtype: :class:`xmatters.objects.common.Pagination`
+        :rtype: :class:`Pagination`
         """
         url = self.get_url(device_id)
         data = self.con.get(url=url, params=params, **kwargs)

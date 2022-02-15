@@ -9,17 +9,18 @@ class DynamicTeam(Recipient):
 
     def __init__(self, parent, data):
         super(DynamicTeam, self).__init__(parent, data)
-        self.response_count = data.get('responseCount')
-        self.response_count_threshold = data.get('responseCountThreshold')
-        self.use_emergency_device = data.get('useEmergencyDevice')
-        self.description = data.get('description')
+        self.response_count = data.get('responseCount')  #:
+        self.response_count_threshold = data.get('responseCountThreshold')  #:
+        self.use_emergency_device = data.get('useEmergencyDevice')  #:
+        self.description = data.get('description')  #:
         criteria = data.get('criteria')
-        self.criteria = SubscriptionCriteriaReference(criteria) if criteria else None
-        links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
+        self.criteria = SubscriptionCriteriaReference(criteria) if criteria else None  #:
+        links = data.get('links')  #:
+        self.links = SelfLink(self, links) if links else None  #:
 
     @property
     def observers(self):
+        """ Alias of :meth:`get_observers` """
         return self.get_observers()
 
     @property
