@@ -1,6 +1,7 @@
 import xmatters.factories
 import xmatters.utils as utils
-from xmatters.objects.common import Recipient, SelfLink, Pagination, QuotaItem
+from xmatters.objects.common import Recipient, SelfLink, QuotaItem
+from xmatters.utils import Pagination
 from xmatters.objects.roles import Role
 from xmatters.connection import ApiBridge
 import xmatters.objects.groups

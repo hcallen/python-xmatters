@@ -8,6 +8,7 @@ python-xmatters is a wrapper for the `xMatters REST API <https://help.xmatters.c
     :caption: Contents:
 
     usage
+    user-guide
     api
 
 Indices and tables

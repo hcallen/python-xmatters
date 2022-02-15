@@ -5,8 +5,9 @@ import xmatters.connection
 import xmatters.objects.oncall
 import xmatters.objects.roles
 import xmatters.objects.shifts
-from xmatters.objects.common import Pagination, SelfLink, RecipientReference, Recipient, ReferenceByIdAndSelfLink, \
+from xmatters.objects.common import SelfLink, RecipientReference, Recipient, ReferenceByIdAndSelfLink, \
     QuotaItem
+from xmatters.utils import Pagination
 
 
 class GroupMembershipShiftReference(xmatters.connection.ApiBridge):

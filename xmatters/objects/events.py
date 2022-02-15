@@ -2,7 +2,8 @@ import xmatters.factories
 import xmatters.utils as util
 import xmatters.objects.forms as forms
 from xmatters.connection import ApiBridge
-from xmatters.objects.common import Recipient, Pagination, SelfLink
+from xmatters.objects.common import Recipient, SelfLink
+from xmatters.utils import Pagination
 from xmatters.objects.event_supressions import EventSuppression
 from xmatters.objects.people import PersonReference
 from xmatters.objects.plans import PlanReference

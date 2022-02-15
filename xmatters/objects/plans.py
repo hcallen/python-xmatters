@@ -2,7 +2,8 @@ import xmatters.factories as factory
 import xmatters.objects.forms
 from xmatters.objects.plan_endpoints import Endpoint
 from xmatters.connection import ApiBridge
-from xmatters.objects.common import Pagination, SelfLink
+from xmatters.objects.common import SelfLink
+from xmatters.utils import Pagination
 from xmatters.objects.integrations import Integration
 from xmatters.objects.people import Person
 from xmatters.objects.plan_constants import PlanConstant

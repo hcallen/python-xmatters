@@ -1,4 +1,5 @@
-from xmatters.objects.common import ReferenceById, Pagination, SelfLink
+from xmatters.objects.common import ReferenceById, SelfLink
+from xmatters.utils import Pagination
 from xmatters.objects.people import PersonReference
 import xmatters.objects.plan_endpoints
 import xmatters.objects.plans

@@ -4,7 +4,9 @@ import xmatters.utils
 import xmatters.connection
 import xmatters.objects.plans
 import xmatters.objects.roles
-from xmatters.objects.common import Pagination, SelfLink
+from xmatters.objects.common import SelfLink
+from xmatters.utils import Pagination
+
 
 class SubscriptionForm(xmatters.connection.ApiBridge):
     _endpoints = {'target_device_names': '?embed=deviceNames',

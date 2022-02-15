@@ -111,7 +111,7 @@ class Shift(xmatters.connection.ApiBridge):
     def get_members(self):
         url = self.get_url(self._endpoints.get('get_members'))
         members = self.con.get(url)
-        return xmatters.objects.common.Pagination(self, members, ShiftMember) if members.get('data') else []
+        return xmatters.utils.Pagination(self, members, ShiftMember) if members.get('data') else []
 
     
     def add_member(self, data):

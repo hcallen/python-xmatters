@@ -1,4 +1,5 @@
-from xmatters.objects.common import Recipient, Pagination, SelfLink
+from xmatters.objects.common import Recipient, SelfLink
+from xmatters.utils import Pagination
 from xmatters.objects.people import Person
 from xmatters.objects.roles import Role
 from xmatters.objects.subscriptions import SubscriptionCriteriaReference

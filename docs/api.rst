@@ -19,8 +19,59 @@ Endpoints
 xMatters API Objects
 --------------------
 
-| Only classes that have user-callable methods are documented.
-| See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ and source code for object attributes.
+| See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for more information.
 
-.. autoclass:: xmatters.objects.devices.Device
+Audits
+^^^^^^
+
+.. automodule:: xmatters.objects.audits
    :members:
+   :no-undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+Common
+^^^^^^
+
+.. automodule:: xmatters.objects.common
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+Conference Bridges
+^^^^^^^^^^^^^^^^^^
+
+.. automodule:: xmatters.objects.conference_bridges
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+Device Names
+^^^^^^^^^^^^
+
+.. automodule:: xmatters.objects.device_names
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+Device Types
+^^^^^^^^^^^^
+
+.. automodule:: xmatters.objects.device_types
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
+Devices
+^^^^^^^
+
+.. automodule:: xmatters.objects.devices
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+

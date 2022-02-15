@@ -4,7 +4,8 @@ import xmatters.objects.events as events
 import xmatters.objects.plans as plans
 import xmatters.objects.scenarios
 from xmatters.objects.device_names import TargetDeviceNameSelector
-from xmatters.objects.common import Pagination, Recipient, PropertyDefinition, SelfLink
+from xmatters.objects.common import Recipient, PropertyDefinition, SelfLink
+from xmatters.utils import Pagination
 
 
 class FormReference(object):

@@ -7,7 +7,8 @@ import xmatters.objects.people
 import xmatters.objects.plans
 import xmatters.objects.roles
 
-from xmatters.objects.common import Pagination, SelfLink
+from xmatters.objects.common import SelfLink
+from xmatters.utils import Pagination
 
 
 class ScenarioPermission(xmatters.connection.ApiBridge):

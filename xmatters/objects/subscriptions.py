@@ -2,7 +2,8 @@ import xmatters.connection
 import xmatters.utils
 import xmatters.factories as factory
 import xmatters.objects.forms
-from xmatters.objects.common import Pagination, SelfLink
+from xmatters.objects.common import SelfLink
+from xmatters.utils import Pagination
 from xmatters.objects.people import Person
 
 

@@ -1,6 +1,7 @@
 import xmatters.utils as util
 import xmatters.factories
-from xmatters.objects.common import SelfLink, Pagination
+from xmatters.objects.common import SelfLink
+from xmatters.utils import Pagination
 from xmatters.connection import ApiBridge
 from xmatters.objects.shifts import GroupReference, Shift
 
