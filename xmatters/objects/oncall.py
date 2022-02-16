@@ -33,7 +33,7 @@ class ShiftOccurrenceMember(ApiBridge):
     def __init__(self, parent, data):
         super(ShiftOccurrenceMember, self).__init__(parent, data)
         member = data.get('member')
-        self.member = xmatters.factories.RecipientFactory.compose(self, member) if member else None    #: :vartype: :class:`xmatters.factories.RecipientFactory`
+        self.member = xmatters.factories.RecipientFactory.construct(self, member) if member else None    #: :vartype: :class:`xmatters.factories.RecipientFactory`
         self.position = data.get('position')   #: :vartype: int
         self.delay = data.get('delay')    #: :vartype: int
         self.escalation_type = data.get('escalationType')   #: :vartype: str
@@ -89,6 +89,10 @@ class OnCall(ApiBridge):
 
     @property
     def shift(self):
+        """ Alias for :meth:`get_shift` """
+        return self.get_shift()
+
+    def get_shift(self):
         if self._shift_link:
             url = '{}{}'.format(self.con.instance_url, self._shift_link)
             data = self.con.get(url)

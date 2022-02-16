@@ -228,10 +228,15 @@ class Form(xmatters.connection.ApiBridge):
 
     @property
     def response_options(self):
+        """ Alias of :meth:`get_response_options` """
         return self.get_response_options()
 
     @property
-    def recipients(self, params=None, **kwargs):
+    def recipients(self):
+        """ Alias of :meth:`get_recipients` """
+        return self.get_recipients()
+
+    def get_recipients(self, params=None, **kwargs):
         url = self.get_url(self._endpoints.get('recipients'))
         recipients = self.con.get(url, params=params, **kwargs).get('recipients', {})
         return Pagination(self, recipients, factory.RecipientFactory) if recipients.get('data') else []

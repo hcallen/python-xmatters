@@ -13,7 +13,7 @@ from xmatters.objects.subscription_forms import SubscriptionForm
 
 class PlanPointer(object):
     def __init__(self, data):
-        self.id = data.get('id')    #:
+        self.id = data.get('id')    #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -24,8 +24,8 @@ class PlanPointer(object):
 
 class PlanReference(object):
     def __init__(self, data):
-        self.id = data.get('id')    #:
-        self.name = data.get('name')    #:
+        self.id = data.get('id')    #: :vartype: str
+        self.name = data.get('name')   #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -52,46 +52,61 @@ class Plan(ApiBridge):
 
     def __init__(self, parent, data):
         super(Plan, self).__init__(parent, data)
-        self.id = data.get('id')    #:
-        self.plan_type = data.get('planType')    #:
-        self.name = data.get('name')    #:
-        self.description = data.get('description')    #:
-        self.enabled = data.get('enabled')    #:
-        self.editable = data.get('editable')    #:
-        self.logging_level = data.get('loggingLevel')    #:
-        self.accessible = data.get('accessibleByAll')    #:
-        self.flood_control = data.get('floodControl')    #:
+        self.id = data.get('id')    #: :vartype: str
+        self.plan_type = data.get('planType')    #: :vartype: str
+        self.name = data.get('name')   #: :vartype: str
+        self.description = data.get('description')    #: :vartype: str
+        self.enabled = data.get('enabled')   #: :vartype: bool
+        self.editable = data.get('editable')    #: :vartype: bool
+        self.logging_level = data.get('loggingLevel')   #: :vartype: str
+        self.accessible = data.get('accessibleByAll')    #: :vartype: bool
+        self.flood_control = data.get('floodControl')    #: :vartype: bool
         created = data.get('created')
         self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
-        self.position = data.get('position')    #:
+        self.position = data.get('position')   #: :vartype: int
 
     @property
     def creator(self):
-        url = self.get_url(self._endpoints.get('creator'))
-        creator = self.con.get(url).get('creator')
-        return Person(self, creator) if creator else None
+        """ Alias of :meth:`get_creator` """
+        return self.get_creator()
 
     @property
     def constants(self):
+        """ Alias of :meth:`get_constants` """
         return self.get_constants()
 
     @property
     def endpoints(self):
+        """ Alias of :meth:`get_endpoints` """
         return self.get_endpoints()
 
     @property
     def forms(self):
+        """ Alias of :meth:`get_forms` """
         return self.get_forms()
 
     @property
     def integrations(self):
+        """ Alias of :meth:`get_integrations` """
         return self.get_integrations()
 
     @property
     def property_definitions(self):
+        """ Alias of :meth:`get_properties` """
         return self.get_properties()
+
+    def get_creator(self):
+        """
+        Get plan creator
+
+        :return: Plan creator
+        :rtype: :class:`xmatters.objects.people.Person`
+        """
+        url = self.get_url(self._endpoints.get('creator'))
+        creator = self.con.get(url).get('creator')
+        return Person(self, creator) if creator else None
 
     def get_forms(self, params=None, **kwargs):
         url = self.get_url(self._endpoints.get('get_forms'))
@@ -169,17 +184,17 @@ class Plan(ApiBridge):
     def create_property(self, data):
         url = self.get_url(self._endpoints.get('get_properties'))
         data = self.con.post(url, data=data)
-        return factory.PropertiesFactory.compose(self, data) if data else None
+        return factory.PropertiesFactory.construct(self, data) if data else None
 
     def update_property(self, data):
         url = self.get_url(self._endpoints.get('get_properties'))
         data = self.con.post(url, data=data)
-        return factory.PropertiesFactory.compose(self, data) if data else None
+        return factory.PropertiesFactory.construct(self, data) if data else None
 
     def delete_property(self, property_id):
         url = self.get_url(self._endpoints.get('delete_property').format(prop_id=property_id))
         data = self.con.delete(url)
-        return factory.PropertiesFactory.compose(self, data) if data else None
+        return factory.PropertiesFactory.construct(self, data) if data else None
 
     def get_shared_libraries(self, params=None, **kwargs):
         url = self.get_url(self._endpoints.get('get_libraries'))

@@ -40,7 +40,7 @@ class Device(Recipient):
         Get device timeframes
 
         :return: list
-        :rtype: list[:class:`DeviceTimeframe`]
+        :rtype: list[:class:`xmatters.objects.devices.DeviceTimeframe`]
         """
         url = self.get_url('?embed=timeframes')
         data = self.con.get(url).get('timeframes', {}).get('data', [])
@@ -171,8 +171,8 @@ class GenericDevice(Device):
 class DeviceTimeframe(object):
     def __init__(self, data):
         self.days = data.get('days')    #: :vartype: str
-        self.duration_in_minutes = data.get('durationInMinutes')    #: :vartype: str
-        self.exclude_holidays = data.get('excludeHolidays')    #: :vartype: str
+        self.duration_in_minutes = data.get('durationInMinutes')    #: :vartype: int
+        self.exclude_holidays = data.get('excludeHolidays')    #: :vartype: bool
         self.name = data.get('name')    #: :vartype: str
         self.start_time = data.get('startTime')    #: :vartype: str
         self.timezone = data.get('timezone')    #: :vartype: str

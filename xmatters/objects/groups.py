@@ -15,12 +15,13 @@ class GroupMembershipShiftReference(xmatters.connection.ApiBridge):
 
     def __int__(self, parent, data):
         super(GroupMembershipShiftReference, self).__init__(parent, data)
-        self.id = data.get('id')     #: :vartype: str
+        self.id = data.get('id')  #: :vartype: str
         group = data.get('group')
-        self.group = xmatters.objects.shifts.GroupReference(self, group) if group else None    #: :vartype: :class:`xmatters.objects.shifts.GroupReference`
-        self.name = data.get('name')    #: :vartype: str
+        self.group = xmatters.objects.shifts.GroupReference(self,
+                                                            group) if group else None  #: :vartype: :class:`xmatters.objects.shifts.GroupReference`
+        self.name = data.get('name')  #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -35,11 +36,14 @@ class GroupMembership(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(GroupMembership, self).__init__(parent, data)
         group = data.get('group')
-        self.group = xmatters.objects.shifts.GroupReference(self, group) if group else None    #: :vartype: :class:`xmatters.objects.shifts.GroupReference`
+        self.group = xmatters.objects.shifts.GroupReference(self,
+                                                            group) if group else None  #: :vartype: :class:`xmatters.objects.shifts.GroupReference`
         member = data.get('member')
-        self.member = RecipientReference(self, member) if member else None    #: :vartype: :class:`xmatters.objects.common.RecipientReference`
+        self.member = RecipientReference(self,
+                                         member) if member else None  #: :vartype: :class:`xmatters.objects.common.RecipientReference`
         shifts = data.get('shifts', {})
-        self.shifts = Pagination(self, shifts, GroupMembershipShiftReference) if shifts.get('data') else []    #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.groups.GroupMembershipShiftReference`
+        self.shifts = Pagination(self, shifts, GroupMembershipShiftReference) if shifts.get(
+            'data') else []  #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.groups.GroupMembershipShiftReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -60,28 +64,35 @@ class Group(Recipient):
 
     def __init__(self, parent, data):
         super(Group, self).__init__(parent, data)
-        self.allow_duplicates = data.get('allowDuplicates')     #: :vartype: bool
-        self.description = data.get('description')     #: :vartype: str
-        self.observed_by_all = data.get('observedByAll')    #: :vartype: bool
-        self.response_count = data.get('responseCount')    #: :vartype: int
-        self.response_count_threshold = data.get('responseCount')    #: :vartype: str
-        self.use_default_devices = data.get('responseCountThreshold')    #: :vartype: bool
+        self.allow_duplicates = data.get('allowDuplicates')  #: :vartype: bool
+        self.description = data.get('description')  #: :vartype: str
+        self.observed_by_all = data.get('observedByAll')  #: :vartype: bool
+        self.response_count = data.get('responseCount')  #: :vartype: int
+        self.response_count_threshold = data.get('responseCount')  #: :vartype: str
+        self.use_default_devices = data.get('responseCountThreshold')  #: :vartype: bool
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
-        self.group_type = data.get('groupType')     #: :vartype: str
+        self.created = xmatters.utils.TimeAttribute(
+            created) if created else None  #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.group_type = data.get('groupType')  #: :vartype: str
         site = data.get('site')
-        self.site = ReferenceByIdAndSelfLink(self, site) if site else None    #: :vartype: :class:`xmatters.objects.common.ReferenceByIdAndSelfLink`
-        self.services = data.get('services', [])     #: :vartype: list
+        self.site = ReferenceByIdAndSelfLink(self,
+                                             site) if site else None  #: :vartype: :class:`xmatters.objects.common.ReferenceByIdAndSelfLink`
+        self.services = data.get('services', [])  #: :vartype: list
 
     @property
     def observers(self):
-        url = self.get_url(self._endpoints.get('observers'))
-        observers = self.con.get(url).get('observers', {}).get('data')
-        return [xmatters.objects.roles.Role(role) for role in observers] if observers else []
+        """ Alias of :meth:`get_observers` """
+        return self.get_observers()
 
     @property
     def supervisors(self):
+        """ Alias of :meth:`get_supervisors` """
         return self.get_supervisors()
+
+    def get_observers(self):
+        url = self.get_url(self._endpoints.get('observers'))
+        observers = self.con.get(url).get('observers', {}).get('data')
+        return [xmatters.objects.roles.Role(role) for role in observers] if observers else []
 
     def get_supervisors(self):
         url = self.get_url(self._endpoints.get('get_supervisors'))
@@ -94,7 +105,6 @@ class Group(Recipient):
         return Pagination(self, data, xmatters.objects.oncall.OnCall) if data.get('data') else []
 
     def get_shifts(self, params=None, **kwargs):
-        
         url = self.get_url(self._endpoints.get('get_shifts'))
         data = self.con.get(url, params=params, **kwargs)
         return Pagination(self, data, xmatters.objects.shifts.Shift) if data.get('data') else []
@@ -104,13 +114,11 @@ class Group(Recipient):
         data = self.con.get(url, params=params, **kwargs)
         return xmatters.objects.shifts.Shift(self, data) if data else None
 
-    
     def create_shift(self, data):
         url = self.get_url(self._endpoints.get('get_shifts'))
         data = self.con.post(url, data=data)
         return xmatters.objects.shifts.Shift(self, data) if data else None
 
-    
     def delete_shift(self, shift_id):
         url = self.get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
         data = self.con.delete(url)
@@ -121,20 +129,15 @@ class Group(Recipient):
         data = self.con.get(url)
         return Pagination(self, data, GroupMembership) if data.get('data') else []
 
-    
     def add_member(self, data):
         url = self.get_url(self._endpoints.get('add_member'))
         data = self.con.post(url, data=data)
-        return xmatters.factories.RecipientFactory.compose(self, data) if data else None
+        return xmatters.factories.RecipientFactory.construct(self, data) if data else None
 
-    
     def remove_member(self, member_id):
         url = self.get_url(self._endpoints.get('remove_member').format(member_id=member_id))
         data = self.con.delete(url)
         return GroupMembership(self, data) if data else None
-
-    def get_observers(self):
-        return self.observers
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -145,9 +148,10 @@ class Group(Recipient):
 
 class GroupQuota(object):
     def __init__(self, data):
-        self.group_quota_enabled = data.get('groupQuotaEnabled')    #:
+        self.group_quota_enabled = data.get('groupQuotaEnabled')  #:
         groups = data.get('groups')
-        self.stakeholder_users = QuotaItem(groups) if groups else None    #: :vartype: :class:`xmatters.objects.common.QuotaItem`
+        self.stakeholder_users = QuotaItem(
+            groups) if groups else None  #: :vartype: :class:`xmatters.objects.common.QuotaItem`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

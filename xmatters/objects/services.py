@@ -5,10 +5,10 @@ import xmatters.objects.shifts
 class Service(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(Service, self).__init__(parent, data)
-        self.id = data.get('id')    #:
-        self.target_name = data.get('targetName')    #:
-        self.recipients_type = data.get('recipientType')    #:
-        self.description = data.get('description')    #:
+        self.id = data.get('id')   #: :vartype: str
+        self.target_name = data.get('targetName')   #: :vartype: str
+        self.recipients_type = data.get('recipientType')   #: :vartype: str
+        self.description = data.get('description')    #: :vartype: str
         owned_by = data.get('ownedBy')
         self.owned_by = xmatters.objects.shifts.GroupReference(self, owned_by) if owned_by else None    #: :vartype: :class:`xmatters.objects.shifts.GroupReference`
 

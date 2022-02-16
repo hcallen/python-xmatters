@@ -18,7 +18,7 @@ class TestGet:
             assert iter(group.get_oncall())
             assert iter(group.get_shifts())
             assert iter(group.get_members())
-            assert iter(group.observers)
+            assert iter(group.get_observers())
 
     @my_vcr.use_cassette('{}_test_get_oncall.json'.format(fn))
     def test_get_oncall(self, xm_test):

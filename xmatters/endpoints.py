@@ -43,13 +43,6 @@ class AuditsEndpoint(ApiBridge):
         super(AuditsEndpoint, self).__init__(parent, '/audits')
 
     def get_audits(self, params=None, **kwargs):
-        """
-        | Get audit information.
-        | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
-
-        :return: Pagination of audit objects
-        :rtype: :class:`Pagination`
-        """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
         return Pagination(self, data, xmatters.factories.AuditFactory) if data.get('data') else []
@@ -68,65 +61,29 @@ class DevicesEndpoint(ApiBridge):
         super(DevicesEndpoint, self).__init__(parent, '/devices')
 
     def get_devices(self, params=None, **kwargs):
-        """
-        | Get devices.
-        | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
-
-        :return: Pagination of device objects
-        :rtype: :class:`Pagination`
-        """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
         return Pagination(self, data, xmatters.factories.DeviceFactory) if data.get('data') else []
 
     def get_device_by_id(self, device_id, params=None, **kwargs):
-        """
-        | Get device by device's id.
-        | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid query parameters.
-
-        :return: Pagination of device objects
-        :rtype: :class:`Pagination`
-        """
         url = self.get_url(device_id)
         data = self.con.get(url=url, params=params, **kwargs)
-        return xmatters.factories.DeviceFactory.compose(self, data) if data else None
+        return xmatters.factories.DeviceFactory.construct(self, data) if data else None
 
     def create_device(self, data):
-        """
-        | Create a device.
-        | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for expected data.
-
-        :return: device object
-        :rtype: Dependent on device type
-        """
         url = self.get_url()
         data = self.con.post(url, data=data)
-        return xmatters.factories.DeviceFactory.compose(self, data) if data else None
+        return xmatters.factories.DeviceFactory.construct(self, data) if data else None
 
     def update_device(self, data):
-        """
-        | Update a device.
-        | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for expected data.
-
-        :return: device object
-        :rtype: Dependent on device type
-        """
         url = self.get_url()
         data = self.con.post(url=url, data=data)
-        return xmatters.factories.DeviceFactory.compose(self, data) if data else None
+        return xmatters.factories.DeviceFactory.construct(self, data) if data else None
 
     def delete_device(self, device_id):
-        """
-        | Delete a device.
-
-        :param device_id: device id
-        :type device_id: str
-        :return: device object
-        :rtype: Dependent on device type
-        """
         url = self.get_url(device_id)
         data = self.con.delete(url=url)
-        return xmatters.factories.DeviceFactory.compose(self, data) if data else None
+        return xmatters.factories.DeviceFactory.construct(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -149,17 +106,17 @@ class DeviceNamesEndpoint(ApiBridge):
     def create_device_name(self, data):
         url = self.get_url()
         data = self.con.post(url, data=data)
-        return xmatters.factories.DeviceNameFactory.compose(self, data) if data else None
+        return xmatters.factories.DeviceNameFactory.construct(self, data) if data else None
 
     def update_device_name(self, data):
         url = self.get_url()
         data = self.con.post(url, data=data)
-        return xmatters.factories.DeviceNameFactory.compose(self, data) if data else None
+        return xmatters.factories.DeviceNameFactory.construct(self, data) if data else None
 
     def delete_device_name(self, device_name_id):
         url = self.get_url(device_name_id)
         data = self.con.delete(url)
-        return xmatters.factories.DeviceNameFactory.compose(self, data) if data else None
+        return xmatters.factories.DeviceNameFactory.construct(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

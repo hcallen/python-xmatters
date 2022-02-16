@@ -5,8 +5,56 @@ XMSession
 ---------
 
 .. autoclass:: xmatters.XMSession
-    :members:
-    :undoc-members:
+
+    .. automethod:: set_authentication
+
+    .. automethod:: attachments_endpoint
+
+    .. automethod:: audits_endpoint
+
+    .. automethod:: conference_bridges_endpoint
+
+    .. automethod:: device_names_endpoint
+
+    .. automethod:: device_types_endpoint
+
+    .. automethod:: devices_endpoint
+
+    .. automethod:: dynamic_teams_endpoint
+
+    .. automethod:: events_endpoint
+
+    .. automethod:: event_suppressions_endpoint
+
+    .. automethod:: forms_endpoint
+
+    .. automethod:: imports_endpoint
+
+    .. automethod:: groups_endpoint
+
+    .. automethod:: incidents_endpoint
+
+    .. automethod:: oncall_endpoint
+
+    .. automethod:: oncall_summary_endpoint
+
+    .. automethod:: people_endpoint
+
+    .. automethod:: plans_endpoint
+
+    .. automethod:: roles_endpoint
+
+    .. automethod:: scenarios_endpoint
+
+    .. automethod:: services_endpoint
+
+    .. automethod:: sites_endpoint
+
+    .. automethod:: subscriptions_endpoint
+
+    .. automethod:: subscription_forms_endpoint
+
+    .. automethod:: temporary_absences_endpoint
 
 
 Endpoints
@@ -25,7 +73,6 @@ Utilities
 .. automodule:: xmatters.utils
    :members:
    :undoc-members:
-   :inherited-members:
    :show-inheritance:
 
 Factories
@@ -40,7 +87,16 @@ Factories
 xMatters API Objects
 --------------------
 
-| See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for more information.
+| See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for more detailed information.
+
+Attachments
+^^^^^^^^^^^
+
+.. automodule:: xmatters.objects.attachments
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
 
 Audits
 ^^^^^^
@@ -144,7 +200,7 @@ Groups
 Import Jobs
 ^^^^^^^^^^^^
 
-.. automodule:: xmatters.objects.import_jobs
+.. automodule:: xmatters.objects.imports
    :members:
    :undoc-members:
    :inherited-members:

@@ -54,8 +54,8 @@ class XMSession(object):
 
     def set_authentication(self, username=None, password=None, client_id=None, **kwargs):
         """
-        Set the authentication method when interacting with the API.
-        OAuth2 authentication is used if a client_id is provided; otherwise basic authentication is used.
+        | Set the authentication method when interacting with the API.
+        | OAuth2 authentication is used if a client_id is provided; otherwise basic authentication is used.
 
         :param username: xMatters username
         :type username: str
@@ -68,8 +68,8 @@ class XMSession(object):
         :keyword refresh_token: refresh token
         :type refresh_token: str
         :keyword token_storage: Class instance used to store token.
-            Any class instance should work as long is it has *read_token* and *write_token* methods.
-        :type token_storage: object
+            Any class instance should work as long is it has :meth:`read_token` and :meth:`write_token` methods.
+        :type token_storage: class
         :return: self
         :rtype: :class:`XMSession`
 
@@ -96,6 +96,17 @@ class XMSession(object):
         :type endpoint: str
         :return: Endpoint object
         :rtype: object
+
+        Example:
+
+        .. code-block:: python
+
+            from xmatters import XMSession
+
+            xm = XMSession('my-instance')
+            xm.set_authentication(username='my-username', password='my-password')
+            people_endpoint = xm.get_endpoint('people')
+
 
         """
         endpoint_object = self._endpoints.get(endpoint.strip('/'))
@@ -195,7 +206,7 @@ class XMSession(object):
 
     def imports_endpoint(self):
         """
-        Get the '/import-jobs' top-level endpoint.
+        Get the '/imports' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`ImportsEndpoint`

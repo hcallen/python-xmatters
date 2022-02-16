@@ -9,10 +9,10 @@ from xmatters.objects.people import Person
 
 class SubscriptionCriteriaReference(object):
     def __init__(self, data):
-        self.name = data.get('name')    #:
-        self.operator = data.get('operator')    #:
-        self.value = data.get('value')    #:
-        self.values = data.get('values', [])    #:
+        self.name = data.get('name')   #: :vartype: str
+        self.operator = data.get('operator')   #: :vartype: str
+        self.value = data.get('value')   #: :vartype: str
+        self.values = data.get('values', [])   #: :vartype: list
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -26,9 +26,9 @@ class Subscription(xmatters.connection.ApiBridge):
 
     def __init__(self, parent, data):
         super(Subscription, self).__init__(parent, data)
-        self.id = data.get('id')    #:
-        self.name = data.get('name')    #:
-        self.description = data.get('description')    #:
+        self.id = data.get('id')    #: :vartype: str
+        self.name = data.get('name')    #: :vartype: str
+        self.description = data.get('description')    #: :vartype: str
         form = data.get('form')
         self.form = xmatters.objects.forms.FormReference(form) if form else None    #: :vartype: :class:`xmatters.objects.forms.FormReference`
         owner = data.get('owner')
@@ -36,7 +36,7 @@ class Subscription(xmatters.connection.ApiBridge):
         self.owner = xmatters.objects.people.PersonReference(self, owner)    #: :vartype: :class:`xmatters.objects.people.PersonReference`
         created = data.get('created')
         self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
-        self.notification_delay = data.get('notificationDelay')    #:
+        self.notification_delay = data.get('notificationDelay')    #: :vartype: int
         criteria = data.get('criteria', {})
         self.criteria = Pagination(self, criteria, SubscriptionCriteriaReference) if criteria.get('data') else []    #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.subscriptions.SubscriptionCriteriaReference`
         r = data.get('recipients', {})

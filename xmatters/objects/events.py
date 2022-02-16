@@ -240,30 +240,37 @@ class Event(ApiBridge):
 
     @property
     def annotations(self):
+        """ Alias of :meth:`get_annotations` """
         return self.get_annotations()
 
     @property
     def messages(self):
+        """ Alias of :meth:`get_messages` """
         return self.get_messages()
 
     @property
     def properties(self):
+        """ Alias of :meth:`get_properties` """
         return self.get_properties()
 
     @property
     def recipients(self):
+        """ Alias of :meth:`get_recipients` """
         return self.get_recipients()
 
     @property
     def response_options(self):
+        """ Alias of :meth:`get_response_options` """
         return self.get_response_options()
 
     @property
     def suppressions(self):
+        """ Alias of :meth:`get_suppressions` """
         return self.get_suppressions()
 
     @property
     def targeted_recipients(self):
+        """ Alias of :meth:`get_targeted_recipients` """
         return self.get_targeted_recipients()
 
     def get_recipients(self):
@@ -316,8 +323,7 @@ class Event(ApiBridge):
         data = self.con.get(url)
         return Annotation(self, data) if data else None
 
-    def add_annotation(self, comment):
-        data = {'comment': comment}
+    def add_annotation(self, data):
         url = self.get_url(self._endpoints.get('get_annotations'))
         data = self.con.post(url, data=data)
         return Annotation(self, data) if data else None

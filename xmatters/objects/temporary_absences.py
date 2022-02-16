@@ -7,8 +7,8 @@ import xmatters.connection
 class TemporaryAbsence(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(TemporaryAbsence, self).__init__(parent, data)
-        self.id = data.get('id')    #:
-        self.absence_type = data.get('absenceType')    #:
+        self.id = data.get('id')   #: :vartype: str
+        self.absence_type = data.get('absenceType')   #: :vartype: str
         member = data.get('member')
         self.member = xmatters.objects.people.PersonReference(self, member) if member else None    #: :vartype: :class:`xmatters.objects.people.PersonReference`
         start = data.get('start')
