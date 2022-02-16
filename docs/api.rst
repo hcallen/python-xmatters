@@ -1,8 +1,9 @@
+===
 API
 ===
 
 XMSession
----------
+==========
 
 .. autoclass:: xmatters.XMSession
 
@@ -58,7 +59,7 @@ XMSession
 
 
 Endpoints
----------
+=========
 
 .. automodule:: xmatters.endpoints
    :members:
@@ -68,7 +69,7 @@ Endpoints
 
 
 Utilities
----------
+==========
 
 .. automodule:: xmatters.utils
    :members:
@@ -76,7 +77,7 @@ Utilities
    :show-inheritance:
 
 Factories
----------
+==========
 
 .. automodule:: xmatters.factories
    :members:
@@ -84,13 +85,13 @@ Factories
    :inherited-members:
    :show-inheritance:
 
-xMatters API Objects
---------------------
+API Objects
+============
 
 | See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for more detailed information.
 
 Attachments
-^^^^^^^^^^^
+-----------
 
 .. automodule:: xmatters.objects.attachments
    :members:
@@ -99,7 +100,7 @@ Attachments
    :show-inheritance:
 
 Audits
-^^^^^^
+------
 
 .. automodule:: xmatters.objects.audits
    :members:
@@ -108,7 +109,7 @@ Audits
    :show-inheritance:
 
 Common
-^^^^^^
+------
 
 .. automodule:: xmatters.objects.common
    :members:
@@ -117,7 +118,7 @@ Common
    :show-inheritance:
 
 Conference Bridges
-^^^^^^^^^^^^^^^^^^
+------------------
 
 .. automodule:: xmatters.objects.conference_bridges
    :members:
@@ -126,7 +127,7 @@ Conference Bridges
    :show-inheritance:
 
 Device Names
-^^^^^^^^^^^^
+------------
 
 .. automodule:: xmatters.objects.device_names
    :members:
@@ -135,7 +136,7 @@ Device Names
    :show-inheritance:
 
 Device Types
-^^^^^^^^^^^^
+------------
 
 .. automodule:: xmatters.objects.device_types
    :members:
@@ -144,7 +145,7 @@ Device Types
    :show-inheritance:
 
 Devices
-^^^^^^^
+-------
 
 .. automodule:: xmatters.objects.devices
    :members:
@@ -153,7 +154,7 @@ Devices
    :show-inheritance:
 
 Dynamic Teams
-^^^^^^^^^^^^^
+-------------
 
 .. automodule:: xmatters.objects.dynamic_teams
    :members:
@@ -162,7 +163,7 @@ Dynamic Teams
    :show-inheritance:
 
 Event Suppressions
-^^^^^^^^^^^^^^^^^^
+------------------
 
 .. automodule:: xmatters.objects.event_suppressions
    :members:
@@ -171,7 +172,7 @@ Event Suppressions
    :show-inheritance:
 
 Events
-^^^^^^
+------
 
 .. automodule:: xmatters.objects.events
    :members:
@@ -180,7 +181,7 @@ Events
    :show-inheritance:
 
 Forms
-^^^^^
+-----
 
 .. automodule:: xmatters.objects.forms
    :members:
@@ -189,7 +190,7 @@ Forms
    :show-inheritance:
 
 Groups
-^^^^^^
+------
 
 .. automodule:: xmatters.objects.groups
    :members:
@@ -198,7 +199,7 @@ Groups
    :show-inheritance:
 
 Import Jobs
-^^^^^^^^^^^^
+------------
 
 .. automodule:: xmatters.objects.imports
    :members:
@@ -208,7 +209,7 @@ Import Jobs
 
 
 Incidents
-^^^^^^^^^
+---------
 
 .. automodule:: xmatters.objects.incidents
    :members:
@@ -217,7 +218,7 @@ Incidents
    :show-inheritance:
 
 Integrations
-^^^^^^^^^^^^
+------------
 
 .. automodule:: xmatters.objects.integrations
    :members:
@@ -226,7 +227,7 @@ Integrations
    :show-inheritance:
 
 On-Call
-^^^^^^^
+-------
 
 .. automodule:: xmatters.objects.oncall
    :members:
@@ -235,7 +236,7 @@ On-Call
    :show-inheritance:
 
 On-Call Summary
-^^^^^^^^^^^^^^^
+---------------
 
 .. automodule:: xmatters.objects.oncall_summary
    :members:
@@ -244,7 +245,7 @@ On-Call Summary
    :show-inheritance:
 
 People
-^^^^^^
+------
 
 .. automodule:: xmatters.objects.people
    :members:
@@ -253,7 +254,7 @@ People
    :show-inheritance:
 
 Plan Constants
-^^^^^^^^^^^^^^
+--------------
 
 .. automodule:: xmatters.objects.plan_constants
    :members:
@@ -262,7 +263,7 @@ Plan Constants
    :show-inheritance:
 
 Plan Endpoints
-^^^^^^^^^^^^^^
+--------------
 
 .. automodule:: xmatters.objects.plan_endpoints
    :members:
@@ -271,7 +272,7 @@ Plan Endpoints
    :show-inheritance:
 
 Plan Properties
-^^^^^^^^^^^^^^^
+---------------
 
 .. automodule:: xmatters.objects.plan_properties
    :members:
@@ -280,7 +281,7 @@ Plan Properties
    :show-inheritance:
 
 Plans
-^^^^^
+-----
 
 .. automodule:: xmatters.objects.plans
    :members:
@@ -289,7 +290,7 @@ Plans
    :show-inheritance:
 
 Roles
-^^^^^
+-----
 
 .. automodule:: xmatters.objects.roles
    :members:
@@ -298,7 +299,7 @@ Roles
    :show-inheritance:
 
 Scenarios
-^^^^^^^^^
+---------
 
 .. automodule:: xmatters.objects.scenarios
    :members:
@@ -307,7 +308,7 @@ Scenarios
    :show-inheritance:
 
 Services
-^^^^^^^^^
+---------
 
 .. automodule:: xmatters.objects.services
    :members:
@@ -316,7 +317,7 @@ Services
    :show-inheritance:
 
 Shared Libraries
-^^^^^^^^^^^^^^^^
+----------------
 
 .. automodule:: xmatters.objects.shared_libraries
    :members:
@@ -325,7 +326,7 @@ Shared Libraries
    :show-inheritance:
 
 Shifts
-^^^^^^
+------
 
 .. automodule:: xmatters.objects.shifts
    :members:
@@ -334,7 +335,7 @@ Shifts
    :show-inheritance:
 
 Sites
-^^^^^^
+------
 
 .. automodule:: xmatters.objects.sites
    :members:
@@ -343,7 +344,7 @@ Sites
    :show-inheritance:
 
 Subscription Forms
-^^^^^^^^^^^^^^^^^^
+------------------
 
 .. automodule:: xmatters.objects.subscription_forms
    :members:
@@ -352,7 +353,7 @@ Subscription Forms
    :show-inheritance:
 
 Subscriptions
-^^^^^^^^^^^^^
+-------------
 
 .. automodule:: xmatters.objects.subscriptions
    :members:
@@ -361,7 +362,7 @@ Subscriptions
    :show-inheritance:
 
 Temporary Absences
-^^^^^^^^^^^^^^^^^^^
+-------------------
 
 .. automodule:: xmatters.objects.temporary_absences
    :members:

@@ -1,5 +1,6 @@
+============
 Quick Start
-===========
+============
 
 The expected workflow is:
 
@@ -41,10 +42,3 @@ Example using OAuth2 authentication with refresh token:
 .. note::
 
     | The use of OAuth2 authentication is implied if client_id is provided.
-
-
-
-
-
-
-

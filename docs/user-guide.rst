@@ -1,8 +1,9 @@
+===========
 User Guide
 ===========
 
 Initial Setup
-_____________
+==============
 
 A typical session starts by initializing an XMSession class with an xMatters instance url.
 
@@ -17,7 +18,7 @@ Example:
 
 
 Authentication
---------------
+===============
 
 Both basic and OAuth2 authentication are supported.
 
@@ -25,7 +26,7 @@ The authentication mechanism is set using :meth:`xmatters.XMSession.set_authenti
 authentication is implied. If the *client_id* parameter is defined, OAuth2 is used, otherwise basic is used.
 
 Basic Authentication
-^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 Example:
 
@@ -37,7 +38,7 @@ Example:
     xm_session.set_authentication(username='my-username', password='my-password')
 
 OAuth2 Authentication
-^^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 Example using username and password:
 
@@ -80,6 +81,7 @@ Example using refresh token:
 Example using token storage
 
 .. note::
+
     :class:`xmatters.utils.TokenFileStorage` is used in this example. Any object with **read_token** and
     **write_token** methods can be used.
 
@@ -94,7 +96,7 @@ Example using token storage
 
 
 Accessing Endpoints
--------------------
+===================
 
 Top-level endpoints can be accessed by using :meth:`xmatters.XMSession.get_endpoint`
 
@@ -112,9 +114,10 @@ Example:
 
 
 
+
 .. note::
 
-    Object specific endpoints can be accessed from the respective object. Refer to :ref:`api:xMatters API Objects` for
+    Object specific endpoints can be accessed from the respective object. Refer to :ref:`api:API Objects` for
     methods to access an object endpoint.
 
 
@@ -134,13 +137,13 @@ Example:
 
 
 Query Parameters
-----------------
+================
 
 .. note::
     Refer to the `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for valid parameters and arguments.
 
 Params
-^^^^^^
+-------
 
 Query parameters can be applied to *GET* requests by passing a dict to the *params* parameter for the applicable method.
 
@@ -159,7 +162,7 @@ Example:
 
 
 Kwargs
-^^^^^^
+-------
 
 Query parameters can also be passed as kwargs.
 
@@ -181,7 +184,7 @@ Example:
 
 
 Parameter Casing
-^^^^^^^^^^^^^^^^
+-----------------
 
 Query parameters can also be snake-cased.
 
@@ -202,7 +205,7 @@ Example:
     | Example: *devices.exists* parameter can be a kwarg as *devices_dot_exists*
 
 Timestamp Parameters
-^^^^^^^^^^^^^^^^^^^^
+---------------------
 
 Query parameters that expect a ISO-8601 UTC timestamp have the UTC offset of your local timezone applied
 if the UTC timezone isn't included in the timestamp.

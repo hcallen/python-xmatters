@@ -1,10 +1,12 @@
+===============
 python-xmatters
 ===============
 
-python-xmatters is a wrapper for the `xMatters REST API <https://help.xmatters.com/xmapi/>`_
+| python-xmatters is a wrapper for the the xMatters REST API.
+| See `xMatters REST API Reference <https://help.xmatters.com/xmapi/>`_ for further information.
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :caption: Contents:
 
     installation
@@ -12,6 +14,7 @@ python-xmatters is a wrapper for the `xMatters REST API <https://help.xmatters.c
     user-guide
     api
 
+==================
 Indices and tables
 ==================
 

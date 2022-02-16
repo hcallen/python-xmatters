@@ -13,4 +13,4 @@ Install using pip:
 
 .. code-block:: bash
 
-  $ pip install pytest-xmatters
+  $ pip install python-xmatters
