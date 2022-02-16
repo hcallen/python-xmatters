@@ -6,14 +6,14 @@ import xmatters.connection
 class PlanConstant(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(PlanConstant, self).__init__(parent, data)
-        self.id = data.get('id')
+        self.id = data.get('id')    #: :vartype: str
         plan = data.get('plan')
-        self.plan = xmatters.objects.plans.PlanPointer(plan) if plan else None
-        self.name = data.get('name')
-        self.value = data.get('value')
-        self.description = data.get('description')
+        self.plan = xmatters.objects.plans.PlanPointer(plan) if plan else None    #: :vartype: :class:`xmatters.objects.plans.PlanPointer`
+        self.name = data.get('name')   #: :vartype: str
+        self.value = data.get('value')    #: :vartype: str
+        self.description = data.get('description')    #: :vartype: str
         links = data.get('links')
-        self.links = xmatters.objects.common.SelfLink(self, links) if links else None
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

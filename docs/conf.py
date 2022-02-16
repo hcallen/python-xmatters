@@ -56,3 +56,5 @@ html_static_path = ['_static']
 
 # Don't include full path to classes
 add_module_names = False
+
+autodoc_member_order = 'groupwise'

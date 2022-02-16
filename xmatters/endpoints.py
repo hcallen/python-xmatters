@@ -5,10 +5,10 @@ from xmatters.utils import Pagination
 from xmatters.objects.conference_bridges import ConferenceBridge
 from xmatters.objects.device_types import DeviceTypes
 from xmatters.objects.dynamic_teams import DynamicTeam
-from xmatters.objects.event_supressions import EventSuppression
+from xmatters.objects.event_suppressions import EventSuppression
 from xmatters.objects.events import Event
 from xmatters.objects.groups import Group, GroupQuota
-from xmatters.objects.import_jobs import Import
+from xmatters.objects.imports import Import
 from xmatters.objects.incidents import Incident
 from xmatters.objects.oncall import OnCall
 from xmatters.objects.oncall_summary import OnCallSummary
@@ -21,10 +21,24 @@ from xmatters.objects.sites import Site
 from xmatters.objects.subscription_forms import SubscriptionForm
 from xmatters.objects.subscriptions import Subscription
 from xmatters.objects.temporary_absences import TemporaryAbsence
+from xmatters.objects.attachments import Attachments
+
+
+class AttachmentsEndpoint(ApiBridge):
+    """ Used to interact with '/attachments' top-level endpoint """
+
+    def __init__(self, parent):
+        super(AttachmentsEndpoint, self).__init__(parent, '/attachments')
+
+    def upload_attachment(self, data):
+        url = self.get_url()
+        data = self.con.post(url, data=data)
+        return Attachments(data) if data else None
 
 
 class AuditsEndpoint(ApiBridge):
     """ Used to interact with '/audits' top-level endpoint """
+
     def __init__(self, parent):
         super(AuditsEndpoint, self).__init__(parent, '/audits')
 
@@ -122,7 +136,6 @@ class DevicesEndpoint(ApiBridge):
 
 
 class DeviceNamesEndpoint(ApiBridge):
-
     """ Used to interact with '/device-names' top-level endpoint """
 
     def __init__(self, parent):

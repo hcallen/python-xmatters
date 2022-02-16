@@ -3,7 +3,7 @@ import xmatters.objects.forms
 from xmatters.objects.plan_endpoints import Endpoint
 from xmatters.connection import ApiBridge
 from xmatters.objects.common import SelfLink
-from xmatters.utils import Pagination
+from xmatters.utils import Pagination, TimeAttribute
 from xmatters.objects.integrations import Integration
 from xmatters.objects.people import Person
 from xmatters.objects.plan_constants import PlanConstant
@@ -13,7 +13,7 @@ from xmatters.objects.subscription_forms import SubscriptionForm
 
 class PlanPointer(object):
     def __init__(self, data):
-        self.id = data.get('id')
+        self.id = data.get('id')    #:
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -24,8 +24,8 @@ class PlanPointer(object):
 
 class PlanReference(object):
     def __init__(self, data):
-        self.id = data.get('id')
-        self.name = data.get('name')
+        self.id = data.get('id')    #:
+        self.name = data.get('name')    #:
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -52,33 +52,53 @@ class Plan(ApiBridge):
 
     def __init__(self, parent, data):
         super(Plan, self).__init__(parent, data)
-        self.id = data.get('id')
-        self.plan_type = data.get('planType')
-        self.name = data.get('name')
-        self.description = data.get('description')
-        self.enabled = data.get('enabled')
-        self.editable = data.get('editable')
-        self.logging_level = data.get('loggingLevel')
-        self.accessible = data.get('accessibleByAll')
-        self.flood_control = data.get('floodControl')
-        self.created = data.get('created')
+        self.id = data.get('id')    #:
+        self.plan_type = data.get('planType')    #:
+        self.name = data.get('name')    #:
+        self.description = data.get('description')    #:
+        self.enabled = data.get('enabled')    #:
+        self.editable = data.get('editable')    #:
+        self.logging_level = data.get('loggingLevel')    #:
+        self.accessible = data.get('accessibleByAll')    #:
+        self.flood_control = data.get('floodControl')    #:
+        created = data.get('created')
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
-        self.position = data.get('position')
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.position = data.get('position')    #:
 
-    def get_forms(self, enabled_for=None, sort_by=None, sort_order=None, trigger_type=None, **kwargs):
-        params = {'enabledFor': enabled_for,
-                  'sortBy': sort_by,
-                  'sortOrder': sort_order,
-                  'triggerType': trigger_type}
+    @property
+    def creator(self):
+        url = self.get_url(self._endpoints.get('creator'))
+        creator = self.con.get(url).get('creator')
+        return Person(self, creator) if creator else None
 
+    @property
+    def constants(self):
+        return self.get_constants()
+
+    @property
+    def endpoints(self):
+        return self.get_endpoints()
+
+    @property
+    def forms(self):
+        return self.get_forms()
+
+    @property
+    def integrations(self):
+        return self.get_integrations()
+
+    @property
+    def property_definitions(self):
+        return self.get_properties()
+
+    def get_forms(self, params=None, **kwargs):
         url = self.get_url(self._endpoints.get('get_forms'))
         fs = self.con.get(url, params=params, **kwargs)
         return Pagination(self, fs, xmatters.objects.forms.Form) if fs.get('data') else []
 
-    def get_form_by_id(self, form_id, recipients=None, **kwargs):
-        params = {'recipients': recipients}
-
+    def get_form_by_id(self, form_id, params=None, **kwargs):
         url = self.get_url(self._endpoints.get('get_form_by_id').format(form_id=form_id))
         data = self.con.get(url, params=params, **kwargs)
         return xmatters.objects.forms.Form(self, data) if data else None
@@ -221,31 +241,6 @@ class Plan(ApiBridge):
         data = self.con.post(url, data=data)
         return SubscriptionForm(self, data) if data else None
 
-    @property
-    def creator(self):
-        url = self.get_url(self._endpoints.get('creator'))
-        creator = self.con.get(url).get('creator')
-        return Person(self, creator) if creator else None
-
-    @property
-    def constants(self):
-        return self.get_constants()
-
-    @property
-    def endpoints(self):
-        return self.get_endpoints()
-
-    @property
-    def forms(self):
-        return self.get_forms()
-
-    @property
-    def integrations(self):
-        return self.get_integrations()
-
-    @property
-    def property_definitions(self):
-        return self.get_properties()
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.name)

@@ -18,7 +18,8 @@ class XMSession(object):
     :type max_retries: int
     """
 
-    _endpoints = {'audits': xmatters.endpoints.AuditsEndpoint,
+    _endpoints = {'attachments': xmatters.endpoints.AttachmentsEndpoint,
+                  'audits': xmatters.endpoints.AuditsEndpoint,
                   'conference-bridges': xmatters.endpoints.ConferenceBridgesEndpoint,
                   'device-names': xmatters.endpoints.DeviceNamesEndpoint,
                   'device-types': xmatters.endpoints.DeviceTypesEndpoint,
@@ -101,6 +102,15 @@ class XMSession(object):
         if not endpoint_object:
             raise NotImplementedError('{} endpoint is not implemented'.format(endpoint))
         return endpoint_object(self)
+
+    def attachments_endpoint(self):
+        """
+        Get the '/attachments' top-level endpoint.
+
+        :return: Endpoint
+        :rtype: :class:`AttachmentsEndpoint`
+        """
+        return xmatters.endpoints.AttachmentsEndpoint(self)
 
     def audits_endpoint(self):
         """

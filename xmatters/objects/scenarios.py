@@ -14,8 +14,8 @@ from xmatters.utils import Pagination
 class ScenarioPermission(xmatters.connection.ApiBridge):
     def __init__(self, parent, data):
         super(ScenarioPermission, self).__init__(parent, data)
-        self.permissible_type = data.get('permissibleType')
-        self.editor = data.get('editor')
+        self.permissible_type = data.get('permissibleType')    #:
+        self.editor = data.get('editor')    #:
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -28,7 +28,7 @@ class ScenarioPermissionPerson(ScenarioPermission):
     def __init__(self, parent, data):
         super(ScenarioPermissionPerson, self).__init__(parent, data)
         person = data.get('person')
-        self.person = xmatters.objects.people.PersonReference(self, person) if person else None
+        self.person = xmatters.objects.people.PersonReference(self, person) if person else None    #: :vartype: :class:`xmatters.objects.people.PersonReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -41,7 +41,7 @@ class ScenarioPermissionRole(ScenarioPermission):
     def __init__(self, parent, data):
         super(ScenarioPermissionRole, self).__init__(parent, data)
         role = data.get('role')
-        self.role = xmatters.objects.roles.Role(role) if role else None
+        self.role = xmatters.objects.roles.Role(role) if role else None    #: :vartype: :class:`xmatters.objects.roles.Role`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -58,30 +58,30 @@ class Scenario(xmatters.connection.ApiBridge):
 
     def __init__(self, parent, data):
         super(Scenario, self).__init__(parent, data)
-        self.id = data.get('id')
-        self.name = data.get('name')
-        self.description = data.get('description')
-        self.priority = data.get('priority')
-        self.position = data.get('position')
-        self.bypass_phone_intro = data.get('bypassPhoneIntro')
-        self.escalation_override = data.get('escalationOverride')
-        self.expiration_in_minutes = data.get('expirationInMinutes')
-        self.override_device_restrictions = data.get('overrideDeviceRestrictions')
-        self.require_phone_password = data.get('requirePhonePassword')
+        self.id = data.get('id')    #:
+        self.name = data.get('name')    #:
+        self.description = data.get('description')    #:
+        self.priority = data.get('priority')    #:
+        self.position = data.get('position')    #:
+        self.bypass_phone_intro = data.get('bypassPhoneIntro')    #:
+        self.escalation_override = data.get('escalationOverride')    #:
+        self.expiration_in_minutes = data.get('expirationInMinutes')    #:
+        self.override_device_restrictions = data.get('overrideDeviceRestrictions')    #:
+        self.require_phone_password = data.get('requirePhonePassword')    #:
         sos = data.get('senderOverrides')
-        self.sender_overrides = xmatters.objects.forms.SenderOverrides(sos) if sos else None
+        self.sender_overrides = xmatters.objects.forms.SenderOverrides(sos) if sos else None    #: :vartype: :class:`xmatters.objects.forms.SenderOverrides`
         vm_opts = data.get('voicemailOptions')
-        self.voicemail_options = xmatters.objects.events.VoicemailOptions(vm_opts) if vm_opts else None
+        self.voicemail_options = xmatters.objects.events.VoicemailOptions(vm_opts) if vm_opts else None    #: :vartype: :class:`xmatters.objects.events.VoicemailOptions`
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []
+        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []    #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.utils.DeviceNameFactory`
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None
+        self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
         perm = data.get('permitted', {}).get('data')
-        self.permitted = [factory.ScenarioPermFactory.compose(self, p) for p in perm] if perm else []
+        self.permitted = [factory.ScenarioPermFactory.compose(self, p) for p in perm] if perm else []    #:
         rs = data.get('recipients')
-        self.recipients = Pagination(self, rs, factory.RecipientFactory) if rs.get('data') else []
+        self.recipients = Pagination(self, rs, factory.RecipientFactory) if rs.get('data') else []    #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.utils.RecipientFactory`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
 
     @property
     def properties(self):

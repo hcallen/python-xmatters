@@ -137,6 +137,9 @@ class ApiBridge(object):
             self.base_resource = self.con.api_base_url
 
     def get_url(self, endpoint=None):
+        """
+        :meta private:
+        """
         if not endpoint:
             return self.base_resource
 

@@ -16,21 +16,21 @@ class SubscriptionForm(xmatters.connection.ApiBridge):
 
     def __init__(self, parent, data):
         super(SubscriptionForm, self).__init__(parent, data)
-        self.id = data.get('id')
-        self.name = data.get('name')
-        self.description = data.get('description')
+        self.id = data.get('id')    #:
+        self.name = data.get('name')    #:
+        self.description = data.get('description')    #:
         plan = data.get('plan')
-        self.plan = xmatters.objects.plans.PlanReference(data) if plan else None
-        self.scope = data.get('scope')
+        self.plan = xmatters.objects.plans.PlanReference(data) if plan else None    #: :vartype: :class:`xmatters.objects.plans.PlanReference`
+        self.scope = data.get('scope')    #:
         form = data.get('form')
-        self.form = xmatters.objects.forms.FormReference(form) if form else None
+        self.form = xmatters.objects.forms.FormReference(form) if form else None    #: :vartype: :class:`xmatters.objects.forms.FormReference`
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None
-        self.one_way = data.get('oneWay')
-        self.subscribe_others = data.get('subscribeOthers')
-        self.notification_delay = data.get('notificationDelay')
+        self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.one_way = data.get('oneWay')    #:
+        self.subscribe_others = data.get('subscribeOthers')    #:
+        self.notification_delay = data.get('notificationDelay')    #:
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
 
     @property
     def target_device_names(self):
@@ -69,10 +69,10 @@ class SubscriptionForm(xmatters.connection.ApiBridge):
 
 class SubscriptionFormReference(object):
     def __init__(self, data):
-        self.id = data.get('id')
-        self.name = data.get('name')
+        self.id = data.get('id')    #:
+        self.name = data.get('name')    #:
         plan = data.get('plan')
-        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None
+        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None    #: :vartype: :class:`xmatters.objects.plans.PlanReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

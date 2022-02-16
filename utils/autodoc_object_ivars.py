@@ -1,66 +1,76 @@
 import inspect
 import xmatters.objects
 import xmatters.utils
+import xmatters.factories
 import re
 import os
 
-OUTPUT_PATH = '../test'
-
+# OUTPUT_PATH = '../xmatters/objects/'
+OUTPUT_PATH = './test'
 
 def main():
     # compile all class names
-    class_names = []
+    class_names = {}
     for module_name, module in inspect.getmembers(xmatters.objects, inspect.ismodule):
-        for name, class_ in inspect.getmembers(module, inspect.isclass):
-            class_names.append(name)
+        # only get classes defined in module; not imported classes
+        for name, class_ in inspect.getmembers(module, lambda x: inspect.isclass(x) and x.__module__ == module.__name__):
+            class_names[name] = 'xmatters.objects.{}.{}'.format(module_name, name)
     for name, class_ in inspect.getmembers(xmatters.utils, inspect.isclass):
-        class_names.append(name)
+        class_names[name] = 'xmatters.utils.{}'.format(name)
+    for name, class_ in inspect.getmembers(xmatters.factories, inspect.isclass):
+        class_names[name] = 'xmatters.utils.{}'.format(name)
 
     for module_name, module in inspect.getmembers(xmatters.objects, inspect.ismodule):
 
-        source_out = []
-        source_lines = inspect.getsourcelines(module)
-        for line in source_lines[0]:
+        source_lines_out = []
+        source_lines_in = inspect.getsourcelines(module)[0]
+        for line in source_lines_in:
 
             is_ivar = re.match('\s+[^#]self\.[a-z_]+\s=\s', line)
-            has_comment = re.match('^.*\s+#:(?P<comment>.*)\n$', line)
-            has_comment_text = has_comment.group('comment').strip() if has_comment else None
 
             if is_ivar:
 
-                if not has_comment:
-                    outline = line.rstrip() + '    #:'
-                else:
-                    outline = line
+                source_line_out = line.split('#:')[0].rstrip() + '    #:'
 
                 is_assigned_from_dict = re.match('\s+[^#](?P<attr_name>self\.[a-z_]+)\s=\s[a-z_]+\.get\(\'', line)
                 is_assigned_class = re.match('\s+[^#]self\.\w+\s=\s[a-z\.]*[A-Z]\w+\(.*\)', line)
-                is_assigned_list = re.match('\s+[^#]self\.\w+\s=\s\[[a-z\.]*(?P<class_name>[A-Z]\w+)\(.*\).*\]', line)
+                is_assigned_list = re.match('\s+[^#]self\.\w+\s=\s\[[a-z\.]*[A-Z]\w+\(.*\).*\]', line)
 
-                if is_assigned_class or is_assigned_list:
-                    class_match = re.match('\s+[^#]self\.\w+\s=\s\[?[a-z\.]*(?P<class_name>[A-Z]\w+)\(.*\).*\]?', line)
-                    class_name = class_match.group('class_name') if class_match else None
+                class_match = re.match('\s+[^#]self\.\w+\s=\s\[?[a-z\.]*(?P<class_name>[A-Z]\w+)\(.*\).*\]?', line)
+                class_name = class_match.group('class_name') if class_match else None
 
-                    if class_name not in class_names:
-                        class_name = None
+                if class_name not in class_names.keys():
+                    class_name = None
 
-                if not has_comment_text and not is_assigned_from_dict:
+                if not is_assigned_from_dict and class_name:
 
                     if is_assigned_class:
-                        outline = outline.rstrip() + ' :vartype: :class:`{}`'.format(class_name)
+                        source_line_out += ' :vartype: :class:`{}`'.format(class_names[class_name])
+                        if class_name == 'Pagination':
+                            page_class_match = re.match('.*Pagination\([a-z.,\s]+(?P<page_class>[A-Z]\w+)\)', line)
+                            page_class = page_class_match.group('page_class') if page_class_match else None
+                            if page_class in class_names.keys():
+                                source_line_out += ' of :class:`{}`'.format(class_names[page_class])
                     elif is_assigned_list:
-                        outline = outline.rstrip() + ' :vartype: [:class:`{}`]'.format(class_name)
+                        source_line_out = source_line_out.rstrip() + ' :vartype: [:class:`{}`]'.format(class_names[class_name])
+                    elif is_assigned_from_dict:
+                        list_match = re.match('\s+[^#](?P<attr_name>self\.[a-z_]+)\s=\s[a-z_]+\.get\(\'\w+\',\[\]', line)
+                        if list_match:
+                            source_line_out += ':vartype: list'
 
-                outline = outline + '\n' if not outline.endswith('\n') else outline
+                source_line_out = source_line_out + '\n' if not source_line_out.endswith('\n') else source_line_out
 
             else:
-                outline = line
+                source_line_out = line
 
-            source_out.append(outline)
+            source_lines_out.append(source_line_out)
+
+        for outline, inline in zip(source_lines_out, source_lines_in):
+            assert outline.split('#:')[0].rstrip() == inline.split('#:')[0].rstrip()
 
         out_filepath = os.path.join(OUTPUT_PATH, '{}.py'.format(module_name))
         with open(out_filepath, 'w') as f:
-            f.writelines(source_out)
+            f.writelines(source_lines_out)
 
 
 if __name__ == '__main__':

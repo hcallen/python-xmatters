@@ -4,7 +4,7 @@ from xmatters.objects.people import PersonReference
 
 class Provider(object):
     def __init__(self, data):
-        self.id = data.get('id')  #:
+        self.id = data.get('id')    #:
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.id)
@@ -17,18 +17,18 @@ class Device(Recipient):
 
     def __init__(self, parent, data):
         super(Device, self).__init__(parent, data)
-        self.default_device = data.get('defaultDevice')  #:
-        self.delay = data.get('delay')  #:
-        self.description = data.get('description')  #:
-        self.device_type = data.get('deviceType')  #:
-        self.name = data.get('name')  #:
+        self.default_device = data.get('defaultDevice')    #: :vartype: bool
+        self.delay = data.get('delay')    #: :vartype: int
+        self.description = data.get('description')    #: :vartype: str
+        self.device_type = data.get('deviceType')    #: :vartype: str
+        self.name = data.get('name')    #: :vartype: str
         owner = data.get('owner')
-        self.owner = PersonReference(self, owner) if owner else None  #:
-        self.priority_threshold = data.get('priorityThreshold')  #:
+        self.owner = PersonReference(self, owner) if owner else None    #: :vartype: :class:`xmatters.objects.people.PersonReference`
+        self.priority_threshold = data.get('priorityThreshold')    #: :vartype: str
         provider = data.get('provider')
-        self.provider = ReferenceById(provider) if provider else None  #: :class:`ReferenceById`
-        self.sequence = data.get('sequence')  #:
-        self.test_status = data.get('testStatus')  #:
+        self.provider = ReferenceById(provider) if provider else None    #: :vartype: :class:`xmatters.objects.common.ReferenceById`
+        self.sequence = data.get('sequence')    #: :vartype: int
+        self.test_status = data.get('testStatus')    #: :vartype: str
 
     @property
     def timeframes(self):
@@ -56,7 +56,7 @@ class Device(Recipient):
 class EmailDevice(Device):
     def __init__(self, parent, data):
         super(EmailDevice, self).__init__(parent, data)
-        self.email_address = data.get('emailAddress')  #:
+        self.email_address = data.get('emailAddress')    #: :vartype: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -68,7 +68,7 @@ class EmailDevice(Device):
 class VoiceDevice(Device):
     def __init__(self, parent, data):
         super(VoiceDevice, self).__init__(parent, data)
-        self.phone_number = data.get('phoneNumber')  #:
+        self.phone_number = data.get('phoneNumber')    #: :vartype: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -80,7 +80,7 @@ class VoiceDevice(Device):
 class SMSDevice(Device):
     def __init__(self, parent, data):
         super(SMSDevice, self).__init__(parent, data)
-        self.phone_number = data.get('phoneNumber')  #:
+        self.phone_number = data.get('phoneNumber')    #: :vartype: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -92,8 +92,8 @@ class SMSDevice(Device):
 class TextPagerDevice(Device):
     def __init__(self, parent, data):
         super(TextPagerDevice, self).__init__(parent, data)
-        self.pin = data.get('pin')  #:
-        self.two_way_device = data.get('twoWayDevice')
+        self.pin = data.get('pin')    #: :vartype: str
+        self.two_way_device = data.get('twoWayDevice')    #: :vartype: bool
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -105,11 +105,11 @@ class TextPagerDevice(Device):
 class ApplePushDevice(Device):
     def __init__(self, parent, data):
         super(ApplePushDevice, self).__init__(parent, data)
-        self.account_id = data.get('accountId')  #:
-        self.apn_token = data.get('apnToken')  #:
-        self.alert_sound = data.get('alertSound')  #:
-        self.sound_status = data.get('soundStatus')  #:
-        self.sounds_threshold = data.get('soundThreshold')  #:
+        self.account_id = data.get('accountId')    #: :vartype: str
+        self.apn_token = data.get('apnToken')    #: :vartype: str
+        self.alert_sound = data.get('alertSound')    #: :vartype: str
+        self.sound_status = data.get('soundStatus')    #: :vartype: str
+        self.sounds_threshold = data.get('soundThreshold')    #: :vartype: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -121,8 +121,8 @@ class ApplePushDevice(Device):
 class AndroidPushDevice(Device):
     def __init__(self, parent, data):
         super(AndroidPushDevice, self).__init__(parent, data)
-        self.account_id = data.get('accountId')  #:
-        self.registration_id = data.get('registrationId')  #:
+        self.account_id = data.get('accountId')    #: :vartype: str
+        self.registration_id = data.get('registrationId')    #: :vartype: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -134,8 +134,8 @@ class AndroidPushDevice(Device):
 class FaxDevice(Device):
     def __init__(self, parent, data):
         super(FaxDevice, self).__init__(parent, data)
-        self.phone_number = data.get('phoneNumber')  #:
-        self.country = data.get('country')  #:
+        self.phone_number = data.get('phoneNumber')    #: :vartype: str
+        self.country = data.get('country')    #: :vartype: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -147,7 +147,7 @@ class FaxDevice(Device):
 class PublicAddressDevice(Device):
     def __init__(self, parent, data):
         super(PublicAddressDevice, self).__init__(parent, data)
-        self.phone_number = data.get('phoneNumber')  #:
+        self.phone_number = data.get('phoneNumber')    #: :vartype: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -159,7 +159,7 @@ class PublicAddressDevice(Device):
 class GenericDevice(Device):
     def __init__(self, parent, data):
         super(GenericDevice, self).__init__(parent, data)
-        self.phone_number = data.get('pin')  #:
+        self.phone_number = data.get('pin')    #: :vartype: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -170,12 +170,12 @@ class GenericDevice(Device):
 
 class DeviceTimeframe(object):
     def __init__(self, data):
-        self.days = data.get('days')  #:
-        self.duration_in_minutes = data.get('durationInMinutes')  #:
-        self.exclude_holidays = data.get('excludeHolidays')  #:
-        self.name = data.get('name')  #:
-        self.start_time = data.get('startTime')  #:
-        self.timezone = data.get('timezone')  #:
+        self.days = data.get('days')    #: :vartype: str
+        self.duration_in_minutes = data.get('durationInMinutes')    #: :vartype: str
+        self.exclude_holidays = data.get('excludeHolidays')    #: :vartype: str
+        self.name = data.get('name')    #: :vartype: str
+        self.start_time = data.get('startTime')    #: :vartype: str
+        self.timezone = data.get('timezone')    #: :vartype: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.name)

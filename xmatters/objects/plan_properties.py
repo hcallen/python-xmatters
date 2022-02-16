@@ -1,10 +1,10 @@
 class Property(object):
     def __init__(self, data):
-        self.id = data.get('id')
-        self.property_type = data.get('propertyType')
-        self.name = data.get('name')
-        self.description = data.get('description')
-        self.help_text = data.get('helpText')
+        self.id = data.get('id')    #: :vartype: str
+        self.property_type = data.get('propertyType')   #: :vartype: str
+        self.name = data.get('name')   #: :vartype: str
+        self.description = data.get('description')   #: :vartype: str
+        self.help_text = data.get('helpText')  #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -16,7 +16,7 @@ class Property(object):
 class Boolean(Property):
     def __init__(self, data):
         super(Boolean, self).__init__(data)
-        self.default = data.get('default')
+        self.default = data.get('default')    #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -28,10 +28,10 @@ class Boolean(Property):
 class Hierarchy(Property):
     def __init__(self, data):
         super(Hierarchy, self).__init__(data)
-        self.default = data.get('default')
-        self.delimiter = data.get('delimiter')
-        self.categories = data.get('categories', [])
-        self.paths = data.get('paths', [])
+        self.default = data.get('default')   #: :vartype: str
+        self.delimiter = data.get('delimiter')   #: :vartype: str
+        self.categories = data.get('categories', [])   #: :vartype: list
+        self.paths = data.get('paths', [])    #: :vartype: list
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -43,7 +43,7 @@ class Hierarchy(Property):
 class MultLinkSelectList(Property):
     def __init__(self, data):
         super(MultLinkSelectList, self).__init__(data)
-        self.items = data.get('items', [])
+        self.items = data.get('items', [])   #: :vartype: list
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -55,7 +55,7 @@ class MultLinkSelectList(Property):
 class SingleSelectList(Property):
     def __init__(self, data):
         super(SingleSelectList, self).__init__(data)
-        self.items = data.get('items', [])
+        self.items = data.get('items', [])    #: :vartype: list
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -67,10 +67,10 @@ class SingleSelectList(Property):
 class Number(Property):
     def __init__(self, data):
         super(Number, self).__init__(data)
-        self.default = data.get('default')
-        self.max_length = data.get('maxLength')
-        self.min_length = data.get('minLength')
-        self.units = data.get('units')
+        self.default = data.get('default')    #: :vartype: str
+        self.max_length = data.get('maxLength')   #: :vartype: int
+        self.min_length = data.get('minLength')   #: :vartype: int
+        self.units = data.get('units')    #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -82,10 +82,10 @@ class Number(Property):
 class Password(Property):
     def __init__(self, data):
         super(Password, self).__init__(data)
-        self.max_length = data.get('maxLength')
-        self.min_length = data.get('minLength')
-        self.pattern = data.get('pattern')
-        self.validate = data.get('validate')
+        self.max_length = data.get('maxLength')    #: :vartype: int
+        self.min_length = data.get('minLength')     #: :vartype: int
+        self.pattern = data.get('pattern')    #: :vartype: str
+        self.validate = data.get('validate')   #: :vartype: bool
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -97,10 +97,10 @@ class Password(Property):
 class Text(Property):
     def __init__(self, data):
         super(Text, self).__init__(data)
-        self.max_length = data.get('maxLength')
-        self.min_length = data.get('minLength')
-        self.pattern = data.get('pattern')
-        self.validate = data.get('validate')
+        self.max_length = data.get('maxLength')     #: :vartype: int
+        self.min_length = data.get('minLength')     #: :vartype: int
+        self.pattern = data.get('pattern')   #: :vartype: str
+        self.validate = data.get('validate')    #: :vartype: bool
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

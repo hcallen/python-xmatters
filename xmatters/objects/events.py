@@ -1,20 +1,19 @@
 import xmatters.factories
-import xmatters.utils as util
-import xmatters.objects.forms as forms
 from xmatters.connection import ApiBridge
 from xmatters.objects.common import Recipient, SelfLink
-from xmatters.utils import Pagination
-from xmatters.objects.event_supressions import EventSuppression
+from xmatters.objects.forms import FormReference
+from xmatters.utils import Pagination, TimeAttribute
+from xmatters.objects.event_suppressions import EventSuppression
 from xmatters.objects.people import PersonReference
 from xmatters.objects.plans import PlanReference
 
 
 class Message(object):
     def __init__(self, data):
-        self.id = data.get('id')
-        self.message_type = data.get('messageType')
-        self.subject = data.get('subject')
-        self.body = data.get('body')
+        self.id = data.get('id')    #: :vartype: str
+        self.message_type = data.get('messageType')    #: :vartype: str
+        self.subject = data.get('subject')   #: :vartype: str
+        self.body = data.get('body')    #: :vartype: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.subject)
@@ -25,10 +24,10 @@ class Message(object):
 
 class UserDeliveryResponse(object):
     def __init__(self, data):
-        self.text = data.get('text')
-        self.notification = data.get('notification')
+        self.text = data.get('text')    #: :vartype: str
+        self.notification = data.get('notification')  #: :vartype: str
         received = data.get('received')
-        self.received = util.TimeAttribute(received) if received else None
+        self.received = TimeAttribute(received) if received else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -39,10 +38,10 @@ class UserDeliveryResponse(object):
 
 class Conference(object):
     def __init__(self, data):
-        self.id = data.get('id')
-        self.bridge_id = data.get('bridgeId')
-        self.bridge_number = data.get('bridgeNumber')
-        self.type = data.get('type')
+        self.id = data.get('id')    #: :vartype: str
+        self.bridge_id = data.get('bridgeId')   #: :vartype: str
+        self.bridge_number = data.get('bridgeNumber')   #: :vartype: str
+        self.type = data.get('type')   #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -53,9 +52,9 @@ class Conference(object):
 
 class VoicemailOptions(object):
     def __init__(self, data):
-        self.retry = data.get('retry')
-        self.every = data.get('every')
-        self.leave = data.get('leave')
+        self.retry = data.get('retry')    #: :vartype: int
+        self.every = data.get('every')    #: :vartype: int
+        self.leave = data.get('leave')    #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -66,11 +65,11 @@ class VoicemailOptions(object):
 
 class Translation(object):
     def __init__(self, data):
-        self.id = data.get('id')
-        self.language = data.get('language')
-        self.text = data.get('text')
-        self.prompt = data.get('prompt')
-        self.description = data.get('description')
+        self.id = data.get('id')   #: :vartype: str
+        self.language = data.get('language')   #: :vartype: str
+        self.text = data.get('text')   #: :vartype: str
+        self.prompt = data.get('prompt')   #: :vartype: str
+        self.description = data.get('description')   #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -81,18 +80,18 @@ class Translation(object):
 
 class ResponseOption(object):
     def __init__(self, data):
-        self.id = data.get('id')
-        self.number = data.get('number')
-        self.text = data.get('text')
-        self.description = data.get('description')
-        self.prompt = data.get('prompt')
-        self.action = data.get('action')
-        self.contribution = data.get('contribution')
-        self.join_conference = data.get('joinConference')
-        self.allow_comments = data.get('allowComments')
-        self.redirect_rul = data.get('redirectUrl')
+        self.id = data.get('id')   #: :vartype: str
+        self.number = data.get('number')    #: :vartype: int
+        self.text = data.get('text')    #: :vartype: str
+        self.description = data.get('description')   #: :vartype: str
+        self.prompt = data.get('prompt')   #: :vartype: str
+        self.action = data.get('action')   #: :vartype: str
+        self.contribution = data.get('contribution')   #: :vartype: str
+        self.join_conference = data.get('joinConference')    #: :vartype: bool
+        self.allow_comments = data.get('allowComments')    #: :vartype: bool
+        self.redirect_rul = data.get('redirectUrl')    #: :vartype: str
         translations = data.get('translations', {}).get('data', [])
-        self.translations = [Translation(t) for t in translations]
+        self.translations = [Translation(t) for t in translations]    #: :vartype: [:class:`xmatters.objects.events.Translation`]
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -103,9 +102,9 @@ class ResponseOption(object):
 
 class ConferencePointer(object):
     def __init__(self, data):
-        self.bridge_id = data.get('bridgeId')
-        self.type = data.get('type')
-        self.bridge_number = data.get('bridgeNumber')
+        self.bridge_id = data.get('bridgeId')    #: :vartype: str
+        self.type = data.get('type')   #: :vartype: str
+        self.bridge_number = data.get('bridgeNumber')    #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -117,10 +116,10 @@ class ConferencePointer(object):
 class EventReference(ApiBridge):
     def __init__(self, parent, data):
         super(EventReference, self).__init__(parent, data)
-        self.id = data.get('id')
-        self.event_id = data.get('eventId')
+        self.id = data.get('id')   #: :vartype: str
+        self.event_id = data.get('eventId')    #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -132,17 +131,17 @@ class EventReference(ApiBridge):
 class Notification(ApiBridge):
     def __init__(self, parent, data):
         super(Notification, self).__init__(parent, data)
-        self.id = data.get('id')
-        self.recipient = Recipient(self, data.get('recipient'))
+        self.id = data.get('id')   #: :vartype: str
+        self.recipient = Recipient(self, data.get('recipient'))    #: :vartype: :class:`xmatters.objects.common.Recipient`
         created = data.get('created')
-        self.created = util.TimeAttribute(created) if created else None
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
         delivered = data.get('delivered')
-        self.delivered = util.TimeAttribute(delivered) if delivered else None
+        self.delivered = TimeAttribute(delivered) if delivered else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
         responded = data.get('responded')
-        self.responded = util.TimeAttribute(responded) if responded else None
-        self.delivery_status = data.get('deliveryStatus')
+        self.responded = TimeAttribute(responded) if responded else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.delivery_status = data.get('deliveryStatus')    #: :vartype: str
         responses = data.get('responses')
-        self.responses = [UserDeliveryResponse(r) for r in responses] if responses.get('data') else []
+        self.responses = [UserDeliveryResponse(r) for r in responses] if responses.get('data') else []    #: :vartype: [:class:`xmatters.objects.events.UserDeliveryResponse`]
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.recipient.target_name)
@@ -155,16 +154,16 @@ class UserDeliveryData(ApiBridge):
     def __init__(self, parent, data):
         super(UserDeliveryData, self).__init__(parent, data)
         event = data.get('event')
-        self.event = EventReference(self, event) if event else None
+        self.event = EventReference(self, event) if event else None    #: :vartype: :class:`xmatters.objects.events.EventReference`
         person = data.get('person')
-        self.person = PersonReference(self, person) if person else None
-        self.delivery_status = data.get('deliveryStatus')
+        self.person = PersonReference(self, person) if person else None    #: :vartype: :class:`xmatters.objects.people.PersonReference`
+        self.delivery_status = data.get('deliveryStatus')   #: :vartype: str
         notifications = data.get('notifications', {}).get('data')
-        self.notifications = [Notification(self, n) for n in notifications] if notifications else []
+        self.notifications = [Notification(self, n) for n in notifications] if notifications else []    #: :vartype: [:class:`xmatters.objects.events.Notification`]
         response = data.get('response')
-        self.response = UserDeliveryResponse(response) if response else None
+        self.response = UserDeliveryResponse(response) if response else None    #: :vartype: :class:`xmatters.objects.events.UserDeliveryResponse`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.person.target_name)
@@ -176,14 +175,14 @@ class UserDeliveryData(ApiBridge):
 class Annotation(ApiBridge):
     def __init__(self, parent, data):
         super(Annotation, self).__init__(parent, data)
-        self.id = data.get('id')
+        self.id = data.get('id')   #: :vartype: str
         event = data.get('event')
-        self.event = EventReference(self, event)
+        self.event = EventReference(self, event)    #: :vartype: :class:`xmatters.objects.events.EventReference`
         author = data.get('author')
-        self.author = PersonReference(self, author)
-        self.comment = data.get('comment')
+        self.author = PersonReference(self, author)    #: :vartype: :class:`xmatters.objects.people.PersonReference`
+        self.comment = data.get('comment')   #: :vartype: str
         created = data.get('created')
-        self.created = util.TimeAttribute(created) if created else None
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -207,37 +206,37 @@ class Event(ApiBridge):
 
     def __init__(self, parent, data):
         super(Event, self).__init__(parent, data)
-        self.bypass_phone_intro = data.get('bypassPhoneIntro')
+        self.bypass_phone_intro = data.get('bypassPhoneIntro')   #: :vartype: bool
         created = data.get('created')
-        self.created = util.TimeAttribute(created) if created else None
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
         conference = data.get('conference')
-        self.conference = Conference(conference) if conference else None
-        self.escalation_override = data.get('escalationOverride')
-        self.event_id = data.get('eventId')
-        self.event_type = data.get('eventType')
-        self.expiration_in_minutes = data.get('expirationInMinutes')
-        self.flood_control = data.get('floodControl')
+        self.conference = Conference(conference) if conference else None    #: :vartype: :class:`xmatters.objects.events.Conference`
+        self.escalation_override = data.get('escalationOverride')   #: :vartype: bool
+        self.event_id = data.get('eventId')  #: :vartype: str
+        self.event_type = data.get('eventType')   #: :vartype: str
+        self.expiration_in_minutes = data.get('expirationInMinutes')   #: :vartype: int
+        self.flood_control = data.get('floodControl')   #: :vartype: bool
         plan = data.get('plan')
-        self.plan = PlanReference(plan) if plan else None
+        self.plan = PlanReference(plan) if plan else None    #: :vartype: :class:`xmatters.objects.plans.PlanReference`
         form = data.get('form')
-        self.form = forms.FormReference(form) if form else None
-        self.id = data.get('id')
-        self.incident = data.get('incident')
-        self.override_device_restrictions = data.get('overrideDeviceRestrictions')
-        self.other_response_count = data.get('otherResponseCount')
-        self.other_response_count_threshold = data.get('otherResponseCountThreshold')
-        self.priority = data.get('priority')
-        self.require_phone_password = data.get('requirePhonePassword')
-        self.response_count_enabled = data.get('responseCountsEnabled')
+        self.form = FormReference(form) if form else None    #: :vartype: :class:`xmatters.objects.forms.FormReference`
+        self.id = data.get('id')   #: :vartype: str
+        self.incident = data.get('incident')   #: :vartype: str
+        self.override_device_restrictions = data.get('overrideDeviceRestrictions')   #: :vartype: bool
+        self.other_response_count = data.get('otherResponseCount')    #: :vartype: int
+        self.other_response_count_threshold = data.get('otherResponseCountThreshold')   #: :vartype: str
+        self.priority = data.get('priority')   #: :vartype: str
+        self.require_phone_password = data.get('requirePhonePassword')   #: :vartype: bool
+        self.response_count_enabled = data.get('responseCountsEnabled')   #: :vartype: bool
         submitter = data.get('submitter')
-        self.submitter = PersonReference(self, submitter) if submitter else None
-        self.status = data.get('status')
+        self.submitter = PersonReference(self, submitter) if submitter else None    #: :vartype: :class:`xmatters.objects.people.PersonReference`
+        self.status = data.get('status')   #: :vartype: str
         terminated = data.get('terminated')
-        self.terminated = util.TimeAttribute(terminated) if terminated else None
+        self.terminated = TimeAttribute(terminated) if terminated else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
         voicemail_options = data.get('voicemailOptions')
-        self.voicemail_options = VoicemailOptions(voicemail_options) if voicemail_options else None
+        self.voicemail_options = VoicemailOptions(voicemail_options) if voicemail_options else None    #: :vartype: :class:`xmatters.objects.events.VoicemailOptions`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
 
     @property
     def annotations(self):

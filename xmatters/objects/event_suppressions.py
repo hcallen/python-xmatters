@@ -6,8 +6,8 @@ import xmatters.utils as util
 
 class EventFloodFilter(object):
     def __init__(self, data):
-        self.id = data.get('id')
-        self.name = data.get('name')
+        self.id = data.get('id')   #: :vartype: str
+        self.name = data.get('name')    #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -19,10 +19,10 @@ class EventFloodFilter(object):
 class SuppressionMatch(ApiBridge):
     def __init__(self, parent, data):
         super(SuppressionMatch, self).__init__(parent, data)
-        self.id = data.get('id')
-        self.event_id = data.get('eventId')
+        self.id = data.get('id')    #: :vartype: str
+        self.event_id = data.get('eventId')   #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -35,14 +35,14 @@ class EventSuppression(ApiBridge):
     def __init__(self, parent, data):
         super(EventSuppression, self).__init__(parent, data)
         event = data.get('event')
-        self.event = events.EventReference(self, event) if event else None
+        self.event = events.EventReference(self, event) if event else None    #: :vartype: :class:`xmatters.objects.events.EventReference`
         match = data.get('match')
-        self.match = SuppressionMatch(self, data) if match else None
+        self.match = SuppressionMatch(self, data) if match else None    #: :vartype: :class:`xmatters.objects.event_suppressions.SuppressionMatch`
         at = data.get('at')
-        self.at = util.TimeAttribute(at) if at else None
+        self.at = util.TimeAttribute(at) if at else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
         filters = data.get('filters', [])
-        self.filter = [EventFloodFilter(f) for f in filters]
-        self.links = SelfLink(self, data.get('links'))
+        self.filter = [EventFloodFilter(f) for f in filters]    #: :vartype: [:class:`xmatters.objects.event_suppressions.EventFloodFilter`]
+        self.links = SelfLink(self, data.get('links'))    #: :vartype: :class:`xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
