@@ -77,7 +77,8 @@ for group in groups.get_groups():
 Any class instance with read_token and write_token methods should work as token_storage
 
 ```python
-from xmatters import XMSession, TokenFileStorage
+from xmatters import XMSession
+from xmatters.utils import TokenFileStorage
 
 token_storage = TokenFileStorage('/path/to/my_token.json')
 xm = XMSession('my_instance.xmatters.com')
@@ -91,7 +92,8 @@ for group in groups.get_groups():
 ### Timestamp conversion to local timezone
 
 ```python
-from xmatters import XMSession, TokenFileStorage
+from xmatters import XMSession
+from xmatters.utils import TokenFileStorage
 
 token_storage = TokenFileStorage('/path/to/my_token.json')
 xm = XMSession('my_instance.xmatters.com')
