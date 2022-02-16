@@ -37,7 +37,7 @@ class Incident(ApiBridge):
         self.commander = PersonReference(self, commander) if commander else None  #: :vartype: :class:`xmatters.objects.people.PersonReference`
         self.request_id = data.get('requestId')  #: :vartype: str
         impacted_services = data.get('impactedServices', [])
-        self.impacted_services = [Service(self, s) for s in impacted_services]  #: :vartype: [xmatters.objects.services.Service]
+        self.impacted_services = [Service(self, s) for s in impacted_services]  #: :vartype: list of xmatters.objects.services.Service
         reporter = data.get('reporter')
         self.reporter = PersonReference(self, reporter) if reporter else None  #: :vartype: :class:`xmatters.objects.people.PersonReference`
         created_at = data.get('createdAt')

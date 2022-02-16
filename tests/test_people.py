@@ -86,12 +86,6 @@ class TestGet:
             person_by_id = xm_test.people_endpoint().get_person_by_id(person.id)
             assert isinstance(person_by_id, Person)
 
-    @my_vcr.use_cassette('{}_test_get_by_query.json'.format(fn))
-    def test_get_by_query(self, xm_test):
-        people_by_first_name = list(xm_test.people_endpoint().get_people_by_query(first_name='David'))
-        assert iter(people_by_first_name)
-        assert len(people_by_first_name) > 0
-
     @my_vcr.use_cassette('{}_test_get_quota.json'.format(fn))
     def test_get_quota(self, xm_test):
         quotas = xm_test.people_endpoint().get_license_quotas()
@@ -105,7 +99,8 @@ class TestParams:
         person_property_name = settings.get('person_property_name')
         person_property_value = True
         people = list(
-            xm_test.people_endpoint().get_people(property_names=person_property_name, property_values=person_property_value))
+            xm_test.people_endpoint().get_people(property_names=person_property_name,
+                                                 property_values=person_property_value))
         assert iter(people)
         assert len(people) > 0
         for person in people:
