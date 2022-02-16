@@ -30,21 +30,21 @@ class Subscription(xmatters.connection.ApiBridge):
         self.name = data.get('name')    #: :vartype: str
         self.description = data.get('description')    #: :vartype: str
         form = data.get('form')
-        self.form = xmatters.objects.forms.FormReference(form) if form else None    #: :vartype: :class:`xmatters.objects.forms.FormReference`
+        self.form = xmatters.objects.forms.FormReference(form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
         owner = data.get('owner')
 
-        self.owner = xmatters.objects.people.PersonReference(self, owner)    #: :vartype: :class:`xmatters.objects.people.PersonReference`
+        self.owner = xmatters.objects.people.PersonReference(self, owner)    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         self.notification_delay = data.get('notificationDelay')    #: :vartype: int
         criteria = data.get('criteria', {})
-        self.criteria = Pagination(self, criteria, SubscriptionCriteriaReference) if criteria.get('data') else []    #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.subscriptions.SubscriptionCriteriaReference`
+        self.criteria = Pagination(self, criteria, SubscriptionCriteriaReference) if criteria.get('data') else []    #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.subscriptions.SubscriptionCriteriaReference`
         r = data.get('recipients', {})
-        self.recipients = Pagination(self, r, factory.RecipientFactory) if r.get('data') else []    #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.utils.RecipientFactory`
+        self.recipients = Pagination(self, r, factory.RecipientFactory) if r.get('data') else []    #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.utils.RecipientFactory`
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []    #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.utils.DeviceNameFactory`
+        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []    #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.utils.DeviceNameFactory`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def get_subscribers(self, params=None, **kwargs):
         url = self.get_url(self._endpoints.get('get_subscribers'))

@@ -82,7 +82,7 @@ Example using token storage
 
 .. note::
 
-    :class:`xmatters.utils.TokenFileStorage` is used in this example. Any object with **read_token** and
+    :class:`~xmatters.utils.TokenFileStorage` is used in this example. Any object with **read_token** and
     **write_token** methods can be used.
 
 .. code-block:: python

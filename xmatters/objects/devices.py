@@ -23,10 +23,10 @@ class Device(Recipient):
         self.device_type = data.get('deviceType')    #: :vartype: str
         self.name = data.get('name')    #: :vartype: str
         owner = data.get('owner')
-        self.owner = PersonReference(self, owner) if owner else None    #: :vartype: :class:`xmatters.objects.people.PersonReference`
+        self.owner = PersonReference(self, owner) if owner else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.priority_threshold = data.get('priorityThreshold')    #: :vartype: str
         provider = data.get('provider')
-        self.provider = ReferenceById(provider) if provider else None    #: :vartype: :class:`xmatters.objects.common.ReferenceById`
+        self.provider = ReferenceById(provider) if provider else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
         self.sequence = data.get('sequence')    #: :vartype: int
         self.test_status = data.get('testStatus')    #: :vartype: str
 
@@ -40,7 +40,7 @@ class Device(Recipient):
         Get device timeframes
 
         :return: list
-        :rtype: list[:class:`xmatters.objects.devices.DeviceTimeframe`]
+        :rtype: list[:class:`~xmatters.objects.devices.DeviceTimeframe`]
         """
         url = self.get_url('?embed=timeframes')
         data = self.con.get(url).get('timeframes', {}).get('data', [])

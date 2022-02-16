@@ -47,14 +47,14 @@ class Endpoint(ApiBridge):
         super(Endpoint, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
         plan = data.get('plan')
-        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None    #: :vartype: :class:`xmatters.objects.plans.PlanReference`
+        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
         self.url = data.get('url')   #: :vartype: str
         self.endpoint_type = data.get('endpointType')   #: :vartype: str
         self.authentication_type = data.get('authenticationType')   #: :vartype: str
         auth = data.get('authentication')
-        self.authentication = xmatters.factories.AuthFactory.construct(self, data) if auth else None    #: :vartype: :class:`xmatters.factories.AuthFactory`
+        self.authentication = xmatters.factories.AuthFactory.construct(self, data) if auth else None    #: :vartype: :class:`~xmatters.factories.AuthFactory`
         links = data.get('links')
-        self.links = xmatters.objects.common.SelfLink(self, data) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = xmatters.objects.common.SelfLink(self, data) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
         self.trust_self_signed = data.get('trustSelfSigned')    #: :vartype: bool
         self.preemptive = data.get('preemptive')   #: :vartype: bool
         self.data = data.get('data')   #: :vartype: str

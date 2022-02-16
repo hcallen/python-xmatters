@@ -62,9 +62,9 @@ class Plan(ApiBridge):
         self.accessible = data.get('accessibleByAll')    #: :vartype: bool
         self.flood_control = data.get('floodControl')    #: :vartype: bool
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
         self.position = data.get('position')   #: :vartype: int
 
     @property
@@ -102,7 +102,7 @@ class Plan(ApiBridge):
         Get plan creator
 
         :return: Plan creator
-        :rtype: :class:`xmatters.objects.people.Person`
+        :rtype: :class:`~xmatters.objects.people.Person`
         """
         url = self.get_url(self._endpoints.get('creator'))
         creator = self.con.get(url).get('creator')

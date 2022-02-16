@@ -29,7 +29,7 @@ class ScenarioPermissionPerson(ScenarioPermission):
         super(ScenarioPermissionPerson, self).__init__(parent, data)
         person = data.get('person')
         self.person = xmatters.objects.people.PersonReference(self,
-                                                              person) if person else None  #: :vartype: :class:`xmatters.objects.people.PersonReference`
+                                                              person) if person else None  #: :vartype: :class:`~xmatters.objects.people.PersonReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -43,7 +43,7 @@ class ScenarioPermissionRole(ScenarioPermission):
         super(ScenarioPermissionRole, self).__init__(parent, data)
         role = data.get('role')
         self.role = xmatters.objects.roles.Role(
-            role) if role else None  #: :vartype: :class:`xmatters.objects.roles.Role`
+            role) if role else None  #: :vartype: :class:`~xmatters.objects.roles.Role`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -72,20 +72,20 @@ class Scenario(xmatters.connection.ApiBridge):
         self.require_phone_password = data.get('requirePhonePassword')  #: :vartype: bool
         sos = data.get('senderOverrides')
         self.sender_overrides = xmatters.objects.forms.SenderOverrides(
-            sos) if sos else None  #: :vartype: :class:`xmatters.objects.forms.SenderOverrides`
+            sos) if sos else None  #: :vartype: :class:`~xmatters.objects.forms.SenderOverrides`
         vm_opts = data.get('voicemailOptions')
         self.voicemail_options = xmatters.objects.events.VoicemailOptions(
-            vm_opts) if vm_opts else None  #: :vartype: :class:`xmatters.objects.events.VoicemailOptions`
+            vm_opts) if vm_opts else None  #: :vartype: :class:`~xmatters.objects.events.VoicemailOptions`
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []  #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.utils.DeviceNameFactory`
+        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []  #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.utils.DeviceNameFactory`
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None  #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.created = xmatters.utils.TimeAttribute(created) if created else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         perm = data.get('permitted', {}).get('data')
-        self.permitted = [factory.ScenarioPermFactory.construct(self, p) for p in perm] if perm else []  #: :vartype: [:class:`xmatters.factories.ScenarioPermFactory.compose(self, p)]`
+        self.permitted = [factory.ScenarioPermFactory.construct(self, p) for p in perm] if perm else []  #: :vartype: [:class:`~xmatters.factories.ScenarioPermFactory.compose(self, p)]`
         rs = data.get('recipients')
-        self.recipients = Pagination(self, rs, factory.RecipientFactory) if rs.get('data') else []  #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.utils.RecipientFactory`
+        self.recipients = Pagination(self, rs, factory.RecipientFactory) if rs.get('data') else []  #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.utils.RecipientFactory`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     @property
     def properties(self):

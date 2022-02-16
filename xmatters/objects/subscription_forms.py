@@ -20,17 +20,17 @@ class SubscriptionForm(xmatters.connection.ApiBridge):
         self.name = data.get('name')   #: :vartype: str
         self.description = data.get('description')   #: :vartype: str
         plan = data.get('plan')
-        self.plan = xmatters.objects.plans.PlanReference(data) if plan else None    #: :vartype: :class:`xmatters.objects.plans.PlanReference`
+        self.plan = xmatters.objects.plans.PlanReference(data) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
         self.scope = data.get('scope')    #: :vartype: str
         form = data.get('form')
-        self.form = xmatters.objects.forms.FormReference(form) if form else None    #: :vartype: :class:`xmatters.objects.forms.FormReference`
+        self.form = xmatters.objects.forms.FormReference(form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         self.one_way = data.get('oneWay')    #: :vartype: bool
         self.subscribe_others = data.get('subscribeOthers')    #: :vartype: bool
         self.notification_delay = data.get('notificationDelay')   #: :vartype: int
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     @property
     def target_device_names(self):
@@ -72,7 +72,7 @@ class SubscriptionFormReference(object):
         self.id = data.get('id')    #: :vartype: str
         self.name = data.get('name')   #: :vartype: str
         plan = data.get('plan')
-        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None    #: :vartype: :class:`xmatters.objects.plans.PlanReference`
+        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

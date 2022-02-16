@@ -27,7 +27,7 @@ class UserDeliveryResponse(object):
         self.text = data.get('text')    #: :vartype: str
         self.notification = data.get('notification')  #: :vartype: str
         received = data.get('received')
-        self.received = TimeAttribute(received) if received else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.received = TimeAttribute(received) if received else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -91,7 +91,7 @@ class ResponseOption(object):
         self.allow_comments = data.get('allowComments')    #: :vartype: bool
         self.redirect_rul = data.get('redirectUrl')    #: :vartype: str
         translations = data.get('translations', {}).get('data', [])
-        self.translations = [Translation(t) for t in translations]    #: :vartype: [:class:`xmatters.objects.events.Translation`]
+        self.translations = [Translation(t) for t in translations]    #: :vartype: [:class:`~xmatters.objects.events.Translation`]
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -119,7 +119,7 @@ class EventReference(ApiBridge):
         self.id = data.get('id')   #: :vartype: str
         self.event_id = data.get('eventId')    #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -132,16 +132,16 @@ class Notification(ApiBridge):
     def __init__(self, parent, data):
         super(Notification, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
-        self.recipient = Recipient(self, data.get('recipient'))    #: :vartype: :class:`xmatters.objects.common.Recipient`
+        self.recipient = Recipient(self, data.get('recipient'))    #: :vartype: :class:`~xmatters.objects.common.Recipient`
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         delivered = data.get('delivered')
-        self.delivered = TimeAttribute(delivered) if delivered else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.delivered = TimeAttribute(delivered) if delivered else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         responded = data.get('responded')
-        self.responded = TimeAttribute(responded) if responded else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.responded = TimeAttribute(responded) if responded else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         self.delivery_status = data.get('deliveryStatus')    #: :vartype: str
         responses = data.get('responses')
-        self.responses = [UserDeliveryResponse(r) for r in responses] if responses.get('data') else []    #: :vartype: [:class:`xmatters.objects.events.UserDeliveryResponse`]
+        self.responses = [UserDeliveryResponse(r) for r in responses] if responses.get('data') else []    #: :vartype: [:class:`~xmatters.objects.events.UserDeliveryResponse`]
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.recipient.target_name)
@@ -154,16 +154,16 @@ class UserDeliveryData(ApiBridge):
     def __init__(self, parent, data):
         super(UserDeliveryData, self).__init__(parent, data)
         event = data.get('event')
-        self.event = EventReference(self, event) if event else None    #: :vartype: :class:`xmatters.objects.events.EventReference`
+        self.event = EventReference(self, event) if event else None    #: :vartype: :class:`~xmatters.objects.events.EventReference`
         person = data.get('person')
-        self.person = PersonReference(self, person) if person else None    #: :vartype: :class:`xmatters.objects.people.PersonReference`
+        self.person = PersonReference(self, person) if person else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.delivery_status = data.get('deliveryStatus')   #: :vartype: str
         notifications = data.get('notifications', {}).get('data')
-        self.notifications = [Notification(self, n) for n in notifications] if notifications else []    #: :vartype: [:class:`xmatters.objects.events.Notification`]
+        self.notifications = [Notification(self, n) for n in notifications] if notifications else []    #: :vartype: [:class:`~xmatters.objects.events.Notification`]
         response = data.get('response')
-        self.response = UserDeliveryResponse(response) if response else None    #: :vartype: :class:`xmatters.objects.events.UserDeliveryResponse`
+        self.response = UserDeliveryResponse(response) if response else None    #: :vartype: :class:`~xmatters.objects.events.UserDeliveryResponse`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.person.target_name)
@@ -177,12 +177,12 @@ class Annotation(ApiBridge):
         super(Annotation, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
         event = data.get('event')
-        self.event = EventReference(self, event)    #: :vartype: :class:`xmatters.objects.events.EventReference`
+        self.event = EventReference(self, event)    #: :vartype: :class:`~xmatters.objects.events.EventReference`
         author = data.get('author')
-        self.author = PersonReference(self, author)    #: :vartype: :class:`xmatters.objects.people.PersonReference`
+        self.author = PersonReference(self, author)    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.comment = data.get('comment')   #: :vartype: str
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -208,18 +208,18 @@ class Event(ApiBridge):
         super(Event, self).__init__(parent, data)
         self.bypass_phone_intro = data.get('bypassPhoneIntro')   #: :vartype: bool
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         conference = data.get('conference')
-        self.conference = Conference(conference) if conference else None    #: :vartype: :class:`xmatters.objects.events.Conference`
+        self.conference = Conference(conference) if conference else None    #: :vartype: :class:`~xmatters.objects.events.Conference`
         self.escalation_override = data.get('escalationOverride')   #: :vartype: bool
         self.event_id = data.get('eventId')  #: :vartype: str
         self.event_type = data.get('eventType')   #: :vartype: str
         self.expiration_in_minutes = data.get('expirationInMinutes')   #: :vartype: int
         self.flood_control = data.get('floodControl')   #: :vartype: bool
         plan = data.get('plan')
-        self.plan = PlanReference(plan) if plan else None    #: :vartype: :class:`xmatters.objects.plans.PlanReference`
+        self.plan = PlanReference(plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
         form = data.get('form')
-        self.form = FormReference(form) if form else None    #: :vartype: :class:`xmatters.objects.forms.FormReference`
+        self.form = FormReference(form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
         self.id = data.get('id')   #: :vartype: str
         self.incident = data.get('incident')   #: :vartype: str
         self.override_device_restrictions = data.get('overrideDeviceRestrictions')   #: :vartype: bool
@@ -229,14 +229,14 @@ class Event(ApiBridge):
         self.require_phone_password = data.get('requirePhonePassword')   #: :vartype: bool
         self.response_count_enabled = data.get('responseCountsEnabled')   #: :vartype: bool
         submitter = data.get('submitter')
-        self.submitter = PersonReference(self, submitter) if submitter else None    #: :vartype: :class:`xmatters.objects.people.PersonReference`
+        self.submitter = PersonReference(self, submitter) if submitter else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.status = data.get('status')   #: :vartype: str
         terminated = data.get('terminated')
-        self.terminated = TimeAttribute(terminated) if terminated else None    #: :vartype: :class:`xmatters.utils.TimeAttribute`
+        self.terminated = TimeAttribute(terminated) if terminated else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         voicemail_options = data.get('voicemailOptions')
-        self.voicemail_options = VoicemailOptions(voicemail_options) if voicemail_options else None    #: :vartype: :class:`xmatters.objects.events.VoicemailOptions`
+        self.voicemail_options = VoicemailOptions(voicemail_options) if voicemail_options else None    #: :vartype: :class:`~xmatters.objects.events.VoicemailOptions`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     @property
     def annotations(self):

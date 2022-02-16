@@ -18,10 +18,10 @@ class GroupMembershipShiftReference(xmatters.connection.ApiBridge):
         self.id = data.get('id')  #: :vartype: str
         group = data.get('group')
         self.group = xmatters.objects.shifts.GroupReference(self,
-                                                            group) if group else None  #: :vartype: :class:`xmatters.objects.shifts.GroupReference`
+                                                            group) if group else None  #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
         self.name = data.get('name')  #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -37,13 +37,13 @@ class GroupMembership(xmatters.connection.ApiBridge):
         super(GroupMembership, self).__init__(parent, data)
         group = data.get('group')
         self.group = xmatters.objects.shifts.GroupReference(self,
-                                                            group) if group else None  #: :vartype: :class:`xmatters.objects.shifts.GroupReference`
+                                                            group) if group else None  #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
         member = data.get('member')
         self.member = RecipientReference(self,
-                                         member) if member else None  #: :vartype: :class:`xmatters.objects.common.RecipientReference`
+                                         member) if member else None  #: :vartype: :class:`~xmatters.objects.common.RecipientReference`
         shifts = data.get('shifts', {})
         self.shifts = Pagination(self, shifts, GroupMembershipShiftReference) if shifts.get(
-            'data') else []  #: :vartype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.groups.GroupMembershipShiftReference`
+            'data') else []  #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.groups.GroupMembershipShiftReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -72,11 +72,11 @@ class Group(Recipient):
         self.use_default_devices = data.get('responseCountThreshold')  #: :vartype: bool
         created = data.get('created')
         self.created = xmatters.utils.TimeAttribute(
-            created) if created else None  #: :vartype: :class:`xmatters.utils.TimeAttribute`
+            created) if created else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         self.group_type = data.get('groupType')  #: :vartype: str
         site = data.get('site')
         self.site = ReferenceByIdAndSelfLink(self,
-                                             site) if site else None  #: :vartype: :class:`xmatters.objects.common.ReferenceByIdAndSelfLink`
+                                             site) if site else None  #: :vartype: :class:`~xmatters.objects.common.ReferenceByIdAndSelfLink`
         self.services = data.get('services', [])  #: :vartype: list
 
     @property
@@ -151,7 +151,7 @@ class GroupQuota(object):
         self.group_quota_enabled = data.get('groupQuotaEnabled')  #:
         groups = data.get('groups')
         self.stakeholder_users = QuotaItem(
-            groups) if groups else None  #: :vartype: :class:`xmatters.objects.common.QuotaItem`
+            groups) if groups else None  #: :vartype: :class:`~xmatters.objects.common.QuotaItem`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

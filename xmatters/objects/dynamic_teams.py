@@ -30,9 +30,9 @@ class DynamicTeam(Recipient):
         self.description = data.get('description')  #: :vartype: str
         criteria = data.get('criteria')
         self.criteria = DynamicTeamsCriterion(
-            criteria) if criteria else None  #: :vartype: :class:`xmatters.objects.dynamic_teams.DynamicTeamsCriterion`
+            criteria) if criteria else None  #: :vartype: :class:`~xmatters.objects.dynamic_teams.DynamicTeamsCriterion`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     @property
     def observers(self):

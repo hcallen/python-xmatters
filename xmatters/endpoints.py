@@ -33,7 +33,7 @@ class AttachmentsEndpoint(ApiBridge):
     def upload_attachment(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.attachments.Attachments`
+        :rtype: :class:`~xmatters.objects.attachments.Attachments`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -49,7 +49,7 @@ class AuditsEndpoint(ApiBridge):
     def get_audits(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.factories.AuditFactory`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.factories.AuditFactory`
         """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
@@ -71,7 +71,7 @@ class DevicesEndpoint(ApiBridge):
     def get_devices(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.factories.DeviceFactory`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.factories.DeviceFactory`
         """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
@@ -80,7 +80,7 @@ class DevicesEndpoint(ApiBridge):
     def get_device_by_id(self, device_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.factories.DeviceFactory`
+        :rtype: :class:`~xmatters.factories.DeviceFactory`
         """
         url = self.get_url(device_id)
         data = self.con.get(url=url, params=params, **kwargs)
@@ -89,7 +89,7 @@ class DevicesEndpoint(ApiBridge):
     def create_device(self, data):
         """
 
-        :rtype: :class:`xmatters.factories.DeviceFactory`
+        :rtype: :class:`~xmatters.factories.DeviceFactory`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -98,7 +98,7 @@ class DevicesEndpoint(ApiBridge):
     def update_device(self, data):
         """
 
-        :rtype: :class:`xmatters.factories.DeviceFactory`
+        :rtype: :class:`~xmatters.factories.DeviceFactory`
         """
         url = self.get_url()
         data = self.con.post(url=url, data=data)
@@ -107,7 +107,7 @@ class DevicesEndpoint(ApiBridge):
     def delete_device(self, device_id):
         """
 
-        :rtype: :class:`xmatters.factories.DeviceFactory`
+        :rtype: :class:`~xmatters.factories.DeviceFactory`
         """
         url = self.get_url(device_id)
         data = self.con.delete(url=url)
@@ -129,7 +129,7 @@ class DeviceNamesEndpoint(ApiBridge):
     def get_device_names(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.factories.DeviceNameFactory`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.factories.DeviceNameFactory`
         """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
@@ -138,7 +138,7 @@ class DeviceNamesEndpoint(ApiBridge):
     def create_device_name(self, data):
         """
 
-        :rtype: :class:`xmatters.factories.DeviceNameFactory`
+        :rtype: :class:`~xmatters.factories.DeviceNameFactory`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -147,7 +147,7 @@ class DeviceNamesEndpoint(ApiBridge):
     def update_device_name(self, data):
         """
 
-        :rtype: :class:`xmatters.factories.DeviceNameFactory`
+        :rtype: :class:`~xmatters.factories.DeviceNameFactory`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -156,7 +156,7 @@ class DeviceNamesEndpoint(ApiBridge):
     def delete_device_name(self, device_name_id):
         """
 
-        :rtype: :class:`xmatters.factories.DeviceNameFactory`
+        :rtype: :class:`~xmatters.factories.DeviceNameFactory`
         """
         url = self.get_url(device_name_id)
         data = self.con.delete(url)
@@ -177,7 +177,7 @@ class DeviceTypesEndpoint(ApiBridge):
     def get_device_types(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.device_types.DeviceNameFactory`
+        :rtype: :class:`~xmatters.objects.device_types.DeviceNameFactory`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -198,7 +198,7 @@ class DynamicTeamsEndpoint(ApiBridge):
     def get_dynamic_teams(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.dynamic_teams.DynamicTeam`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.dynamic_teams.DynamicTeam`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -207,7 +207,7 @@ class DynamicTeamsEndpoint(ApiBridge):
     def get_dynamic_team_by_id(self, dynamic_team_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.dynamic_teams.DynamicTeam`
+        :rtype: :class:`~xmatters.objects.dynamic_teams.DynamicTeam`
         """
         url = self.get_url(dynamic_team_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -216,7 +216,7 @@ class DynamicTeamsEndpoint(ApiBridge):
     def create_dynamic_team(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.dynamic_teams.DynamicTeam`
+        :rtype: :class:`~xmatters.objects.dynamic_teams.DynamicTeam`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -225,7 +225,7 @@ class DynamicTeamsEndpoint(ApiBridge):
     def update_dynamic_team(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.dynamic_teams.DynamicTeam`
+        :rtype: :class:`~xmatters.objects.dynamic_teams.DynamicTeam`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -234,7 +234,7 @@ class DynamicTeamsEndpoint(ApiBridge):
     def delete_dynamic_team(self, dynamic_team_id):
         """
 
-        :rtype: :class:`xmatters.objects.dynamic_teams.DynamicTeam`
+        :rtype: :class:`~xmatters.objects.dynamic_teams.DynamicTeam`
         """
         url = self.get_url(dynamic_team_id)
         data = self.con.delete(url=url)
@@ -255,7 +255,7 @@ class EventsEndpoint(ApiBridge):
     def get_events(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.events.Event`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.events.Event`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -264,7 +264,7 @@ class EventsEndpoint(ApiBridge):
     def get_event_by_id(self, event_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.events.Event`
+        :rtype: :class:`~xmatters.objects.events.Event`
         """
         url = self.get_url(event_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -273,7 +273,7 @@ class EventsEndpoint(ApiBridge):
     def change_event_status(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.events.Event`
+        :rtype: :class:`~xmatters.objects.events.Event`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -294,7 +294,7 @@ class EventSuppressionsEndpoint(ApiBridge):
     def get_suppressions_by_event_id(self, event_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.event_suppressions.EventSuppression`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.event_suppressions.EventSuppression`
         """
         url = self.get_url(event_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -315,7 +315,7 @@ class ConferenceBridgesEndpoint(ApiBridge):
     def get_conference_bridges(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.conference_bridges.ConferenceBridge`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.conference_bridges.ConferenceBridge`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -324,7 +324,7 @@ class ConferenceBridgesEndpoint(ApiBridge):
     def get_conference_bridge_by_id(self, bridge_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.conference_bridges.ConferenceBridge`
+        :rtype: :class:`~xmatters.objects.conference_bridges.ConferenceBridge`
         """
         url = self.get_url(bridge_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -333,7 +333,7 @@ class ConferenceBridgesEndpoint(ApiBridge):
     def create_conference_bridge(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.conference_bridges.ConferenceBridge`
+        :rtype: :class:`~xmatters.objects.conference_bridges.ConferenceBridge`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -342,7 +342,7 @@ class ConferenceBridgesEndpoint(ApiBridge):
     def update_conference_bridge(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.conference_bridges.ConferenceBridge`
+        :rtype: :class:`~xmatters.objects.conference_bridges.ConferenceBridge`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -351,7 +351,7 @@ class ConferenceBridgesEndpoint(ApiBridge):
     def delete_conference_bridge(self, bridge_id):
         """
 
-        :rtype: :class:`xmatters.objects.conference_bridges.ConferenceBridge`
+        :rtype: :class:`~xmatters.objects.conference_bridges.ConferenceBridge`
         """
         url = self.get_url(bridge_id)
         data = self.con.delete(url=url)
@@ -372,7 +372,7 @@ class FormsEndpoint(ApiBridge):
     def get_forms(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.forms.Form`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.forms.Form`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -381,7 +381,7 @@ class FormsEndpoint(ApiBridge):
     def get_form_by_id(self, form_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.forms.Form`
+        :rtype: :class:`~xmatters.objects.forms.Form`
         """
         url = self.get_url(form_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -402,7 +402,7 @@ class GroupsEndpoint(ApiBridge):
     def get_groups(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.groups.Group`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.groups.Group`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -411,7 +411,7 @@ class GroupsEndpoint(ApiBridge):
     def get_group_by_id(self, group_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.groups.Group`
+        :rtype: :class:`~xmatters.objects.groups.Group`
         """
         url = self.get_url(group_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -420,7 +420,7 @@ class GroupsEndpoint(ApiBridge):
     def get_license_quotas(self):
         """
 
-        :rtype: :class:`xmatters.objects.groups.GroupQuota`
+        :rtype: :class:`~xmatters.objects.groups.GroupQuota`
         """
         url = self.get_url('/license-quotas')
         data = self.con.get(url)
@@ -429,7 +429,7 @@ class GroupsEndpoint(ApiBridge):
     def create_group(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.groups.Group`
+        :rtype: :class:`~xmatters.objects.groups.Group`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -438,7 +438,7 @@ class GroupsEndpoint(ApiBridge):
     def update_group(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.groups.Group`
+        :rtype: :class:`~xmatters.objects.groups.Group`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -447,7 +447,7 @@ class GroupsEndpoint(ApiBridge):
     def delete_group(self, group_id):
         """
 
-        :rtype: :class:`xmatters.objects.groups.Group`
+        :rtype: :class:`~xmatters.objects.groups.Group`
         """
         url = self.get_url(group_id)
         data = self.con.delete(url)
@@ -467,7 +467,7 @@ class ImportsEndpoint(ApiBridge):
     def get_import_jobs(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.imports.Import`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.imports.Import`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs).get('data', {})
@@ -476,7 +476,7 @@ class ImportsEndpoint(ApiBridge):
     def get_import_job_by_id(self, import_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.imports.Import`
+        :rtype: :class:`~xmatters.objects.imports.Import`
         """
         url = self.get_url(import_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -497,7 +497,7 @@ class IncidentsEndpoint(ApiBridge):
     def get_incidents(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.incidents.Incident`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.incidents.Incident`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -506,7 +506,7 @@ class IncidentsEndpoint(ApiBridge):
     def get_incident_by_id(self, incident_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.incidents.Incident`
+        :rtype: :class:`~xmatters.objects.incidents.Incident`
         """
         url = self.get_url(incident_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -515,7 +515,7 @@ class IncidentsEndpoint(ApiBridge):
     def update_incident(self, incident_id, data):
         """
 
-        :rtype: :class:`xmatters.objects.incidents.Incident`
+        :rtype: :class:`~xmatters.objects.incidents.Incident`
         """
         url = self.get_url(incident_id)
         data = self.con.post(url, data=data)
@@ -536,7 +536,7 @@ class OnCallEndpoint(ApiBridge):
     def get_oncall(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.oncall.OnCall`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.oncall.OnCall`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -557,7 +557,7 @@ class OnCallSummaryEndpoint(ApiBridge):
     def get_oncall_summary(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.oncall_summary.OnCallSummary`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.oncall_summary.OnCallSummary`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -578,7 +578,7 @@ class PeopleEndpoint(ApiBridge):
     def get_people(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.people.Person`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.people.Person`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -587,7 +587,7 @@ class PeopleEndpoint(ApiBridge):
     def get_person_by_id(self, person_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.people.Person`
+        :rtype: :class:`~xmatters.objects.people.Person`
         """
         url = self.get_url(person_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -596,7 +596,7 @@ class PeopleEndpoint(ApiBridge):
     def get_license_quotas(self):
         """
 
-        :rtype: :class:`xmatters.objects.people.UserQuota`
+        :rtype: :class:`~xmatters.objects.people.UserQuota`
         """
         url = self.get_url('license-quotas')
         data = self.con.get(url)
@@ -605,7 +605,7 @@ class PeopleEndpoint(ApiBridge):
     def create_person(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.people.Person`
+        :rtype: :class:`~xmatters.objects.people.Person`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -614,7 +614,7 @@ class PeopleEndpoint(ApiBridge):
     def update_person(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.people.Person`
+        :rtype: :class:`~xmatters.objects.people.Person`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -623,7 +623,7 @@ class PeopleEndpoint(ApiBridge):
     def delete_person(self, person_id):
         """
 
-        :rtype: :class:`xmatters.objects.people.Person`
+        :rtype: :class:`~xmatters.objects.people.Person`
         """
         url = self.get_url(person_id)
         data = self.con.delete(url)
@@ -644,7 +644,7 @@ class PlansEndpoint(ApiBridge):
     def get_plans(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.plans.Plan`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.plans.Plan`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -653,7 +653,7 @@ class PlansEndpoint(ApiBridge):
     def get_plan_by_id(self, plan_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.plans.Plan`
+        :rtype: :class:`~xmatters.objects.plans.Plan`
         """
         url = self.get_url(plan_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -662,7 +662,7 @@ class PlansEndpoint(ApiBridge):
     def create_plan(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.plans.Plan`
+        :rtype: :class:`~xmatters.objects.plans.Plan`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -671,7 +671,7 @@ class PlansEndpoint(ApiBridge):
     def update_plan(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.plans.Plan`
+        :rtype: :class:`~xmatters.objects.plans.Plan`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -680,7 +680,7 @@ class PlansEndpoint(ApiBridge):
     def delete_plan(self, plan_id):
         """
 
-        :rtype: :class:`xmatters.objects.plans.Plan`
+        :rtype: :class:`~xmatters.objects.plans.Plan`
         """
         url = self.get_url(plan_id)
         data = self.con.delete(url)
@@ -701,7 +701,7 @@ class RolesEndpoint(ApiBridge):
     def get_roles(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.roles.Role`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.roles.Role`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -722,7 +722,7 @@ class ScenariosEndpoint(ApiBridge):
     def get_scenarios(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.scenarios.Scenario`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.scenarios.Scenario`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -731,7 +731,7 @@ class ScenariosEndpoint(ApiBridge):
     def get_scenario_by_id(self, scenario_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.scenarios.Scenario`
+        :rtype: :class:`~xmatters.objects.scenarios.Scenario`
         """
         url = self.get_url(scenario_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -752,7 +752,7 @@ class ServicesEndpoint(ApiBridge):
     def get_services(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.services.Service`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.services.Service`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -761,7 +761,7 @@ class ServicesEndpoint(ApiBridge):
     def get_service_by_id(self, service_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.services.Service`
+        :rtype: :class:`~xmatters.objects.services.Service`
         """
         url = self.get_url(service_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -770,7 +770,7 @@ class ServicesEndpoint(ApiBridge):
     def create_service(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.services.Service`
+        :rtype: :class:`~xmatters.objects.services.Service`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -779,7 +779,7 @@ class ServicesEndpoint(ApiBridge):
     def update_service(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.services.Service`
+        :rtype: :class:`~xmatters.objects.services.Service`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -788,7 +788,7 @@ class ServicesEndpoint(ApiBridge):
     def delete_service(self, service_id):
         """
 
-        :rtype: :class:`xmatters.objects.services.Service`
+        :rtype: :class:`~xmatters.objects.services.Service`
         """
         url = self.get_url(service_id)
         data = self.con.delete(url)
@@ -809,7 +809,7 @@ class SitesEndpoint(ApiBridge):
     def get_sites(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.sites.Site`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.sites.Site`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -818,7 +818,7 @@ class SitesEndpoint(ApiBridge):
     def get_site_by_id(self, site_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.sites.Site`
+        :rtype: :class:`~xmatters.objects.sites.Site`
         """
         url = self.get_url(site_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -827,7 +827,7 @@ class SitesEndpoint(ApiBridge):
     def create_site(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.sites.Site`
+        :rtype: :class:`~xmatters.objects.sites.Site`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -836,7 +836,7 @@ class SitesEndpoint(ApiBridge):
     def update_site(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.sites.Site`
+        :rtype: :class:`~xmatters.objects.sites.Site`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -845,7 +845,7 @@ class SitesEndpoint(ApiBridge):
     def delete_site(self, site_id):
         """
 
-        :rtype: :class:`xmatters.objects.sites.Site`
+        :rtype: :class:`~xmatters.objects.sites.Site`
         """
         url = self.get_url(site_id)
         data = self.con.delete(url)
@@ -866,7 +866,7 @@ class SubscriptionsEndpoint(ApiBridge):
     def get_subscriptions(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.subscriptions.Subscription`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.subscriptions.Subscription`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -875,7 +875,7 @@ class SubscriptionsEndpoint(ApiBridge):
     def get_subscription_by_id(self, subscription_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.subscriptions.Subscription`
+        :rtype: :class:`~xmatters.objects.subscriptions.Subscription`
         """
         url = self.get_url(subscription_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -884,7 +884,7 @@ class SubscriptionsEndpoint(ApiBridge):
     def get_subscribers(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.people.Person`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.people.Person`
         """
         url = self.get_url('/subscribers')
         subscribers = self.con.get(url, params=params, **kwargs)
@@ -893,7 +893,7 @@ class SubscriptionsEndpoint(ApiBridge):
     def unsubscribe_person(self, person_id):
         """
 
-        :rtype: :class:`xmatters.objects.subscriptions.Subscription`
+        :rtype: :class:`~xmatters.objects.subscriptions.Subscription`
         """
         url = self.get_url('/subscribers/{}'.format(person_id))
         data = self.con.delete(url)
@@ -902,7 +902,7 @@ class SubscriptionsEndpoint(ApiBridge):
     def create_subscription(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.subscriptions.Subscription`
+        :rtype: :class:`~xmatters.objects.subscriptions.Subscription`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -911,7 +911,7 @@ class SubscriptionsEndpoint(ApiBridge):
     def update_subscription(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.subscriptions.Subscription`
+        :rtype: :class:`~xmatters.objects.subscriptions.Subscription`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -920,7 +920,7 @@ class SubscriptionsEndpoint(ApiBridge):
     def delete_subscription(self, subscription_id):
         """
 
-        :rtype: :class:`xmatters.objects.subscriptions.Subscription`
+        :rtype: :class:`~xmatters.objects.subscriptions.Subscription`
         """
         url = self.get_url(subscription_id)
         data = self.con.delete(url)
@@ -941,7 +941,7 @@ class SubscriptionFormsEndpoint(ApiBridge):
     def get_subscription_forms(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.subscription_forms.SubscriptionForm`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.subscription_forms.SubscriptionForm`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -950,7 +950,7 @@ class SubscriptionFormsEndpoint(ApiBridge):
     def get_subscription_form_by_id(self, sub_form_id, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.objects.subscription_forms.SubscriptionForm`
+        :rtype: :class:`~xmatters.objects.subscription_forms.SubscriptionForm`
         """
         url = self.get_url(sub_form_id)
         data = self.con.get(url, params=params, **kwargs)
@@ -971,7 +971,7 @@ class TemporaryAbsencesEndpoint(ApiBridge):
     def get_temporary_absences(self, params=None, **kwargs):
         """
 
-        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.temporary_absences.TemporaryAbsence`
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.temporary_absences.TemporaryAbsence`
         """
         url = self.get_url()
         data = self.con.get(url, params=params, **kwargs)
@@ -980,7 +980,7 @@ class TemporaryAbsencesEndpoint(ApiBridge):
     def create_temporary_absence(self, data):
         """
 
-        :rtype: :class:`xmatters.objects.temporary_absences.TemporaryAbsence`
+        :rtype: :class:`~xmatters.objects.temporary_absences.TemporaryAbsence`
         """
         url = self.get_url()
         data = self.con.post(url, data=data)
@@ -989,7 +989,7 @@ class TemporaryAbsencesEndpoint(ApiBridge):
     def delete_temporary_absence(self, temporary_absence_id):
         """
 
-        :rtype: :class:`xmatters.objects.temporary_absences.TemporaryAbsence`
+        :rtype: :class:`~xmatters.objects.temporary_absences.TemporaryAbsence`
         """
         url = self.get_url(temporary_absence_id)
         data = self.con.delete(url)

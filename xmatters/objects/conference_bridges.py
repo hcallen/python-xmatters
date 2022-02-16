@@ -16,7 +16,7 @@ class ConferenceBridge(xmatters.connection.ApiBridge):
         self.bridge_number = data.get('bridgeNumber')    #: :vartype: int
         self.dial_after_bridge = data.get('dialAfterBridge')    #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

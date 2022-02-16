@@ -10,7 +10,7 @@ class Service(xmatters.connection.ApiBridge):
         self.recipients_type = data.get('recipientType')   #: :vartype: str
         self.description = data.get('description')    #: :vartype: str
         owned_by = data.get('ownedBy')
-        self.owned_by = xmatters.objects.shifts.GroupReference(self, owned_by) if owned_by else None    #: :vartype: :class:`xmatters.objects.shifts.GroupReference`
+        self.owned_by = xmatters.objects.shifts.GroupReference(self, owned_by) if owned_by else None    #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

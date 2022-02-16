@@ -15,7 +15,7 @@ class Site(xmatters.connection.ApiBridge):
         self.language = data.get('language')    #: :vartype: str
         self.latitude = data.get('latitude')   #: :vartype: str
         links = data.get('links')
-        self.links = xmatters.objects.common.SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
         self.longitude = data.get('longitude')   #: :vartype: str
         self.name = data.get('name')   #: :vartype: str
         self.postal_code = data.get('postalCode')   #: :vartype: str

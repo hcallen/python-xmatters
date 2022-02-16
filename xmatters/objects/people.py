@@ -22,15 +22,15 @@ class Person(Recipient):
         self.properties = data.get('properties', {})  #: :vartype: dict
         last_login = data.get('lastLogin')
         self.last_login = utils.TimeAttribute(
-            last_login) if last_login else None  #: :vartype: :class:`xmatters.utils.TimeAttribute`
+            last_login) if last_login else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         when_created = data.get('whenCreated')
         self.when_created = utils.TimeAttribute(
-            when_created) if when_created else None  #: :vartype: :class:`xmatters.utils.TimeAttribute`
+            when_created) if when_created else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         when_updated = data.get('whenUpdated')
         self.when_updated = utils.TimeAttribute(
-            when_updated) if when_updated else None  #: :vartype: :class:`xmatters.utils.TimeAttribute`
+            when_updated) if when_updated else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         links = data.get('links')
-        self.links = SelfLink(self, data) if links else None  #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, data) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     @property
     def full_name(self):
@@ -94,7 +94,7 @@ class PersonReference(ApiBridge):
         self.last_name = data.get('lastName')  #: :vartype: str
         self.recipient_type = data.get('recipientType')  #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     @property
     def full_name(self):
@@ -112,10 +112,10 @@ class UserQuota(object):
         self.stakeholder_users_enabled = data.get('stakeholderUsersEnabled')  #: :vartype: bool
         stakeholder_users = data.get('stakeholderUsers')
         self.stakeholder_users = QuotaItem(
-            stakeholder_users) if stakeholder_users else None  #: :vartype: :class:`xmatters.objects.common.QuotaItem`
+            stakeholder_users) if stakeholder_users else None  #: :vartype: :class:`~xmatters.objects.common.QuotaItem`
         full_users = data.get('fullUsers')
         self.full_users = QuotaItem(
-            full_users) if full_users else None  #: :vartype: :class:`xmatters.objects.common.QuotaItem`
+            full_users) if full_users else None  #: :vartype: :class:`~xmatters.objects.common.QuotaItem`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

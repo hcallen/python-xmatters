@@ -26,7 +26,7 @@ class Recipient(xmatters.connection.ApiBridge):
         self.locked = data.get('locked')    #: :vartype: bool
         self.status = data.get('status')    #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{} {} {}>'.format(self.__class__.__name__, self.recipient_type, self.target_name)
@@ -42,7 +42,7 @@ class RecipientReference(xmatters.connection.ApiBridge):
         self.target_name = data.get('targetName')   #: :vartype: str
         self.recipient_type = data.get('recipientType')   #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{} {} {}>'.format(self.__class__.__name__, self.recipient_type, self.target_name)
@@ -92,7 +92,7 @@ class ReferenceByIdAndSelfLink(xmatters.connection.ApiBridge):
         super(ReferenceByIdAndSelfLink, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
         links = data.get('links')  #:
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
+        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
