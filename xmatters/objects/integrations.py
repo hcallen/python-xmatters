@@ -71,6 +71,10 @@ class Integration(ApiBridge):
         self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`xmatters.objects.common.SelfLink`
     
     def get_logs(self):
+        """
+
+        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.objects.integrations.IntegrationLog`
+        """
         endpoint = self.get_url(self._endpoints.get('get_logs'))
         url = self.get_url(endpoint)
         logs = self.con.get(url)

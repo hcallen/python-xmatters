@@ -61,6 +61,9 @@ class DevicesEndpoint(ApiBridge):
         super(DevicesEndpoint, self).__init__(parent, '/devices')
 
     def get_devices(self, params=None, **kwargs):
+        """
+        :rtype: :class:`xmatters.utils.Pagination` of :class:`xmatters.factories.DeviceFactory` objects
+        """
         url = self.get_url()
         data = self.con.get(url=url, params=params, **kwargs)
         return Pagination(self, data, xmatters.factories.DeviceFactory) if data.get('data') else []
