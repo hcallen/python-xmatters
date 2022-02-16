@@ -98,15 +98,21 @@ Example using token storage
 Accessing Endpoints
 ===================
 
-Top-level endpoints can be accessed by using :meth:`xmatters.XMSession.get_endpoint`
+| Top-level endpoints can be accessed by using :meth:`xmatters.XMSession.get_endpoint`
+
+.. note::
+    Top-level endpoints can also be accessed by calling a number of :class:`xmatters.XMSession` helper methods
+
+| Object-specific endpoints can be accessed from the respective object.
 
 Example:
 
 .. code-block:: python
 
     people_endpoint = xm_session.get_endpoint('people')
-    people = people_endpoint.get_people()
+    people = people_endpoint.get_people() # get '/people' endpoint
 
+    # for each person, get their devices using the '/people/<person_id>/devices' endpoint
     for person in people:
         devices = person.get_devices()
         for device in devices:
@@ -117,11 +123,8 @@ Example:
 
 .. note::
 
-    Object specific endpoints can be accessed from the respective object. Refer to :ref:`api:API Objects` for
-    methods to access an object endpoint.
+    Refer to :ref:`api:API Objects` for methods to access object-specific endpoints.
 
-
-Top-level endpoints can also be accessed by calling a number of :class:`xmatters.XMSession` helper methods
 
 Example:
 

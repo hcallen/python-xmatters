@@ -1,13 +1,7 @@
 Installation
 ============
 
-Requirements
-------------
-
-Python >=3.5
-
-Install python-xmatters
------------------------
+Requires: Python >=3.5
 
 Install using pip:
 
