@@ -16,13 +16,13 @@ python-xmatters is a wrapper for the xMatters API.
 - [Python 3.5+](http://python.org)
 
 ## Installation
-  ```$ python -m pip install python-xmatters```
+  ```$ pip install python-xmatters```
+
+## Documentation
+
+See [python-xmatters.readthedocs.io](https://python-xmatters.readthedocs.io/en/latest/) and [xMatters REST API Reference](https://help.xmatters.com/xmapi/) for object reference.
 
 ## Example Usage
-
-Review source code and the [xMatters REST API Reference](https://help.xmatters.com/xmapi/)
-for possible methods, parameters, and objects.
-
 
 ### Authentication
 
