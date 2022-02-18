@@ -1,5 +1,5 @@
 from xmatters.objects.common import ReferenceById, SelfLink
-from xmatters.utils import Pagination, TimeAttribute
+from xmatters.objects.utils import TimeAttribute, Pagination
 from xmatters.objects.people import PersonReference
 import xmatters.objects.plan_endpoints
 import xmatters.objects.plans
@@ -27,7 +27,7 @@ class IntegrationLog(ApiBase):
         integration = data.get('integration')
         self.integration = IntegrationReference(self, integration) if integration else None    #: :vartype: :class:`~xmatters.objects.integrations.IntegrationReference`
         completed = data.get('completed')
-        self.completed = TimeAttribute(completed) if completed else None #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.completed = TimeAttribute(completed) if completed else None #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.request_method = data.get('requestMethod')    #: :vartype: str
         self.request_headers = data.get('requestHeaders', {})    #: :vartype: dict
         self.request_parameters = data.get('requestParameters', {})     #: :vartype: dict
@@ -74,7 +74,7 @@ class Integration(ApiBase):
     def get_logs(self):
         """
 
-        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.integrations.IntegrationLog`
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.integrations.IntegrationLog`
         """
         endpoint = self._get_url(self._endpoints.get('get_logs'))
         url = self._get_url(endpoint)

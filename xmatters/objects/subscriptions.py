@@ -1,9 +1,10 @@
 import xmatters.connection
+import xmatters.objects.utils
 import xmatters.utils
 import xmatters.factories as factory
 import xmatters.objects.forms
 from xmatters.objects.common import SelfLink
-from xmatters.utils import Pagination
+from xmatters.objects.utils import Pagination
 from xmatters.objects.people import Person
 
 
@@ -36,14 +37,14 @@ class Subscription(xmatters.connection.ApiBase):
 
         self.owner = xmatters.objects.people.PersonReference(self, owner)    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.created = xmatters.objects.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.notification_delay = data.get('notificationDelay')    #: :vartype: int
         criteria = data.get('criteria', {})
-        self.criteria = Pagination(self, criteria, SubscriptionCriteriaReference) if criteria.get('data') else []    #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.subscriptions.SubscriptionCriteriaReference`
+        self.criteria = Pagination(self, criteria, SubscriptionCriteriaReference) if criteria.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.subscriptions.SubscriptionCriteriaReference`
         r = data.get('recipients', {})
-        self.recipients = Pagination(self, r, factory.RecipientFactory) if r.get('data') else []    #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.utils.RecipientFactory`
+        self.recipients = Pagination(self, r, factory.RecipientFactory) if r.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.utils.RecipientFactory`
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []    #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.utils.DeviceNameFactory`
+        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.utils.DeviceNameFactory`
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 

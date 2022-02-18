@@ -1,7 +1,8 @@
+import xmatters.objects.utils
 import xmatters.utils as util
 import xmatters.factories
 from xmatters.objects.common import SelfLink
-from xmatters.utils import Pagination
+from xmatters.objects.utils import Pagination
 from xmatters.connection import ApiBase
 from xmatters.objects.shifts import GroupReference, Shift
 
@@ -38,7 +39,7 @@ class ShiftOccurrenceMember(ApiBase):
         self.delay = data.get('delay')    #: :vartype: int
         self.escalation_type = data.get('escalationType')   #: :vartype: str
         replacements = data.get('replacements', {})
-        self.replacements = Pagination(self, replacements, TemporaryReplacement) if replacements.get('data') else []    #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.oncall.TemporaryReplacement`
+        self.replacements = Pagination(self, replacements, TemporaryReplacement) if replacements.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.oncall.TemporaryReplacement`
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.member.target_name)
@@ -66,9 +67,9 @@ class TemporaryReplacement(ApiBase):
     def __init__(self, parent, data):
         super(TemporaryReplacement, self).__init__(parent, data)
         start = data.get('start')
-        self.start = util.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.start = xmatters.objects.utils.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         end = data.get('end')
-        self.end = util.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.end = xmatters.objects.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         replacement = data.get('replacement')
         self.replacement = TemporaryReplacement(self, replacement) if replacement else None    #: :vartype: :class:`~xmatters.objects.oncall.TemporaryReplacement`
 
@@ -81,11 +82,11 @@ class OnCall(ApiBase):
         group = data.get('group')
         self.group = GroupReference(parent, group) if group else None    #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
         start = data.get('start')
-        self.start = util.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.start = xmatters.objects.utils.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         end = data.get('end')
-        self.end = util.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.end = xmatters.objects.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         members = data.get('members', {})
-        self.members = Pagination(self, members, ShiftOccurrenceMember) if members.get('data') else []    #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.oncall.ShiftOccurrenceMember`
+        self.members = Pagination(self, members, ShiftOccurrenceMember) if members.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.oncall.ShiftOccurrenceMember`
 
     @property
     def shift(self):

@@ -1,3 +1,4 @@
+import xmatters.objects.utils
 import xmatters.utils
 import xmatters.objects.people
 import xmatters.factories
@@ -7,7 +8,7 @@ import xmatters.objects.roles
 import xmatters.objects.shifts
 from xmatters.objects.common import SelfLink, RecipientReference, Recipient, ReferenceByIdAndSelfLink, \
     QuotaItem
-from xmatters.utils import Pagination
+from xmatters.objects.utils import Pagination
 
 
 class GroupMembershipShiftReference(xmatters.connection.ApiBase):
@@ -43,7 +44,7 @@ class GroupMembership(xmatters.connection.ApiBase):
                                          member) if member else None  #: :vartype: :class:`~xmatters.objects.common.RecipientReference`
         shifts = data.get('shifts', {})
         self.shifts = Pagination(self, shifts, GroupMembershipShiftReference) if shifts.get(
-            'data') else []  #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.groups.GroupMembershipShiftReference`
+            'data') else []  #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.groups.GroupMembershipShiftReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -71,8 +72,8 @@ class Group(Recipient):
         self.response_count_threshold = data.get('responseCount')  #: :vartype: str
         self.use_default_devices = data.get('responseCountThreshold')  #: :vartype: bool
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(
-            created) if created else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.created = xmatters.objects.utils.TimeAttribute(
+            created) if created else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.group_type = data.get('groupType')  #: :vartype: str
         site = data.get('site')
         self.site = ReferenceByIdAndSelfLink(self,

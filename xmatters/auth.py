@@ -3,10 +3,10 @@ from oauthlib.oauth2 import LegacyApplicationClient
 from requests_oauthlib import OAuth2Session
 
 from xmatters import errors as err
-from xmatters.connection import Connection
+import xmatters.connection
 
 
-class OAuth2Auth(Connection):
+class OAuth2Auth(xmatters.connection.Connection):
     _endpoints = {'token': '/oauth2/token'}
 
     def __init__(self, api_base_url, client_id, username=None, password=None, **kwargs):
@@ -93,7 +93,7 @@ class OAuth2Auth(Connection):
         return self.__repr__()
 
 
-class BasicAuth(Connection):
+class BasicAuth(xmatters.connection.Connection):
     """
     Used to authentication requests using basic authentication
 

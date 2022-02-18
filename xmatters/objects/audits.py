@@ -1,4 +1,4 @@
-import xmatters.utils as util
+import xmatters.objects.utils
 from xmatters.objects.common import Recipient
 from xmatters.objects.people import PersonReference
 from xmatters.connection import ApiBase
@@ -14,7 +14,7 @@ class Notification(ApiBase):
         self.recipient = Recipient(parent, recipient) if recipient else None    #: :vartype: :class:`~xmatters.objects.common.Recipient`
         self.delivery_status = data.get('deliveryStatus')    #:
         created = data.get('created')  #:
-        self.created = util.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.created = xmatters.objects.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         event = data.get('event')  #:
         self.event = events.EventReference(parent, event) if event else None    #: :vartype: :class:`~xmatters.objects.events.EventReference`
 
@@ -35,7 +35,7 @@ class Response(ApiBase):
         self.options = [events.ResponseOption(self, r) for r in options] if options else None    #: :vartype: [:class:`~xmatters.objects.events.ResponseOption`]
         self.source = data.get('source')    #:
         received = data.get('received')  #:
-        self.received = util.TimeAttribute(received) if received else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.received = xmatters.objects.utils.TimeAttribute(received) if received else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.response = data.get('response')    #:
 
     def __repr__(self):
@@ -50,9 +50,10 @@ class AuditBase(ApiBase):
         super(AuditBase, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
         self.type = data.get('type')    #: :vartype: str
+        self.audit_type = data.get('auditType')
         self.order_id = data.get('orderId')    #: :vartype: int
         at = data.get('at')  #:
-        self.at = util.TimeAttribute(at) if at else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.at = xmatters.objects.utils.TimeAttribute(at) if at else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.type)

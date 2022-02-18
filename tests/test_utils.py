@@ -1,4 +1,4 @@
-from xmatters.utils import TimeAttribute
+from xmatters.objects.utils import TimeAttribute
 
 
 class TestUtils:

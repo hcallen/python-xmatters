@@ -3,7 +3,7 @@ import xmatters.connection
 from xmatters.objects.common import Recipient, SelfLink
 from xmatters.objects.people import Person
 from xmatters.objects.roles import Role
-from xmatters.utils import Pagination
+from xmatters.objects.utils import Pagination
 
 
 class DynamicTeamsCriterion(xmatters.connection.ApiBase):

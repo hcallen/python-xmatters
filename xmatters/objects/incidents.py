@@ -1,3 +1,4 @@
+import xmatters.objects.utils
 import xmatters.utils as utils
 from xmatters.objects.common import SelfLink
 from xmatters.objects.people import PersonReference
@@ -42,11 +43,11 @@ class Incident(ApiBase):
         reporter = data.get('reporter')
         self.reporter = PersonReference(self, reporter) if reporter else None  #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         created_at = data.get('createdAt')
-        self.created_at = utils.TimeAttribute(created_at) if created_at else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.created_at = xmatters.objects.utils.TimeAttribute(created_at) if created_at else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         updated_at = data.get('updated_at')
-        self.updated_at = utils.TimeAttribute(updated_at) if updated_at else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.updated_at = xmatters.objects.utils.TimeAttribute(updated_at) if updated_at else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         acknowledged_at = data.get('acknowledgeAt')
-        self.acknowledged_at = utils.TimeAttribute(acknowledged_at) if acknowledged_at else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.acknowledged_at = xmatters.objects.utils.TimeAttribute(acknowledged_at) if acknowledged_at else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
@@ -67,7 +68,7 @@ class IncidentNote(ApiBase):
         super(IncidentNote, self).__init__(parent, data)
         self.id = data.get('id')  #: :vartype: str
         at = data.get('at')
-        self.at = utils.TimeAttribute(at) if at else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.at = xmatters.objects.utils.TimeAttribute(at) if at else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.entry_type = data.get('entryType')  #: :vartype: str
         self.text = data.get('text')  #: :vartype: str
         added_by = data.get('addedBy')

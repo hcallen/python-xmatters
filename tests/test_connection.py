@@ -2,7 +2,6 @@ from xmatters.session import XMSession
 from xmatters.utils import TokenFileStorage
 
 
-# TODO: properly test
 class TestErrors:
 
     def test_401_error(self, xm_test):
@@ -12,7 +11,6 @@ class TestErrors:
         assert xm_test.con.auth.session.token['access_token'] != 'invalid-token'
 
 
-# TODO: Create separate tests; properly test
 class TestKwargs:
 
     def test_basic_kwargs(self, settings):

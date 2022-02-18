@@ -1,10 +1,14 @@
+
 import pytest
 
 import xmatters.objects.conference_bridges
 import xmatters.errors
+from xmatters import utils
 
 
-class TestCreateGetUpdateDelete:
+
+
+class Test:
 
     @pytest.mark.order(1)
     def test_create(self, xm_sb):
@@ -27,6 +31,14 @@ class TestCreateGetUpdateDelete:
             assert bridge.id is not None
 
     @pytest.mark.order(3)
+    def test_accounting_attrs(self, xm_sb):
+        bridges = xm_sb.conference_bridges_endpoint().get_conference_bridges()
+        for b in bridges:
+            for k in b._api_data.keys():
+                snake_k = utils.camel_to_snakecase(k)
+                assert hasattr(b, snake_k)
+
+    @pytest.mark.order(4)
     def test_update(self, xm_sb):
         bridge = list(xm_sb.conference_bridges_endpoint().get_conference_bridges(name="INC-211 Zoom Conference"))[0]
         data = {"id": bridge.id,
@@ -35,9 +47,10 @@ class TestCreateGetUpdateDelete:
         assert isinstance(mod_bridge, xmatters.objects.conference_bridges.ConferenceBridge)
         assert mod_bridge.name == "INC-211 Zoom Conference Updated"
 
-    @pytest.mark.order(4)
+    @pytest.mark.order(5)
     def test_delete(self, xm_sb):
-        bridge = list(xm_sb.conference_bridges_endpoint().get_conference_bridges(name="INC-211 Zoom Conference Updated"))[0]
+        bridge = \
+        list(xm_sb.conference_bridges_endpoint().get_conference_bridges(name="INC-211 Zoom Conference Updated"))[0]
         del_bridge = xm_sb.conference_bridges_endpoint().delete_conference_bridge(bridge_id=bridge.id)
         assert isinstance(del_bridge, xmatters.objects.conference_bridges.ConferenceBridge)
         assert del_bridge.name == "INC-211 Zoom Conference Updated"

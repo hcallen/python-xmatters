@@ -2,7 +2,7 @@ import xmatters.factories
 from xmatters.connection import ApiBase
 from xmatters.objects.common import Recipient, SelfLink
 from xmatters.objects.forms import FormReference
-from xmatters.utils import Pagination, TimeAttribute
+from xmatters.objects.utils import TimeAttribute, Pagination
 from xmatters.objects.event_suppressions import EventSuppression
 from xmatters.objects.people import PersonReference
 from xmatters.objects.plans import PlanReference
@@ -29,7 +29,7 @@ class UserDeliveryResponse(ApiBase):
         self.text = data.get('text')    #: :vartype: str
         self.notification = data.get('notification')  #: :vartype: str
         received = data.get('received')
-        self.received = TimeAttribute(received) if received else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.received = TimeAttribute(received) if received else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -141,11 +141,11 @@ class Notification(ApiBase):
         self.id = data.get('id')   #: :vartype: str
         self.recipient = Recipient(self, data.get('recipient'))    #: :vartype: :class:`~xmatters.objects.common.Recipient`
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         delivered = data.get('delivered')
-        self.delivered = TimeAttribute(delivered) if delivered else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.delivered = TimeAttribute(delivered) if delivered else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         responded = data.get('responded')
-        self.responded = TimeAttribute(responded) if responded else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.responded = TimeAttribute(responded) if responded else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.delivery_status = data.get('deliveryStatus')    #: :vartype: str
         responses = data.get('responses')
         self.responses = [UserDeliveryResponse(self, r) for r in responses] if responses.get('data') else []    #: :vartype: [:class:`~xmatters.objects.events.UserDeliveryResponse`]
@@ -189,7 +189,7 @@ class Annotation(ApiBase):
         self.author = PersonReference(self, author)    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.comment = data.get('comment')   #: :vartype: str
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -215,7 +215,7 @@ class Event(ApiBase):
         super(Event, self).__init__(parent, data)
         self.bypass_phone_intro = data.get('bypassPhoneIntro')   #: :vartype: bool
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         conference = data.get('conference')
         self.conference = Conference(self, conference) if conference else None    #: :vartype: :class:`~xmatters.objects.events.Conference`
         self.escalation_override = data.get('escalationOverride')   #: :vartype: bool
@@ -239,11 +239,16 @@ class Event(ApiBase):
         self.submitter = PersonReference(self, submitter) if submitter else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.status = data.get('status')   #: :vartype: str
         terminated = data.get('terminated')
-        self.terminated = TimeAttribute(terminated) if terminated else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.terminated = TimeAttribute(terminated) if terminated else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         voicemail_options = data.get('voicemailOptions')
         self.voicemail_options = VoicemailOptions(self, voicemail_options) if voicemail_options else None    #: :vartype: :class:`~xmatters.objects.events.VoicemailOptions`
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+
+        # Only system events?
+        self.name = data.get('name')  #: :vartype: str
+        self.system_event_type = data.get('systemEventType') #: :vartype: str
+        self.response_counts_enabled = data.get('responseCountsEnabled')  #: :vartype: str
 
     @property
     def annotations(self):

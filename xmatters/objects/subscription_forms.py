@@ -1,11 +1,12 @@
 import xmatters.factories
 import xmatters.objects.forms
+import xmatters.objects.utils
 import xmatters.utils
 import xmatters.connection
 import xmatters.objects.plans
 import xmatters.objects.roles
 from xmatters.objects.common import SelfLink
-from xmatters.utils import Pagination
+from xmatters.objects.utils import Pagination
 
 
 class SubscriptionForm(xmatters.connection.ApiBase):
@@ -25,7 +26,7 @@ class SubscriptionForm(xmatters.connection.ApiBase):
         form = data.get('form')
         self.form = xmatters.objects.forms.FormReference(self, form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.created = xmatters.objects.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.one_way = data.get('oneWay')    #: :vartype: bool
         self.subscribe_others = data.get('subscribeOthers')    #: :vartype: bool
         self.notification_delay = data.get('notificationDelay')   #: :vartype: int

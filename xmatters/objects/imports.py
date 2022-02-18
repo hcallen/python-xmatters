@@ -1,7 +1,7 @@
 import xmatters.connection
 from xmatters.objects.common import SelfLink
 from xmatters.objects.people import PersonReference
-from xmatters.utils import TimeAttribute
+from xmatters.objects.utils import TimeAttribute
 
 
 class ImportMessage(xmatters.connection.ApiBase):
@@ -30,15 +30,15 @@ class Import(xmatters.connection.ApiBase):
         self.transform = data.get('transform')    #: :vartype: str
         self.status = data.get('status')     #: :vartype: str
         started = data.get('started')
-        self.started = TimeAttribute(started) if started else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.started = TimeAttribute(started) if started else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         last_updated_at = data.get('lastUpdatedAt')
-        self.last_updated_at = TimeAttribute(last_updated_at) if last_updated_at else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.last_updated_at = TimeAttribute(last_updated_at) if last_updated_at else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         by = data.get('by')
         self.by = PersonReference(parent, by) if by else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.total_count = data.get('totalCount')     #: :vartype: int
         self.processed_count = data.get('processedCount')     #: :vartype: int
         finished_at = data.get('finishedAt')
-        self.finished_at = TimeAttribute(finished_at) if finished_at else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.finished_at = TimeAttribute(finished_at) if finished_at else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         links = data.get('links')
         self.links = SelfLink(parent, links)    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 

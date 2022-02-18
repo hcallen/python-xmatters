@@ -3,9 +3,9 @@ import json
 import pytest
 import vcr
 
-from xmatters.session import XMSession
-from xmatters.utils import TokenFileStorage
 
+import xmatters.utils
+from xmatters.session import XMSession
 
 def skip_token_calls(request):
     if request.path.endswith('/oauth2/token'):
@@ -45,7 +45,7 @@ def xm_test(settings):
     base_url = settings.get('test_base_url')
     client_id = settings.get('test_client_id')
     token_filepath = settings.get('test_token_filepath')
-    token_storage = TokenFileStorage(token_filepath)
+    token_storage = xmatters.utils.TokenFileStorage(token_filepath)
     xm = XMSession(base_url, timeout=60, max_retries=3)
     return xm.set_authentication(client_id=client_id, token_storage=token_storage)
 
@@ -55,7 +55,7 @@ def xm_sb(settings):
     base_url = settings.get('sb_base_url')
     client_id = settings.get('sb_client_id')
     token_filepath = settings.get('sb_token_filepath')
-    token_storage = TokenFileStorage(token_filepath)
+    token_storage = xmatters.utils.TokenFileStorage(token_filepath)
     return XMSession(base_url).set_authentication(client_id=client_id,token_storage=token_storage)
 
 
@@ -64,5 +64,5 @@ def xm_prod(settings):
     base_url = settings.get('prod_base_url')
     client_id = settings.get('prod_client_id')
     token_filepath = settings.get('prod_token_filepath')
-    token_storage = TokenFileStorage(token_filepath)
+    token_storage = xmatters.utils.TokenFileStorage(token_filepath)
     return XMSession(base_url).set_authentication(client_id=client_id,token_storage=token_storage)

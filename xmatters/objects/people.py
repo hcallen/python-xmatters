@@ -1,7 +1,7 @@
 import xmatters.factories
-import xmatters.utils as utils
 from xmatters.objects.common import Recipient, SelfLink, QuotaItem
-from xmatters.utils import Pagination
+from xmatters.objects.sites import SiteReference
+from xmatters.objects.utils import Pagination, TimeAttribute
 from xmatters.objects.roles import Role
 from xmatters.connection import ApiBase
 import xmatters.objects.groups
@@ -21,23 +21,20 @@ class Person(Recipient):
         self.phone_pin = data.get('phonePin')  #: :vartype: str
         self.properties = data.get('properties', {})  #: :vartype: dict
         last_login = data.get('lastLogin')
-        self.last_login = utils.TimeAttribute(
-            last_login) if last_login else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.last_login = TimeAttribute( last_login) if last_login else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         when_created = data.get('whenCreated')
-        self.when_created = utils.TimeAttribute(
-            when_created) if when_created else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.when_created = TimeAttribute(when_created) if when_created else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         when_updated = data.get('whenUpdated')
-        self.when_updated = utils.TimeAttribute(
-            when_updated) if when_updated else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.when_updated = TimeAttribute(when_updated) if when_updated else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         links = data.get('links')
         self.links = SelfLink(self, data) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+        site = data.get('site')
+        self.site = SiteReference(self, site) if site else None  #: :vartype: :class:`~xmatters.objects.sites.SiteReference`
 
     @property
     def full_name(self):
         """
-        Get person's full name
 
-        :return: person's full name
         :rtype: str
         """
         return '{} {}'.format(self.first_name, self.last_name)
@@ -58,22 +55,38 @@ class Person(Recipient):
         return self.get_supervisors()
 
     def get_roles(self):
+        """
+
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.roles.Role`
+        """
         url = self._get_url('?embed=roles')
         data = self.con.get(url)
         roles = data.get('roles', {})
         return Pagination(self, roles, Role) if roles.get('data') else []
 
     def get_supervisors(self, params=None, **kwargs):
+        """
+
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.people.Person`
+        """
         url = self._get_url('/supervisors')
         s = self.con.get(url, params=params, **kwargs)
         return Pagination(self, s, Person) if s.get('data') else []
 
     def get_devices(self, params=None, **kwargs):
+        """
+
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.factories.DeviceFactory`
+        """
         url = self._get_url('/devices')
         devices = self.con.get(url, params=params, **kwargs)
         return Pagination(self, devices, xmatters.factories.DeviceFactory) if devices.get('data') else []
 
     def get_groups(self, params=None, **kwargs):
+        """
+
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.groups.GroupMembership`
+        """
         url = self._get_url('/group-memberships')
         groups = self.con.get(url, params=params, **kwargs)
         return Pagination(self, groups, xmatters.objects.groups.GroupMembership) if groups.get('data') else []
@@ -98,6 +111,10 @@ class PersonReference(ApiBase):
 
     @property
     def full_name(self):
+        """
+
+        :rtype: str
+        """
         return '{} {}'.format(self.first_name, self.last_name)
 
     def __repr__(self):

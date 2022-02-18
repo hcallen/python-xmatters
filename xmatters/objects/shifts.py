@@ -1,3 +1,4 @@
+import xmatters.objects.utils
 import xmatters.utils
 import xmatters.connection
 import xmatters.objects.common
@@ -25,7 +26,7 @@ class End(xmatters.connection.ApiBase):
         super(End, self).__init__(parent, data)
         self.end_by = data.get('endBy')   #: :vartype: str
         date = data.get('date')
-        self.date = xmatters.utils.TimeAttribute(date) if date else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.date = xmatters.objects.utils.TimeAttribute(date) if date else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.repetitions = data.get('repetitions')   #: :vartype: int
 
     def __repr__(self):
@@ -43,7 +44,7 @@ class Rotation(xmatters.connection.ApiBase):
         self.interval = data.get('interval')   #: :vartype: int
         self.interval_unit = data.get('intervalUnit')    #: :vartype: str
         next_rotation_time = data.get('nextRotationTime')
-        self.next_rotation_time = xmatters.utils.TimeAttribute(next_rotation_time) if next_rotation_time else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.next_rotation_time = xmatters.objects.utils.TimeAttribute(next_rotation_time) if next_rotation_time else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -104,9 +105,9 @@ class Shift(xmatters.connection.ApiBase):
         self.links = xmatters.objects.common.SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
         self.name = data.get('name')   #: :vartype: str
         start = data.get('start')
-        self.start = xmatters.utils.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.start = xmatters.objects.utils.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         end = data.get('end')
-        self.end = xmatters.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.end = xmatters.objects.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.timezone = data.get('timezone')    #: :vartype: str
         recurrence = data.get('recurrence')
         self.recurrence = ShiftRecurrence(self, recurrence) if recurrence else None    #: :vartype: :class:`~xmatters.objects.shifts.ShiftRecurrence`
@@ -119,7 +120,7 @@ class Shift(xmatters.connection.ApiBase):
     def get_members(self):
         url = self._get_url(self._endpoints.get('get_members'))
         members = self.con.get(url)
-        return xmatters.utils.Pagination(self, members, ShiftMember) if members.get('data') else []
+        return xmatters.objects.utils.Pagination(self, members, ShiftMember) if members.get('data') else []
     
     def add_member(self, data):
         url = self._get_url(self._endpoints.get('get_members'))

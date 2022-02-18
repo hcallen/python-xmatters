@@ -12,6 +12,8 @@ import xmatters.errors as err
 
 # ignore TokenUpdated warning
 # only occurs when token_updater isn't defined in OAuth2Session
+from xmatters.utils import snake_to_camelcase
+
 warnings.simplefilter('always', TokenUpdated)
 
 TIME_PARAMETERS = ('at', 'from', 'to', 'after', 'before', 'createdFrom', 'createdTo', 'createdBefore', 'createdAfter')
@@ -101,8 +103,7 @@ class Connection(object):
         for k in list(params.keys()):
             if '_' in k:
                 v = params.pop(k)
-                k_parts = k.split('_')
-                k = k_parts[0].lower() + ''.join(part.title() for part in k_parts[1:])
+                k = snake_to_camelcase(k)
                 params[k] = v
 
         # apply utc offset to timestamp parameters

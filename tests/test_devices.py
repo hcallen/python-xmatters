@@ -1,13 +1,17 @@
+import os
+
 import pytest
 
 import xmatters.errors
 import xmatters.factories
 from tests.conftest import my_vcr
 import xmatters.objects.devices
+from xmatters import utils
 
+filename = os.path.basename(__file__).replace('.py', '')
 
 class TestGet:
-    @my_vcr.use_cassette('test_get_devices.json')
+    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
     def test_get(self, xm_test):
         devices = xm_test.devices_endpoint().get_devices()
         assert len(devices) > 0
@@ -18,7 +22,7 @@ class TestGet:
             for tf in device.timeframes:
                 assert tf.name is not None
 
-    @my_vcr.use_cassette('test_get_device_by_id.json')
+    @my_vcr.use_cassette('{}_test_get_by_id.json'.format(filename))
     def test_get_by_id(self, xm_test):
         devices = xm_test.devices_endpoint().get_devices()
         assert len(devices) > 0
@@ -27,30 +31,39 @@ class TestGet:
             assert device.id is not None
             assert isinstance(device_by_id, xmatters.objects.devices.Device)
 
+class TestAccounting:
+
+    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
+    def test_attrs(self, xm_test):
+        devices = xm_test.devices_endpoint().get_devices()
+        for device in devices:
+            for k in device._api_data.keys():
+                snake_k = utils.camel_to_snakecase(k)
+                assert hasattr(device, snake_k)
 
 class TestParams:
-    @my_vcr.use_cassette('test_get_devices_param_status.json')
+    @my_vcr.use_cassette('{}_test_params_status.json'.format(filename))
     def test_device_status(self, xm_test):
         devices = xm_test.devices_endpoint().get_devices(device_status='INACTIVE')
         assert len(devices) > 0
         for device in devices:
             assert device.status == 'INACTIVE'
 
-    @my_vcr.use_cassette('test_get_devices_param_type.json')
+    @my_vcr.use_cassette('{}_test_params_type.json'.format(filename))
     def test_device_type(self, xm_test):
         devices = xm_test.devices_endpoint().get_devices(device_type='EMAIL')
         assert len(devices) > 0
         for device in devices:
             assert device.device_type == 'EMAIL'
 
-    @my_vcr.use_cassette('test_get_devices_param_name.json')
+    @my_vcr.use_cassette('{}_test_params_name.json'.format(filename))
     def test_device_names(self, xm_test):
         devices = xm_test.devices_endpoint().get_devices(device_names='Home Email')
         assert len(devices) > 0
         for device in devices:
             assert device.name == 'Home Email'
 
-    @my_vcr.use_cassette('test_get_devices_param_phone_format.json')
+    @my_vcr.use_cassette('{}_test_params_phone_format.json'.format(filename))
     def test_phone_format(self, xm_test):
         devices = xm_test.devices_endpoint().get_devices(device_type='VOICE', phone_number_format='COUNTRY_CODE')
         assert len(devices) > 0

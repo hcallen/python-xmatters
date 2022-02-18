@@ -1,6 +1,7 @@
 import xmatters.objects.events
 import xmatters.objects.forms
 import xmatters.factories as factory
+import xmatters.objects.utils
 import xmatters.utils
 import xmatters.connection
 import xmatters.objects.people
@@ -8,7 +9,7 @@ import xmatters.objects.plans
 import xmatters.objects.roles
 
 from xmatters.objects.common import SelfLink
-from xmatters.utils import Pagination
+from xmatters.objects.utils import Pagination
 
 
 class ScenarioPermission(xmatters.connection.ApiBase):
@@ -76,13 +77,13 @@ class Scenario(xmatters.connection.ApiBase):
         self.voicemail_options = xmatters.objects.events.VoicemailOptions(self,
             vm_opts) if vm_opts else None  #: :vartype: :class:`~xmatters.objects.events.VoicemailOptions`
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []  #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.utils.DeviceNameFactory`
+        self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []  #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.utils.DeviceNameFactory`
         created = data.get('created')
-        self.created = xmatters.utils.TimeAttribute(created) if created else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.created = xmatters.objects.utils.TimeAttribute(created) if created else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         perm = data.get('permitted', {}).get('data')
         self.permitted = [factory.ScenarioPermFactory.construct(self, p) for p in perm] if perm else []  #: :vartype: [:class:`~xmatters.factories.ScenarioPermFactory.compose(self, p)]`
         rs = data.get('recipients')
-        self.recipients = Pagination(self, rs, factory.RecipientFactory) if rs.get('data') else []  #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.utils.RecipientFactory`
+        self.recipients = Pagination(self, rs, factory.RecipientFactory) if rs.get('data') else []  #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.utils.RecipientFactory`
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 

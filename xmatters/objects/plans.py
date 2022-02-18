@@ -3,7 +3,7 @@ import xmatters.objects.forms
 from xmatters.objects.plan_endpoints import Endpoint
 from xmatters.connection import ApiBase
 from xmatters.objects.common import SelfLink
-from xmatters.utils import Pagination, TimeAttribute
+from xmatters.objects.utils import TimeAttribute, Pagination
 from xmatters.objects.integrations import Integration
 from xmatters.objects.people import Person
 from xmatters.objects.plan_constants import PlanConstant
@@ -14,7 +14,7 @@ from xmatters.objects.subscription_forms import SubscriptionForm
 class PlanPointer(ApiBase):
     def __init__(self, parent, data):
         super(PlanPointer, self).__init__(parent, data)
-        self.id = data.get('id')    #: :vartype: str
+        self.id = data.get('id')  #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -26,8 +26,8 @@ class PlanPointer(ApiBase):
 class PlanReference(ApiBase):
     def __init__(self, parent, data):
         super(PlanReference, self).__init__(parent, data)
-        self.id = data.get('id')    #: :vartype: str
-        self.name = data.get('name')   #: :vartype: str
+        self.id = data.get('id')  #: :vartype: str
+        self.name = data.get('name')  #: :vartype: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -54,20 +54,20 @@ class Plan(ApiBase):
 
     def __init__(self, parent, data):
         super(Plan, self).__init__(parent, data)
-        self.id = data.get('id')    #: :vartype: str
-        self.plan_type = data.get('planType')    #: :vartype: str
-        self.name = data.get('name')   #: :vartype: str
-        self.description = data.get('description')    #: :vartype: str
-        self.enabled = data.get('enabled')   #: :vartype: bool
-        self.editable = data.get('editable')    #: :vartype: bool
-        self.logging_level = data.get('loggingLevel')   #: :vartype: str
-        self.accessible = data.get('accessibleByAll')    #: :vartype: bool
-        self.flood_control = data.get('floodControl')    #: :vartype: bool
+        self.id = data.get('id')  #: :vartype: str
+        self.plan_type = data.get('planType')  #: :vartype: str
+        self.name = data.get('name')  #: :vartype: str
+        self.description = data.get('description')  #: :vartype: str
+        self.enabled = data.get('enabled')  #: :vartype: bool
+        self.editable = data.get('editable')  #: :vartype: bool
+        self.logging_level = data.get('loggingLevel')  #: :vartype: str
+        self.accessible = data.get('accessibleByAll')  #: :vartype: bool
+        self.flood_control = data.get('floodControl')  #: :vartype: bool
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.created = TimeAttribute(created) if created else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
-        self.position = data.get('position')   #: :vartype: int
+        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+        self.position = data.get('position')  #: :vartype: int
 
     @property
     def creator(self):
@@ -101,9 +101,7 @@ class Plan(ApiBase):
 
     def get_creator(self):
         """
-        Get plan creator
 
-        :return: Plan creator
         :rtype: :class:`~xmatters.objects.people.Person`
         """
         url = self._get_url(self._endpoints.get('creator'))
@@ -111,153 +109,265 @@ class Plan(ApiBase):
         return Person(self, creator) if creator else None
 
     def get_forms(self, params=None, **kwargs):
+        """
+
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.forms.Form`
+        """
         url = self._get_url(self._endpoints.get('get_forms'))
         fs = self.con.get(url, params=params, **kwargs)
         return Pagination(self, fs, xmatters.objects.forms.Form) if fs.get('data') else []
 
     def get_form_by_id(self, form_id, params=None, **kwargs):
+        """
+
+        :rtype: :class:`~xmatters.objects.forms.Form`
+        """
         url = self._get_url(self._endpoints.get('get_form_by_id').format(form_id=form_id))
         data = self.con.get(url, params=params, **kwargs)
         return xmatters.objects.forms.Form(self, data) if data else None
 
     def create_form(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.forms.Form`
+        """
         url = self._get_url(self._endpoints.get('get_forms'))
         data = self.con.post(url, data=data)
         return xmatters.objects.forms.Form(self, data) if data else None
 
     def update_form(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.forms.Form`
+        """
         url = self._get_url(self._endpoints.get('get_forms'))
         data = self.con.post(url, data=data)
         return xmatters.objects.forms.Form(self, data) if data else None
 
     def get_constants(self):
+        """
+
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.plan_constants.PlanConstant`
+        """
         url = self._get_url(self._endpoints.get('get_constants'))
         constants = self.con.get(url)
         return Pagination(self, constants, PlanConstant) if constants.get('data') else []
 
     def create_constant(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.plan_constants.PlanConstant`
+        """
         url = self._get_url(self._endpoints.get('get_constants'))
         data = self.con.post(url, data=data)
         return PlanConstant(self, data) if data else None
 
     def update_constant(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.plan_constants.PlanConstant`
+        """
         url = self._get_url(self._endpoints.get('get_constants'))
         data = self.con.post(url, data=data)
         return PlanConstant(self, data) if data else None
 
     def delete_constant(self, constant_id):
+        """
+
+        :rtype: :class:`~xmatters.objects.plan_constants.PlanConstant`
+        """
         url = self._get_url(self._endpoints.get('delete_constant').format(const_id=constant_id))
         data = self.con.delete(url)
         return PlanConstant(self, data) if data else None
 
-    def get_integrations(self, integration_type=None, deployed=None, **kwargs):
-        params = {'integrationType': integration_type,
-                  'deployed': deployed}
+    def get_integrations(self, params=None, **kwargs):
+        """
 
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.integrations.Integration`
+        """
         url = self._get_url(self._endpoints.get('get_integrations'))
         ints = self.con.get(url, params=params, **kwargs)
         return Pagination(self, ints, Integration) if ints.get('data') else []
 
     def get_integration_by_id(self, integration_id):
+        """
+
+        :rtype: :class:`~xmatters.objects.integrations.Integration`
+        """
         url = self._get_url(self._endpoints.get('get_integration_by_id').format(int_id=integration_id))
         data = self.con.get(url)
         return Integration(self, data) if data else None
 
     def create_integration(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.integrations.Integration`
+        """
         url = self._get_url(self._endpoints.get('get_integrations'))
         data = self.con.post(url, data=data)
         return Integration(self, data) if data else None
 
     def update_integration(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.integrations.Integration`
+        """
         url = self._get_url(self._endpoints.get('get_integrations'))
         data = self.con.post(url, data=data)
         return Integration(self, data) if data else None
 
     def delete_integration(self, integration_id):
+        """
+
+        :rtype: :class:`~xmatters.objects.integrations.Integration`
+        """
         url = self._get_url(self._endpoints.get('get_integration_by_id').format(int_id=integration_id))
         data = self.con.delete(url)
         return Integration(self, data) if data else None
 
     def get_properties(self):
+        """
+
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.factories.PropertiesFactory`
+        """
         url = self._get_url(self._endpoints.get('get_properties'))
         props = self.con.get(url)
         return Pagination(self, props, factory.PropertiesFactory) if props.get('data') else []
 
     def create_property(self, data):
+        """
+
+        :rtype: :class:`~xmatters.factories.PropertiesFactory`
+        """
         url = self._get_url(self._endpoints.get('get_properties'))
         data = self.con.post(url, data=data)
         return factory.PropertiesFactory.construct(self, data) if data else None
 
     def update_property(self, data):
+        """
+
+        :rtype: :class:`~xmatters.factories.PropertiesFactory`
+        """
         url = self._get_url(self._endpoints.get('get_properties'))
         data = self.con.post(url, data=data)
         return factory.PropertiesFactory.construct(self, data) if data else None
 
     def delete_property(self, property_id):
+        """
+
+        :rtype: :class:`~xmatters.factories.PropertiesFactory`
+        """
         url = self._get_url(self._endpoints.get('delete_property').format(prop_id=property_id))
         data = self.con.delete(url)
         return factory.PropertiesFactory.construct(self, data) if data else None
 
     def get_shared_libraries(self, params=None, **kwargs):
+        """
+
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.shared_libraries.SharedLibrary`
+        """
         url = self._get_url(self._endpoints.get('get_libraries'))
         libs = self.con.get(url, params=params, **kwargs)
         return Pagination(self, libs, SharedLibrary) if libs.get('data') else []
 
     def get_shared_library_by_id(self, library_id):
+        """
+
+        :rtype: :class:`~xmatters.objects.shared_libraries.SharedLibrary`
+        """
         url = self._get_url(self._endpoints.get('get_library_by_id').format(lib_id=library_id))
         data = self.con.get(url)
         return SharedLibrary(self, data) if data else None
 
     def create_shared_library(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.shared_libraries.SharedLibrary`
+        """
         url = self._get_url(self._endpoints.get('get_libraries'))
         data = self.con.post(url, data=data)
         return SharedLibrary(self, data) if data else None
 
     def update_shared_library(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.shared_libraries.SharedLibrary`
+        """
         url = self._get_url(self._endpoints.get('get_libraries'))
         data = self.con.post(url, data=data)
         return SharedLibrary(self, data) if data else None
 
     def delete_shared_library(self, library_id):
+        """
+
+        :rtype: :class:`~xmatters.objects.shared_libraries.SharedLibrary`
+        """
         url = self._get_url(self._endpoints.get('get_library_by_id').format(lib_id=library_id))
         data = self.con.delete(url)
         return SharedLibrary(self, data) if data else None
 
     def get_endpoints(self):
+        """
+
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.plan_endpoints.Endpoint`
+        """
         url = self._get_url(self._endpoints.get('get_endpoints'))
         endpoints = self.con.get(url)
         return Pagination(self, endpoints, xmatters.objects.plan_endpoints.Endpoint) if endpoints.get('data') else []
 
     def create_endpoint(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.plan_endpoints.Endpoint`
+        """
         url = self._get_url(self._endpoints.get('get_endpoints'))
         data = self.con.post(url, data=data)
         return xmatters.objects.plan_endpoints.Endpoint(self, data) if data else None
 
     def update_endpoint(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.plan_endpoints.Endpoint`
+        """
         url = self._get_url(self._endpoints.get('get_endpoints'))
         data = self.con.post(url, data=data)
         return xmatters.objects.plan_endpoints.Endpoint(self, data) if data else None
 
     def delete_endpoint(self, endpoint_id):
+        """
+
+        :rtype: :class:`~xmatters.objects.plan_endpoints.Endpoint`
+        """
         url = self._get_url(self._endpoints.get('delete_endpoint').format(end_id=endpoint_id))
         data = self.con.delete(url)
         return xmatters.objects.plan_endpoints.Endpoint(self, data) if data else None
 
     def get_subscription_forms(self, params=None, **kwargs):
+        """
+
+        :rtype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.subscription_forms.SubscriptionForm`
+        """
         url = self._get_url(self._endpoints.get('get_subscription_forms'))
         sub_forms = self.con.get(url, params=params, **kwargs)
         return Pagination(self, sub_forms, SubscriptionForm) if sub_forms.get('data') else []
 
     def create_subscription_form(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.subscription_forms.SubscriptionForm`
+        """
         url = self._get_url(self._endpoints.get('get_subscription_forms'))
         data = self.con.post(url, data=data)
         return SubscriptionForm(self, data) if data else None
 
     def update_subscription_form(self, data):
+        """
+
+        :rtype: :class:`~xmatters.objects.subscription_forms.SubscriptionForm`
+        """
         url = self._get_url(self._endpoints.get('get_subscription_forms'))
         data = self.con.post(url, data=data)
         return SubscriptionForm(self, data) if data else None
-
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.name)

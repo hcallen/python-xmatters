@@ -1,7 +1,7 @@
 import xmatters.factories as factory
 import xmatters.objects.forms
 from xmatters.connection import ApiBase
-from xmatters.utils import Pagination
+from xmatters.objects.utils import Pagination
 from xmatters.objects.conference_bridges import ConferenceBridge
 from xmatters.objects.device_types import DeviceTypes
 from xmatters.objects.dynamic_teams import DynamicTeam

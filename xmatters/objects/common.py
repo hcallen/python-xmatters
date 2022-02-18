@@ -2,20 +2,6 @@ import xmatters.connection
 import xmatters.utils
 
 
-class PaginationLinks(xmatters.connection.ApiBase):
-    def __init__(self, parent, data):
-        super(PaginationLinks, self).__init__(parent, data)
-        self.next = data.get('next')    #: :vartype: str
-        self.previous = data.get('previous')   #: :vartype: str
-        self.self = data.get('self')   #: :vartype: str
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()
-
-
 class Recipient(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(Recipient, self).__init__(parent, data)

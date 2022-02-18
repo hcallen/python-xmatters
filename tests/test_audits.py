@@ -3,17 +3,20 @@ import os
 from tests.conftest import my_vcr
 import xmatters.errors
 import xmatters.factories
+from xmatters import utils
+
+filename = os.path.basename(__file__).replace('.py', '')
 
 
 class TestGet:
-    @my_vcr.use_cassette('{}_test_get_audits.json'.format(os.path.basename(__file__).replace('.py', '')))
+    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
     def test_get_audits(self, xm_test):
         audits = xm_test.audits_endpoint().get_audits()
         assert len(audits) > 0
         for audit in audits:
             assert audit.id is not None
 
-    # @my_vcr.use_cassette('{}_test_get_by_id.json'.format(os.path.basename(__file__).replace('.py', '')))
+    @my_vcr.use_cassette('{}_test_get_by_id.json'.format(filename))
     def test_get_by_id(self, xm_test):
         events = xm_test.events_endpoint().get_events(limit=50)
         assert len(events) > 0
@@ -25,7 +28,7 @@ class TestGet:
 
 
 class TestParams:
-    @my_vcr.use_cassette('{}_test_audit_type.json'.format(os.path.basename(__file__).replace('.py', '')))
+    @my_vcr.use_cassette('{}_test_type.json'.format(filename))
     def test_audit_type(self, xm_test):
         events = xm_test.events_endpoint().get_events(limit=50)
         assert len(events) > 0
@@ -35,7 +38,7 @@ class TestParams:
             for audit_object in audits:
                 assert audit_object.type == 'EVENT_CREATED'
 
-    @my_vcr.use_cassette('{}_test_sort_order.json'.format(os.path.basename(__file__).replace('.py', '')))
+    @my_vcr.use_cassette('{}_test_sort_order.json'.format(filename))
     def test_sort_order(self, xm_test):
         events = xm_test.events_endpoint().get_events(limit=50)
         assert len(events) > 0
@@ -47,11 +50,19 @@ class TestParams:
 
 
 class TestAccounting:
-    @my_vcr.use_cassette('{}_test_accounting.json'.format(os.path.basename(__file__).replace('.py', '')))
-    def test_accounting(self, xm_test):
+    @my_vcr.use_cassette('{}_test_accounting_types.json'.format(filename))
+    def test_types(self, xm_test):
         events = xm_test.events_endpoint().get_events()
         assert len(events) > 0
         for event in events:
             audits = list(xm_test.audits_endpoint().get_audits(event_id=event.id))
             for audit in audits:
                 assert audit.type in xmatters.factories.AuditFactory.factory_objects.keys()
+
+    @my_vcr.use_cassette('{}_test_accounting_attrs.json'.format(filename))
+    def test_attrs(self, xm_test):
+        audits = list(xm_test.audits_endpoint().get_audits())
+        for audit in audits:
+            for k in audit._api_data.keys():
+                snake_k = utils.camel_to_snakecase(k)
+                assert hasattr(audit, snake_k)

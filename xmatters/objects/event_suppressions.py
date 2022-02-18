@@ -1,7 +1,7 @@
+import xmatters.objects.utils
 from xmatters.objects.common import SelfLink
 from xmatters.connection import ApiBase
 import xmatters.objects.events as events
-import xmatters.utils as util
 
 
 class EventFloodFilter(ApiBase):
@@ -42,7 +42,7 @@ class EventSuppression(ApiBase):
         self.match = SuppressionMatch(self,
                                       data) if match else None  #: :vartype: :class:`~xmatters.objects.event_suppressions.SuppressionMatch`
         at = data.get('at')
-        self.at = util.TimeAttribute(at) if at else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.at = xmatters.objects.utils.TimeAttribute(at) if at else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         filters = data.get('filters', [])
         self.filter = [EventFloodFilter(self, f) for f in
                        filters]  #: :vartype: [:class:`~xmatters.objects.event_suppressions.EventFloodFilter`]

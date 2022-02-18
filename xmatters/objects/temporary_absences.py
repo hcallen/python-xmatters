@@ -1,3 +1,4 @@
+import xmatters.objects.utils
 import xmatters.utils
 import xmatters.objects.people
 import xmatters.objects.shifts
@@ -12,9 +13,9 @@ class TemporaryAbsence(xmatters.connection.ApiBase):
         member = data.get('member')
         self.member = xmatters.objects.people.PersonReference(self, member) if member else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         start = data.get('start')
-        self.start = xmatters.utils.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.start = xmatters.objects.utils.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         end = data.get('end')
-        self.end = xmatters.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
+        self.end = xmatters.objects.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         group = data.get('group')
         self.group = xmatters.objects.shifts.GroupReference(self, group) if group else None    #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
         replacement = data.get('replacement')

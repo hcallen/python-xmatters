@@ -5,7 +5,7 @@ import xmatters.objects.plans as plans
 import xmatters.objects.scenarios
 from xmatters.objects.device_names import TargetDeviceNameSelector
 from xmatters.objects.common import Recipient, PropertyDefinition, SelfLink
-from xmatters.utils import Pagination
+from xmatters.objects.utils import Pagination
 
 
 class FormReference(xmatters.connection.ApiBase):
@@ -146,7 +146,7 @@ class DevicesSection(FormSection):
     def __init__(self, parent, data):
         super(DevicesSection, self).__init__(parent, data)
         tdns = data.get('targetDeviceNames', {})
-        self.target_device_names = Pagination(self, tdns, TargetDeviceNameSelector) if tdns.get('data') else []    #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.device_names.TargetDeviceNameSelector`
+        self.target_device_names = Pagination(self, tdns, TargetDeviceNameSelector) if tdns.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.device_names.TargetDeviceNameSelector`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -186,7 +186,7 @@ class RecipientsSection(FormSection):
     def __init__(self, parent, data):
         super(RecipientsSection, self).__init__(parent, data)
         recipients = data.get('recipients', {})
-        self.recipients = Pagination(self, recipients, Recipient) if recipients.get('data') else []    #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.common.Recipient`
+        self.recipients = Pagination(self, recipients, Recipient) if recipients.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.common.Recipient`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
