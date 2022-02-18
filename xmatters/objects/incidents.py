@@ -5,9 +5,10 @@ from xmatters.connection import ApiBase
 from xmatters.objects.services import Service
 
 
-class IncidentProperty(object):
+class IncidentProperty(ApiBase):
 
-    def __init__(self, data):
+    def __init__(self, parent, data):
+        super(IncidentProperty, self).__init__(parent, data)
         self.name = data.get('name')  #: :vartype: str
         self.level = data.get('level')  #: :vartype: str
 
@@ -28,9 +29,9 @@ class Incident(ApiBase):
         self.summary = data.get('summary')  #: :vartype: str
         self.description = data.get('description')  #: :vartype: str
         severity = data.get('severity')
-        self.severity = IncidentProperty(severity) if severity else None  #: :vartype: :class:`~xmatters.objects.incidents.IncidentProperty`
+        self.severity = IncidentProperty(self, severity) if severity else None  #: :vartype: :class:`~xmatters.objects.incidents.IncidentProperty`
         status = data.get('status')
-        self.status = IncidentProperty(status) if status else None  #: :vartype: :class:`~xmatters.objects.incidents.IncidentProperty`
+        self.status = IncidentProperty(self, status) if status else None  #: :vartype: :class:`~xmatters.objects.incidents.IncidentProperty`
         initiated_by = data.get('initiatedBy')
         self.initiated_by = PersonReference(self, initiated_by) if initiated_by else None  #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         commander = data.get('commander')
@@ -79,8 +80,9 @@ class IncidentNote(ApiBase):
         return self.__repr__()
 
 
-class IncidentDetails(object):
-    def __init__(self, data):
+class IncidentDetails(ApiBase):
+    def __init__(self, parent, data):
+        super(IncidentDetails, self).__init__(parent, data)
         self.summary = data.get('summary')  #: :vartype: str
         self.description = data.get('description')  #: :vartype: str
         self.severity = data.get('severity')  #: :vartype: str

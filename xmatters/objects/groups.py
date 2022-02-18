@@ -92,7 +92,7 @@ class Group(Recipient):
     def get_observers(self):
         url = self._get_url(self._endpoints.get('observers'))
         observers = self.con.get(url).get('observers', {}).get('data')
-        return [xmatters.objects.roles.Role(role) for role in observers] if observers else []
+        return [xmatters.objects.roles.Role(self, role) for role in observers] if observers else []
 
     def get_supervisors(self):
         url = self._get_url(self._endpoints.get('get_supervisors'))
@@ -146,12 +146,12 @@ class Group(Recipient):
         return self.__repr__()
 
 
-class GroupQuota(object):
-    def __init__(self, data):
-        self.group_quota_enabled = data.get('groupQuotaEnabled')  #:
+class GroupQuota(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(GroupQuota, self).__init__(parent, data)
+        self.group_quota_enabled = data.get('groupQuotaEnabled')  #: :vartype: bool
         groups = data.get('groups')
-        self.stakeholder_users = QuotaItem(
-            groups) if groups else None  #: :vartype: :class:`~xmatters.objects.common.QuotaItem`
+        self.stakeholder_users = QuotaItem(self, groups) if groups else None  #: :vartype: :class:`~xmatters.objects.common.QuotaItem`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

@@ -11,8 +11,9 @@ from xmatters.objects.shared_libraries import SharedLibrary
 from xmatters.objects.subscription_forms import SubscriptionForm
 
 
-class PlanPointer(object):
-    def __init__(self, data):
+class PlanPointer(ApiBase):
+    def __init__(self, parent, data):
+        super(PlanPointer, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
 
     def __repr__(self):
@@ -22,8 +23,9 @@ class PlanPointer(object):
         return self.__repr__()
 
 
-class PlanReference(object):
-    def __init__(self, data):
+class PlanReference(ApiBase):
+    def __init__(self, parent, data):
+        super(PlanReference, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
         self.name = data.get('name')   #: :vartype: str
 
@@ -204,22 +206,22 @@ class Plan(ApiBase):
     def get_shared_library_by_id(self, library_id):
         url = self._get_url(self._endpoints.get('get_library_by_id').format(lib_id=library_id))
         data = self.con.get(url)
-        return SharedLibrary(data) if data else None
+        return SharedLibrary(self, data) if data else None
 
     def create_shared_library(self, data):
         url = self._get_url(self._endpoints.get('get_libraries'))
         data = self.con.post(url, data=data)
-        return SharedLibrary(data) if data else None
+        return SharedLibrary(self, data) if data else None
 
     def update_shared_library(self, data):
         url = self._get_url(self._endpoints.get('get_libraries'))
         data = self.con.post(url, data=data)
-        return SharedLibrary(data) if data else None
+        return SharedLibrary(self, data) if data else None
 
     def delete_shared_library(self, library_id):
         url = self._get_url(self._endpoints.get('get_library_by_id').format(lib_id=library_id))
         data = self.con.delete(url)
-        return SharedLibrary(data) if data else None
+        return SharedLibrary(self, data) if data else None
 
     def get_endpoints(self):
         url = self._get_url(self._endpoints.get('get_endpoints'))

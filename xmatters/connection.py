@@ -48,7 +48,7 @@ class Connection(object):
         try:
             r.raise_for_status()
         except requests.exceptions.HTTPError:
-            raise err.ErrorFactory.compose(r)
+            err.ErrorFactory(r)
 
         # a resource was not found in response to a DELETE request.
         if r.status_code == 204 and r.request.method == 'DELETE':
@@ -121,25 +121,23 @@ class Connection(object):
 class ApiBase(object):
     """ Base for api objects """
 
-    def __init__(self, parent, data=None):
+    def __init__(self, parent, data=None, endpoint=None):
         # parent passed without a connection
         if not hasattr(parent, 'con') or not parent.con:
             raise err.AuthorizationError('authentication not provided')
 
         self.con = parent.con
+        self._api_data = data
 
-        if isinstance(data, dict):
+        if data:
             self_link = data.get('links', {}).get('self')
             self.base_resource = '{}{}'.format(self.con.instance_url, self_link) if self_link else None
-        elif isinstance(data, str):
-            self.base_resource = '{}{}'.format(self.con.api_base_url, data)
+        elif endpoint:
+            self.base_resource = '{}{}'.format(self.con.api_base_url, endpoint)
         else:
             self.base_resource = self.con.api_base_url
 
     def _get_url(self, endpoint=None):
-        """
-        :meta private:
-        """
         if not endpoint:
             return self.base_resource
 

@@ -15,10 +15,6 @@ import xmatters.utils
 
 class Factory(ABC):
     """ ABC for factory objects """
-    @property
-    @abstractmethod
-    def needs_parent(self):
-        pass
 
     @property
     @abstractmethod
@@ -30,22 +26,20 @@ class Factory(ABC):
     def factory_objects(self):
         pass
 
-    @classmethod
-    def construct(cls, parent, item_data, default=None):
-        """ Determine which object to construct from 'identifier' attribute in object """
-        identifier = item_data.get(cls.id_attr)
-        # noinspection PyUnresolvedReferences
-        constructor = cls.factory_objects.get(identifier, default)
+    def __new__(cls, parent, data):
+        return cls.construct(parent, data)
 
-        if cls.needs_parent:
-            return constructor(parent, item_data) if constructor else None
-        else:
-            return constructor(item_data) if constructor else None
+    @classmethod
+    def construct(cls, parent, data):
+        """ Determine which object to construct from 'identifier' attribute in object """
+        identifier = data.get(cls.id_attr)
+        # noinspection PyUnresolvedReferences
+        constructor = cls.factory_objects.get(identifier)
+        return constructor(parent, data) if constructor else None
 
 
 class DeviceFactory(Factory):
     """ Construct Device object based on 'deviceType' attribute """
-    needs_parent = True
     id_attr = 'deviceType'
     factory_objects = {'EMAIL': xmatters.objects.devices.EmailDevice,
                        'VOICE': xmatters.objects.devices.VoiceDevice,
@@ -66,7 +60,6 @@ class DeviceFactory(Factory):
 
 class RecipientFactory(Factory):
     """ Construct recipient object based on 'recipientType' attribute """
-    needs_parent = True
     id_attr = 'recipientType'
     factory_objects = {'GROUP': xmatters.objects.groups.Group,
                        'PERSON': xmatters.objects.people.Person,
@@ -82,7 +75,6 @@ class RecipientFactory(Factory):
 
 class AuditFactory(Factory):
     """ Construct audit object based on 'type' attribute """
-    needs_parent = True
     id_attr = 'type'
     factory_objects = {'EVENT_ANNOTATED': xmatters.objects.audits.AuditAnnotation,
                        'EVENT_CREATED': xmatters.objects.audits.Audit,
@@ -103,7 +95,6 @@ class AuditFactory(Factory):
 
 class SectionFactory(Factory):
     """ Construct section object based on 'type' attribute """
-    needs_parent = True
     id_attr = 'type'
     factory_objects = {'CONFERENCE_BRIDGE': xmatters.objects.forms.ConferenceBridgeSection,
                        'CUSTOM_SECTION': xmatters.objects.forms.CustomSectionItems,
@@ -125,7 +116,6 @@ class SectionFactory(Factory):
 
 class AuthFactory(Factory):
     """ Construct authentication object based on 'authenticationType' attribute """
-    needs_parent = False
     id_attr = 'authenticationType'
     factory_objects = {'NO_AUTH': None,
                        'BASIC': xmatters.objects.plan_endpoints.BasicAuthentication,
@@ -144,7 +134,6 @@ class AuthFactory(Factory):
 
 class PropertiesFactory(Factory):
     """ Construct plan property object based on 'propertyType' attribute """
-    needs_parent = False
     id_attr = 'propertyType'
     factory_objects = {'BOOLEAN': xmatters.objects.plan_properties.Boolean,
                        'HIERARCHY': xmatters.objects.plan_properties.Hierarchy,
@@ -163,7 +152,6 @@ class PropertiesFactory(Factory):
 
 class ScenarioPermFactory(Factory):
     """ Construct scenario permission object based on 'permissibleType' attribute """
-    needs_parent = True
     id_attr = 'permissibleType'
     factory_objects = {'PERSON': xmatters.objects.scenarios.ScenarioPermissionPerson,
                        'ROLE': xmatters.objects.scenarios.ScenarioPermissionRole}
@@ -177,7 +165,6 @@ class ScenarioPermFactory(Factory):
 
 class DeviceNameFactory(Factory):
     """ Construct device name object based on 'deviceType' attribute """
-    needs_parent = False
     id_attr = 'deviceType'
     factory_objects = {
         'ANDROID_PUSH': xmatters.objects.device_names.DeviceName,

@@ -20,8 +20,9 @@ class GroupReference(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class End(object):
-    def __init__(self, data):
+class End(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(End, self).__init__(parent, data)
         self.end_by = data.get('endBy')   #: :vartype: str
         date = data.get('date')
         self.date = xmatters.utils.TimeAttribute(date) if date else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
@@ -34,8 +35,9 @@ class End(object):
         return self.__repr__()
 
 
-class Rotation(object):
-    def __init__(self, data):
+class Rotation(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(Rotation, self).__init__(parent, data)
         self.type = data.get('type')   #: :vartype: str
         self.direction = data.get('direction')   #: :vartype: str
         self.interval = data.get('interval')   #: :vartype: int
@@ -50,8 +52,9 @@ class Rotation(object):
         return self.__repr__()
 
 
-class ShiftRecurrence(object):
-    def __init__(self, data):
+class ShiftRecurrence(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(ShiftRecurrence, self).__init__(parent, data)
         self.frequency = data.get('frequency')    #: :vartype: str
         self.repeat_every = data.get('repeatEvery')    #: :vartype: str
         self.on_days = data.get('onDays', [])    #: :vartype: list
@@ -61,7 +64,7 @@ class ShiftRecurrence(object):
         self.day_of_week_classifier = data.get('dayOfWeekClassifier')    #: :vartype: str
         self.day_of_week = data.get('dayOfWeek')   #: :vartype: str
         end = data.get('end')
-        self.end = End(end) if end else None    #: :vartype: :class:`~xmatters.objects.shifts.End`
+        self.end = End(self, end) if end else None    #: :vartype: :class:`~xmatters.objects.shifts.End`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -106,7 +109,7 @@ class Shift(xmatters.connection.ApiBase):
         self.end = xmatters.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         self.timezone = data.get('timezone')    #: :vartype: str
         recurrence = data.get('recurrence')
-        self.recurrence = ShiftRecurrence(recurrence) if recurrence else None    #: :vartype: :class:`~xmatters.objects.shifts.ShiftRecurrence`
+        self.recurrence = ShiftRecurrence(self, recurrence) if recurrence else None    #: :vartype: :class:`~xmatters.objects.shifts.ShiftRecurrence`
 
     @property
     def members(self):

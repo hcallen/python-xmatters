@@ -32,7 +32,7 @@ class Response(ApiBase):
         notification = data.get('notification')  #:
         self.notification = Notification(self, notification) if notification else None    #: :vartype: :class:`~xmatters.objects.events.Notification`
         options = data.get('options', {}).get('data')  #:
-        self.options = [events.ResponseOption(r) for r in options] if options else None    #: :vartype: [:class:`~xmatters.objects.events.ResponseOption`]
+        self.options = [events.ResponseOption(self, r) for r in options] if options else None    #: :vartype: [:class:`~xmatters.objects.events.ResponseOption`]
         self.source = data.get('source')    #:
         received = data.get('received')  #:
         self.received = util.TimeAttribute(received) if received else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`

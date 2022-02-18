@@ -7,8 +7,9 @@ from xmatters.utils import Pagination
 from xmatters.objects.people import Person
 
 
-class SubscriptionCriteriaReference(object):
-    def __init__(self, data):
+class SubscriptionCriteriaReference(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(SubscriptionCriteriaReference, self).__init__(parent, data)
         self.name = data.get('name')   #: :vartype: str
         self.operator = data.get('operator')   #: :vartype: str
         self.value = data.get('value')   #: :vartype: str
@@ -30,7 +31,7 @@ class Subscription(xmatters.connection.ApiBase):
         self.name = data.get('name')    #: :vartype: str
         self.description = data.get('description')    #: :vartype: str
         form = data.get('form')
-        self.form = xmatters.objects.forms.FormReference(form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
+        self.form = xmatters.objects.forms.FormReference(self, form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
         owner = data.get('owner')
 
         self.owner = xmatters.objects.people.PersonReference(self, owner)    #: :vartype: :class:`~xmatters.objects.people.PersonReference`

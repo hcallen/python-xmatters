@@ -1,5 +1,8 @@
-class Role(object):
-    def __init__(self, data):
+import xmatters.connection
+
+class Role(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(Role, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
         self.name = data.get('name')    #: :vartype: str
         self.description = data.get('description')    #: :vartype: str

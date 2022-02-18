@@ -1,11 +1,14 @@
+import xmatters.connection
+
 from xmatters.objects.common import Recipient, SelfLink
-from xmatters.utils import Pagination
 from xmatters.objects.people import Person
 from xmatters.objects.roles import Role
+from xmatters.utils import Pagination
 
 
-class DynamicTeamsCriterion(object):
-    def __init__(self, data):
+class DynamicTeamsCriterion(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(DynamicTeamsCriterion, self).__init__(parent, data)
         self.criterion_type = data.get('criterionType')  #: :vartype: str
         self.field = data.get('field')  #: :vartype: str
         self.operand = data.get('operand')  #: :vartype: str
@@ -13,8 +16,9 @@ class DynamicTeamsCriterion(object):
         self.value = data.get('value')  #: :vartype: str
 
 
-class DynamicTeamsReference(object):
-    def __init__(self, data):
+class DynamicTeamsReference(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(DynamicTeamsReference, self).__init__(parent, data)
         self.id = data.get('criterionType')  #: :vartype: str
         self.target_name = data.get('targetName')  #: :vartype: str
         self.recipient_type = data.get('recipientType')  #: :vartype: str
@@ -29,7 +33,7 @@ class DynamicTeam(Recipient):
         self.use_emergency_device = data.get('useEmergencyDevice')  #: :vartype: bool
         self.description = data.get('description')  #: :vartype: str
         criteria = data.get('criteria')
-        self.criteria = DynamicTeamsCriterion(
+        self.criteria = DynamicTeamsCriterion(self,
             criteria) if criteria else None  #: :vartype: :class:`~xmatters.objects.dynamic_teams.DynamicTeamsCriterion`
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
@@ -51,7 +55,7 @@ class DynamicTeam(Recipient):
     def get_observers(self):
         url = self._get_url('?embed=observers')
         observers = self.con.get(url).get('observers', {}).get('data')
-        return [Role(role) for role in observers] if observers else []
+        return [Role(self, role) for role in observers] if observers else []
 
     def get_supervisors(self):
         url = self._get_url('?embed=supervisors')

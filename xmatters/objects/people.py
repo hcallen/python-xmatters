@@ -107,15 +107,14 @@ class PersonReference(ApiBase):
         return self.__repr__()
 
 
-class UserQuota(object):
-    def __init__(self, data):
+class UserQuota(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(UserQuota, self).__init__(parent, data)
         self.stakeholder_users_enabled = data.get('stakeholderUsersEnabled')  #: :vartype: bool
         stakeholder_users = data.get('stakeholderUsers')
-        self.stakeholder_users = QuotaItem(
-            stakeholder_users) if stakeholder_users else None  #: :vartype: :class:`~xmatters.objects.common.QuotaItem`
+        self.stakeholder_users = QuotaItem(self, stakeholder_users) if stakeholder_users else None  #: :vartype: :class:`~xmatters.objects.common.QuotaItem`
         full_users = data.get('fullUsers')
-        self.full_users = QuotaItem(
-            full_users) if full_users else None  #: :vartype: :class:`~xmatters.objects.common.QuotaItem`
+        self.full_users = QuotaItem(self, full_users) if full_users else None  #: :vartype: :class:`~xmatters.objects.common.QuotaItem`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

@@ -1,10 +1,13 @@
+import xmatters.connection
+
 from xmatters.objects.common import Recipient, ReferenceById
 from xmatters.objects.people import PersonReference
 
 
-class Provider(object):
-    def __init__(self, data):
-        self.id = data.get('id')    #:
+class Provider(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(Provider, self).__init__(parent, data)
+        self.id = data.get('id')    #: str
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.id)
@@ -26,7 +29,7 @@ class Device(Recipient):
         self.owner = PersonReference(self, owner) if owner else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.priority_threshold = data.get('priorityThreshold')    #: :vartype: str
         provider = data.get('provider')
-        self.provider = ReferenceById(provider) if provider else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
+        self.provider = ReferenceById(self, provider) if provider else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
         self.sequence = data.get('sequence')    #: :vartype: int
         self.test_status = data.get('testStatus')    #: :vartype: str
 
@@ -44,7 +47,7 @@ class Device(Recipient):
         """
         url = self._get_url('?embed=timeframes')
         data = self.con.get(url).get('timeframes', {}).get('data', [])
-        return [DeviceTimeframe(timeframe) for timeframe in data]
+        return [DeviceTimeframe(self, timeframe) for timeframe in data]
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)
@@ -168,8 +171,9 @@ class GenericDevice(Device):
         return self.__repr__()
 
 
-class DeviceTimeframe(object):
-    def __init__(self, data):
+class DeviceTimeframe(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(DeviceTimeframe, self).__init__(parent, data)
         self.days = data.get('days')    #: :vartype: str
         self.duration_in_minutes = data.get('durationInMinutes')    #: :vartype: int
         self.exclude_holidays = data.get('excludeHolidays')    #: :vartype: bool

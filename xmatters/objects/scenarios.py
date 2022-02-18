@@ -42,7 +42,7 @@ class ScenarioPermissionRole(ScenarioPermission):
     def __init__(self, parent, data):
         super(ScenarioPermissionRole, self).__init__(parent, data)
         role = data.get('role')
-        self.role = xmatters.objects.roles.Role(
+        self.role = xmatters.objects.roles.Role(self,
             role) if role else None  #: :vartype: :class:`~xmatters.objects.roles.Role`
 
     def __repr__(self):
@@ -71,10 +71,9 @@ class Scenario(xmatters.connection.ApiBase):
         self.override_device_restrictions = data.get('overrideDeviceRestrictions')  #: :vartype: bool
         self.require_phone_password = data.get('requirePhonePassword')  #: :vartype: bool
         sos = data.get('senderOverrides')
-        self.sender_overrides = xmatters.objects.forms.SenderOverrides(
-            sos) if sos else None  #: :vartype: :class:`~xmatters.objects.forms.SenderOverrides`
+        self.sender_overrides = xmatters.objects.forms.SenderOverrides(self, sos) if sos else None  #: :vartype: :class:`~xmatters.objects.forms.SenderOverrides`
         vm_opts = data.get('voicemailOptions')
-        self.voicemail_options = xmatters.objects.events.VoicemailOptions(
+        self.voicemail_options = xmatters.objects.events.VoicemailOptions(self,
             vm_opts) if vm_opts else None  #: :vartype: :class:`~xmatters.objects.events.VoicemailOptions`
         tdns = data.get('targetDeviceNames', {})
         self.target_device_names = Pagination(self, tdns, factory.DeviceNameFactory) if tdns.get('data') else []  #: :vartype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.utils.DeviceNameFactory`

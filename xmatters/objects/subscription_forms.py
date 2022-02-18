@@ -20,10 +20,10 @@ class SubscriptionForm(xmatters.connection.ApiBase):
         self.name = data.get('name')   #: :vartype: str
         self.description = data.get('description')   #: :vartype: str
         plan = data.get('plan')
-        self.plan = xmatters.objects.plans.PlanReference(data) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
+        self.plan = xmatters.objects.plans.PlanReference(self, data) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
         self.scope = data.get('scope')    #: :vartype: str
         form = data.get('form')
-        self.form = xmatters.objects.forms.FormReference(form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
+        self.form = xmatters.objects.forms.FormReference(self, form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
         created = data.get('created')
         self.created = xmatters.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         self.one_way = data.get('oneWay')    #: :vartype: bool
@@ -67,12 +67,13 @@ class SubscriptionForm(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class SubscriptionFormReference(object):
-    def __init__(self, data):
+class SubscriptionFormReference(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(SubscriptionFormReference, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
         self.name = data.get('name')   #: :vartype: str
         plan = data.get('plan')
-        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
+        self.plan = xmatters.objects.plans.PlanReference(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

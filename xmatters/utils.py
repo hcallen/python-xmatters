@@ -4,7 +4,6 @@ import pathlib
 from dateutil import tz, parser
 
 import xmatters.connection
-import xmatters.factories
 from xmatters.objects.common import PaginationLinks
 
 
@@ -98,9 +97,8 @@ class Pagination(xmatters.connection.ApiBase):
     """
 
     def __init__(self, parent, data, constructor):
-
         super(Pagination, self).__init__(parent, data)
-        self.parent = parent
+
         self.constructor = constructor
 
         self.state = 0  #: :vartype: int
@@ -128,18 +126,9 @@ class Pagination(xmatters.connection.ApiBase):
         self.count = data.get('count')
         self.data = data.get('data')
         links = data.get('links')
-        self.links = PaginationLinks(links) if links else None
+        self.links = PaginationLinks(self, links) if links else None
         self.total = data.get('total')
         self.index = 0
-
-    def _get_object(self, item_data):
-        if issubclass(self.constructor, xmatters.factories.Factory):
-            data_object = self.constructor.construct(self, item_data)
-        elif issubclass(self.constructor, xmatters.connection.ApiBase):
-            data_object = self.constructor(self, item_data)
-        else:
-            data_object = self.constructor(item_data)
-        return data_object
 
     def __iter__(self):
         return self
@@ -156,7 +145,7 @@ class Pagination(xmatters.connection.ApiBase):
             item_data = self.data[self.index]
             self.index += 1
             self.state += 1
-            return self._get_object(item_data)
+            return self.constructor(self, item_data)
 
     def __len__(self):
         return self.total

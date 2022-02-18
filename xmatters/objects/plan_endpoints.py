@@ -4,8 +4,9 @@ from xmatters.connection import ApiBase
 import xmatters.factories
 
 
-class ServiceAuthentication(object):
-    def __init__(self, data):
+class ServiceAuthentication(ApiBase):
+    def __init__(self, parent, data):
+        super(ServiceAuthentication, self).__init__(parent, data)
         self.username = data.get('username')    #: :vartype: str
         self.connection_status = data.get('connectionStatus')   #: :vartype: str
 
@@ -16,8 +17,9 @@ class ServiceAuthentication(object):
         return self.__repr__()
 
 
-class BasicAuthentication(object):
-    def __init__(self, data):
+class BasicAuthentication(ApiBase):
+    def __init__(self, parent, data):
+        super(BasicAuthentication, self).__init__(parent, data)
         self.username = data.get('username')   #: :vartype: str
         self.password = data.get('password')   #: :vartype: str
 
@@ -28,8 +30,9 @@ class BasicAuthentication(object):
         return self.__repr__()
 
 
-class OAuth2Authentication(object):
-    def __init__(self, data):
+class OAuth2Authentication(ApiBase):
+    def __init__(self, parent, data):
+        super(OAuth2Authentication, self).__init__(parent, data)
         self.username = data.get('username')    #: :vartype: str
         self.oauth_token_url = data.get('oauthTokenUrl')   #: :vartype: str
         self.oauth_client_id = data.get('oauthClientId')    #: :vartype: str
@@ -47,7 +50,7 @@ class Endpoint(ApiBase):
         super(Endpoint, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
         plan = data.get('plan')
-        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
+        self.plan = xmatters.objects.plans.PlanReference(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
         self.url = data.get('url')   #: :vartype: str
         self.endpoint_type = data.get('endpointType')   #: :vartype: str
         self.authentication_type = data.get('authenticationType')   #: :vartype: str

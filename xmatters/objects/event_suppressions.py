@@ -4,8 +4,9 @@ import xmatters.objects.events as events
 import xmatters.utils as util
 
 
-class EventFloodFilter(object):
-    def __init__(self, data):
+class EventFloodFilter(ApiBase):
+    def __init__(self, parent, data):
+        super(EventFloodFilter, self).__init__(parent, data)
         self.id = data.get('id')  #: :vartype: str
         self.name = data.get('name')  #: :vartype: str
 
@@ -43,7 +44,7 @@ class EventSuppression(ApiBase):
         at = data.get('at')
         self.at = util.TimeAttribute(at) if at else None  #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         filters = data.get('filters', [])
-        self.filter = [EventFloodFilter(f) for f in
+        self.filter = [EventFloodFilter(self, f) for f in
                        filters]  #: :vartype: [:class:`~xmatters.objects.event_suppressions.EventFloodFilter`]
         self.links = SelfLink(self, data.get('links'))  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 

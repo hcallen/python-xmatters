@@ -28,7 +28,7 @@ class AttachmentsEndpoint(ApiBase):
     """ Used to interact with '/attachments' top-level endpoint """
 
     def __init__(self, parent):
-        super(AttachmentsEndpoint, self).__init__(parent, '/attachments')
+        super(AttachmentsEndpoint, self).__init__(parent, endpoint='/attachments')
 
     def upload_attachment(self, data):
         """
@@ -44,7 +44,7 @@ class AuditsEndpoint(ApiBase):
     """ Used to interact with '/audits' top-level endpoint """
 
     def __init__(self, parent):
-        super(AuditsEndpoint, self).__init__(parent, '/audits')
+        super(AuditsEndpoint, self).__init__(parent, endpoint='/audits')
 
     def get_audits(self, params=None, **kwargs):
         """
@@ -66,7 +66,7 @@ class DevicesEndpoint(ApiBase):
     """ Used to interact with '/devices' top-level endpoint """
 
     def __init__(self, parent):
-        super(DevicesEndpoint, self).__init__(parent, '/devices')
+        super(DevicesEndpoint, self).__init__(parent, endpoint='/devices')
 
     def get_devices(self, params=None, **kwargs):
         """
@@ -124,7 +124,7 @@ class DeviceNamesEndpoint(ApiBase):
     """ Used to interact with '/device-names' top-level endpoint """
 
     def __init__(self, parent):
-        super(DeviceNamesEndpoint, self).__init__(parent, '/device-names')
+        super(DeviceNamesEndpoint, self).__init__(parent, endpoint='/device-names')
 
     def get_device_names(self, params=None, **kwargs):
         """
@@ -172,7 +172,7 @@ class DeviceNamesEndpoint(ApiBase):
 class DeviceTypesEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(DeviceTypesEndpoint, self).__init__(parent, '/device-types')
+        super(DeviceTypesEndpoint, self).__init__(parent, endpoint='/device-types')
 
     def get_device_types(self, params=None, **kwargs):
         """
@@ -181,7 +181,7 @@ class DeviceTypesEndpoint(ApiBase):
         """
         url = self._get_url()
         data = self.con.get(url, params=params, **kwargs)
-        return DeviceTypes(data) if data else None
+        return DeviceTypes(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -193,7 +193,7 @@ class DeviceTypesEndpoint(ApiBase):
 class DynamicTeamsEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(DynamicTeamsEndpoint, self).__init__(parent, '/dynamic-teams')
+        super(DynamicTeamsEndpoint, self).__init__(parent, endpoint='/dynamic-teams')
 
     def get_dynamic_teams(self, params=None, **kwargs):
         """
@@ -250,7 +250,7 @@ class DynamicTeamsEndpoint(ApiBase):
 class EventsEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(EventsEndpoint, self).__init__(parent, '/events')
+        super(EventsEndpoint, self).__init__(parent, endpoint='/events')
 
     def get_events(self, params=None, **kwargs):
         """
@@ -289,7 +289,7 @@ class EventsEndpoint(ApiBase):
 class EventSuppressionsEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(EventSuppressionsEndpoint, self).__init__(parent, '/event-suppressions')
+        super(EventSuppressionsEndpoint, self).__init__(parent, endpoint='/event-suppressions')
 
     def get_suppressions_by_event_id(self, event_id, params=None, **kwargs):
         """
@@ -310,7 +310,7 @@ class EventSuppressionsEndpoint(ApiBase):
 class ConferenceBridgesEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(ConferenceBridgesEndpoint, self).__init__(parent, '/conference-bridges')
+        super(ConferenceBridgesEndpoint, self).__init__(parent, endpoint='/conference-bridges')
 
     def get_conference_bridges(self, params=None, **kwargs):
         """
@@ -367,7 +367,7 @@ class ConferenceBridgesEndpoint(ApiBase):
 class FormsEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(FormsEndpoint, self).__init__(parent, '/forms')
+        super(FormsEndpoint, self).__init__(parent, endpoint='/forms')
 
     def get_forms(self, params=None, **kwargs):
         """
@@ -397,7 +397,7 @@ class FormsEndpoint(ApiBase):
 class GroupsEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(GroupsEndpoint, self).__init__(parent, '/groups')
+        super(GroupsEndpoint, self).__init__(parent, endpoint='/groups')
 
     def get_groups(self, params=None, **kwargs):
         """
@@ -424,7 +424,7 @@ class GroupsEndpoint(ApiBase):
         """
         url = self._get_url('/license-quotas')
         data = self.con.get(url)
-        return GroupQuota(data) if data else None
+        return GroupQuota(self, data) if data else None
 
     def create_group(self, data):
         """
@@ -462,7 +462,7 @@ class GroupsEndpoint(ApiBase):
 
 class ImportsEndpoint(ApiBase):
     def __init__(self, parent):
-        super(ImportsEndpoint, self).__init__(parent, '/imports')
+        super(ImportsEndpoint, self).__init__(parent, endpoint='/imports')
 
     def get_import_jobs(self, params=None, **kwargs):
         """
@@ -492,7 +492,7 @@ class ImportsEndpoint(ApiBase):
 class IncidentsEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(IncidentsEndpoint, self).__init__(parent, '/incidents')
+        super(IncidentsEndpoint, self).__init__(parent, endpoint='/incidents')
 
     def get_incidents(self, params=None, **kwargs):
         """
@@ -531,7 +531,7 @@ class IncidentsEndpoint(ApiBase):
 class OnCallEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(OnCallEndpoint, self).__init__(parent, '/on-call')
+        super(OnCallEndpoint, self).__init__(parent, endpoint='/on-call')
 
     def get_oncall(self, params=None, **kwargs):
         """
@@ -552,7 +552,7 @@ class OnCallEndpoint(ApiBase):
 class OnCallSummaryEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(OnCallSummaryEndpoint, self).__init__(parent, '/on-call-summary')
+        super(OnCallSummaryEndpoint, self).__init__(parent, endpoint='/on-call-summary')
 
     def get_oncall_summary(self, params=None, **kwargs):
         """
@@ -571,9 +571,10 @@ class OnCallSummaryEndpoint(ApiBase):
 
 
 class PeopleEndpoint(ApiBase):
+    _endpoints = {'license_quotas': '/license-quotas'}
 
     def __init__(self, parent):
-        super(PeopleEndpoint, self).__init__(parent, '/people')
+        super(PeopleEndpoint, self).__init__(parent, endpoint='/people')
 
     def get_people(self, params=None, **kwargs):
         """
@@ -598,9 +599,9 @@ class PeopleEndpoint(ApiBase):
 
         :rtype: :class:`~xmatters.objects.people.UserQuota`
         """
-        url = self._get_url('license-quotas')
+        url = self._get_url(self._endpoints.get('license_quotas'))
         data = self.con.get(url)
-        return UserQuota(data) if data else None
+        return UserQuota(self, data) if data else None
 
     def create_person(self, data):
         """
@@ -639,7 +640,7 @@ class PeopleEndpoint(ApiBase):
 class PlansEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(PlansEndpoint, self).__init__(parent, '/plans')
+        super(PlansEndpoint, self).__init__(parent, endpoint='/plans')
 
     def get_plans(self, params=None, **kwargs):
         """
@@ -696,7 +697,7 @@ class PlansEndpoint(ApiBase):
 class RolesEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(RolesEndpoint, self).__init__(parent, '/roles')
+        super(RolesEndpoint, self).__init__(parent, endpoint='/roles')
 
     def get_roles(self, params=None, **kwargs):
         """
@@ -717,7 +718,7 @@ class RolesEndpoint(ApiBase):
 class ScenariosEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(ScenariosEndpoint, self).__init__(parent, '/scenarios')
+        super(ScenariosEndpoint, self).__init__(parent, endpoint='/scenarios')
 
     def get_scenarios(self, params=None, **kwargs):
         """
@@ -747,7 +748,7 @@ class ScenariosEndpoint(ApiBase):
 class ServicesEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(ServicesEndpoint, self).__init__(parent, '/services')
+        super(ServicesEndpoint, self).__init__(parent, endpoint='/services')
 
     def get_services(self, params=None, **kwargs):
         """
@@ -804,7 +805,7 @@ class ServicesEndpoint(ApiBase):
 class SitesEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(SitesEndpoint, self).__init__(parent, '/sites')
+        super(SitesEndpoint, self).__init__(parent, endpoint='/sites')
 
     def get_sites(self, params=None, **kwargs):
         """
@@ -859,9 +860,11 @@ class SitesEndpoint(ApiBase):
 
 
 class SubscriptionsEndpoint(ApiBase):
+    _endpoints = {'subscribers': '/subscribers',
+                  'unsubscribe': '/subscribers/{}'}
 
     def __init__(self, parent):
-        super(SubscriptionsEndpoint, self).__init__(parent, '/subscriptions')
+        super(SubscriptionsEndpoint, self).__init__(parent, endpoint='/subscriptions')
 
     def get_subscriptions(self, params=None, **kwargs):
         """
@@ -895,7 +898,7 @@ class SubscriptionsEndpoint(ApiBase):
 
         :rtype: :class:`~xmatters.objects.subscriptions.Subscription`
         """
-        url = self._get_url('/subscribers/{}'.format(person_id))
+        url = self._get_url(self._endpoints.get('unsubscribe').format(person_id))
         data = self.con.delete(url)
         return Subscription(self, data) if data else None
 
@@ -936,7 +939,7 @@ class SubscriptionsEndpoint(ApiBase):
 class SubscriptionFormsEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(SubscriptionFormsEndpoint, self).__init__(parent, '/subscription-forms')
+        super(SubscriptionFormsEndpoint, self).__init__(parent, endpoint='/subscription-forms')
 
     def get_subscription_forms(self, params=None, **kwargs):
         """
@@ -966,7 +969,7 @@ class SubscriptionFormsEndpoint(ApiBase):
 class TemporaryAbsencesEndpoint(ApiBase):
 
     def __init__(self, parent):
-        super(TemporaryAbsencesEndpoint, self).__init__(parent, '/temporary-absences')
+        super(TemporaryAbsencesEndpoint, self).__init__(parent, endpoint='/temporary-absences')
 
     def get_temporary_absences(self, params=None, **kwargs):
         """

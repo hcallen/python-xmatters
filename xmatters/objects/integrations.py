@@ -6,11 +6,12 @@ import xmatters.objects.plans
 from xmatters.connection import ApiBase
 
 
-class IntegrationReference(object):
-    def __init__(self, data):
+class IntegrationReference(ApiBase):
+    def __init__(self, parent, data):
+        super(IntegrationReference, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
         plan = data.get('plan')
-        self.plan = xmatters.objects.plans.PlanReference(plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
+        self.plan = xmatters.objects.plans.PlanReference(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -24,7 +25,7 @@ class IntegrationLog(ApiBase):
         super(IntegrationLog, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
         integration = data.get('integration')
-        self.integration = IntegrationReference(integration) if integration else None    #: :vartype: :class:`~xmatters.objects.integrations.IntegrationReference`
+        self.integration = IntegrationReference(self, integration) if integration else None    #: :vartype: :class:`~xmatters.objects.integrations.IntegrationReference`
         completed = data.get('completed')
         self.completed = TimeAttribute(completed) if completed else None #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         self.request_method = data.get('requestMethod')    #: :vartype: str
@@ -51,9 +52,9 @@ class Integration(ApiBase):
         super(Integration, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
         plan = data.get('plan')
-        self.plan = ReferenceById(plan) if plan else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
+        self.plan = ReferenceById(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
         form = data.get('form')
-        self.form = ReferenceById(form) if form else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
+        self.form = ReferenceById(self, form) if form else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
         self.name = data.get('name')    #: :vartype: str
         self.integration_type = data.get('integrationType')     #: :vartype: str
         self.operation = data.get('operation')    #: :vartype: str

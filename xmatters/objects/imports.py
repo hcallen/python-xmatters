@@ -4,8 +4,9 @@ from xmatters.objects.people import PersonReference
 from xmatters.utils import TimeAttribute
 
 
-class ImportMessage(object):
-    def __init__(self, data):
+class ImportMessage(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(ImportMessage, self).__init__(parent, data)
         self.id = data.get('id')     #: :vartype: str
         self.message_level = data.get('messageLevel')    #: :vartype: str
         self.message_type = data.get('messageType')    #: :vartype: str
@@ -44,7 +45,7 @@ class Import(xmatters.connection.ApiBase):
     def get_messages(self, params=None, **kwargs):
         url = self._get_url(self._endpoints.get('get_messages'))
         messages = self.con.get(url, params=params, **kwargs).get('data', None)
-        return [ImportMessage(m) for m in messages] if messages else []
+        return [ImportMessage(self, m) for m in messages] if messages else []
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.name)

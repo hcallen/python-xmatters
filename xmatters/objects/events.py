@@ -8,8 +8,9 @@ from xmatters.objects.people import PersonReference
 from xmatters.objects.plans import PlanReference
 
 
-class Message(object):
-    def __init__(self, data):
+class Message(ApiBase):
+    def __init__(self, parent, data):
+        super(Message, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
         self.message_type = data.get('messageType')    #: :vartype: str
         self.subject = data.get('subject')   #: :vartype: str
@@ -22,8 +23,9 @@ class Message(object):
         return self.__repr__()
 
 
-class UserDeliveryResponse(object):
-    def __init__(self, data):
+class UserDeliveryResponse(ApiBase):
+    def __init__(self, parent, data):
+        super(UserDeliveryResponse, self).__init__(parent, data)
         self.text = data.get('text')    #: :vartype: str
         self.notification = data.get('notification')  #: :vartype: str
         received = data.get('received')
@@ -36,8 +38,9 @@ class UserDeliveryResponse(object):
         return self.__repr__()
 
 
-class Conference(object):
-    def __init__(self, data):
+class Conference(ApiBase):
+    def __init__(self, parent, data):
+        super(Conference, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
         self.bridge_id = data.get('bridgeId')   #: :vartype: str
         self.bridge_number = data.get('bridgeNumber')   #: :vartype: str
@@ -50,8 +53,9 @@ class Conference(object):
         return self.__repr__()
 
 
-class VoicemailOptions(object):
-    def __init__(self, data):
+class VoicemailOptions(ApiBase):
+    def __init__(self, parent, data):
+        super(VoicemailOptions, self).__init__(parent, data)
         self.retry = data.get('retry')    #: :vartype: int
         self.every = data.get('every')    #: :vartype: int
         self.leave = data.get('leave')    #: :vartype: str
@@ -63,8 +67,9 @@ class VoicemailOptions(object):
         return self.__repr__()
 
 
-class Translation(object):
-    def __init__(self, data):
+class Translation(ApiBase):
+    def __init__(self, parent, data):
+        super(Translation, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
         self.language = data.get('language')   #: :vartype: str
         self.text = data.get('text')   #: :vartype: str
@@ -78,8 +83,9 @@ class Translation(object):
         return self.__repr__()
 
 
-class ResponseOption(object):
-    def __init__(self, data):
+class ResponseOption(ApiBase):
+    def __init__(self, parent, data):
+        super(ResponseOption, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
         self.number = data.get('number')    #: :vartype: int
         self.text = data.get('text')    #: :vartype: str
@@ -91,7 +97,7 @@ class ResponseOption(object):
         self.allow_comments = data.get('allowComments')    #: :vartype: bool
         self.redirect_rul = data.get('redirectUrl')    #: :vartype: str
         translations = data.get('translations', {}).get('data', [])
-        self.translations = [Translation(t) for t in translations]    #: :vartype: [:class:`~xmatters.objects.events.Translation`]
+        self.translations = [Translation(self, t) for t in translations]    #: :vartype: [:class:`~xmatters.objects.events.Translation`]
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -100,8 +106,9 @@ class ResponseOption(object):
         return self.__repr__()
 
 
-class ConferencePointer(object):
-    def __init__(self, data):
+class ConferencePointer(ApiBase):
+    def __init__(self, parent, data):
+        super(ConferencePointer, self).__init__(parent, data)
         self.bridge_id = data.get('bridgeId')    #: :vartype: str
         self.type = data.get('type')   #: :vartype: str
         self.bridge_number = data.get('bridgeNumber')    #: :vartype: str
@@ -141,7 +148,7 @@ class Notification(ApiBase):
         self.responded = TimeAttribute(responded) if responded else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         self.delivery_status = data.get('deliveryStatus')    #: :vartype: str
         responses = data.get('responses')
-        self.responses = [UserDeliveryResponse(r) for r in responses] if responses.get('data') else []    #: :vartype: [:class:`~xmatters.objects.events.UserDeliveryResponse`]
+        self.responses = [UserDeliveryResponse(self, r) for r in responses] if responses.get('data') else []    #: :vartype: [:class:`~xmatters.objects.events.UserDeliveryResponse`]
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.recipient.target_name)
@@ -161,7 +168,7 @@ class UserDeliveryData(ApiBase):
         notifications = data.get('notifications', {}).get('data')
         self.notifications = [Notification(self, n) for n in notifications] if notifications else []    #: :vartype: [:class:`~xmatters.objects.events.Notification`]
         response = data.get('response')
-        self.response = UserDeliveryResponse(response) if response else None    #: :vartype: :class:`~xmatters.objects.events.UserDeliveryResponse`
+        self.response = UserDeliveryResponse(self, response) if response else None    #: :vartype: :class:`~xmatters.objects.events.UserDeliveryResponse`
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
@@ -210,16 +217,16 @@ class Event(ApiBase):
         created = data.get('created')
         self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         conference = data.get('conference')
-        self.conference = Conference(conference) if conference else None    #: :vartype: :class:`~xmatters.objects.events.Conference`
+        self.conference = Conference(self, conference) if conference else None    #: :vartype: :class:`~xmatters.objects.events.Conference`
         self.escalation_override = data.get('escalationOverride')   #: :vartype: bool
         self.event_id = data.get('eventId')  #: :vartype: str
         self.event_type = data.get('eventType')   #: :vartype: str
         self.expiration_in_minutes = data.get('expirationInMinutes')   #: :vartype: int
         self.flood_control = data.get('floodControl')   #: :vartype: bool
         plan = data.get('plan')
-        self.plan = PlanReference(plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
+        self.plan = PlanReference(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
         form = data.get('form')
-        self.form = FormReference(form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
+        self.form = FormReference(self, form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
         self.id = data.get('id')   #: :vartype: str
         self.incident = data.get('incident')   #: :vartype: str
         self.override_device_restrictions = data.get('overrideDeviceRestrictions')   #: :vartype: bool
@@ -234,7 +241,7 @@ class Event(ApiBase):
         terminated = data.get('terminated')
         self.terminated = TimeAttribute(terminated) if terminated else None    #: :vartype: :class:`~xmatters.utils.TimeAttribute`
         voicemail_options = data.get('voicemailOptions')
-        self.voicemail_options = VoicemailOptions(voicemail_options) if voicemail_options else None    #: :vartype: :class:`~xmatters.objects.events.VoicemailOptions`
+        self.voicemail_options = VoicemailOptions(self, voicemail_options) if voicemail_options else None    #: :vartype: :class:`~xmatters.objects.events.VoicemailOptions`
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
@@ -283,7 +290,7 @@ class Event(ApiBase):
         url = self._get_url(self._endpoints.get('response_options'))
         data = self.con.get(url)
         response_options = data.get('responseOptions', {}).get('data')
-        return [ResponseOption(r) for r in response_options] if response_options else []
+        return [ResponseOption(self, r) for r in response_options] if response_options else []
 
     def get_targeted_recipients(self):
         url = self._get_url(self._endpoints.get('targeted_recipients'))

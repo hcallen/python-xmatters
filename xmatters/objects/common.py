@@ -2,8 +2,9 @@ import xmatters.connection
 import xmatters.utils
 
 
-class PaginationLinks(object):
-    def __init__(self, data):
+class PaginationLinks(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(PaginationLinks, self).__init__(parent, data)
         self.next = data.get('next')    #: :vartype: str
         self.previous = data.get('previous')   #: :vartype: str
         self.self = data.get('self')   #: :vartype: str
@@ -76,8 +77,9 @@ class RecipientPointer(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class ReferenceById(object):
-    def __init__(self, data):
+class ReferenceById(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(ReferenceById, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
 
     def __repr__(self):
@@ -101,8 +103,9 @@ class ReferenceByIdAndSelfLink(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class PropertyDefinition(object):
-    def __init__(self, data):
+class PropertyDefinition(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(PropertyDefinition, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
         self.name = data.get('name')    #: :vartype: str
         self.description = data.get('description')   #: :vartype: str
@@ -120,8 +123,9 @@ class PropertyDefinition(object):
         return self.__repr__()
 
 
-class RequestReference(object):
-    def __init__(self, data):
+class RequestReference(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(RequestReference, self).__init__(parent, data)
         self.request_id = data.get('requestId')    #:
 
     def __repr__(self):
@@ -131,8 +135,9 @@ class RequestReference(object):
         return self.__repr__()
 
 
-class QuotaItem(object):
-    def __init__(self, data):
+class QuotaItem(xmatters.connection.ApiBase):
+    def __init__(self, parent, data):
+        super(QuotaItem, self).__init__(parent, data)
         self.total = data.get('total')    #: :vartype: int
         self.active = data.get('active')    #: :vartype: int
         self.unused = data.get('unused')   #: :vartype: int

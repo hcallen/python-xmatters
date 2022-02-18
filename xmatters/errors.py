@@ -1,5 +1,7 @@
 import json
 
+import requests
+
 
 class Error(Exception):
     pass
@@ -77,10 +79,13 @@ class ErrorFactory(object):
                        415: UnsupportedMediaError,
                        429: TooManyRequestsError}
 
+    def __new__(cls, request):
+        return cls.compose(request)
+
     @classmethod
     def compose(cls, request):
         constructor = cls.factory_objects.get(request.status_code, ApiError)
-        return constructor(request) if constructor else None
+        raise constructor(request)
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
