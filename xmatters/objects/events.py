@@ -165,8 +165,8 @@ class UserDeliveryData(ApiBase):
         person = data.get('person')
         self.person = PersonReference(self, person) if person else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.delivery_status = data.get('deliveryStatus')   #: :vartype: str
-        notifications = data.get('notifications', {}).get('data')
-        self.notifications = [Notification(self, n) for n in notifications] if notifications else []    #: :vartype: [:class:`~xmatters.objects.events.Notification`]
+        notifications = data.get('notifications', {})
+        self.notifications = Pagination(self, notifications, Notification) if notifications else []    #: :vartype: [:class:`~xmatters.objects.utils.Pagination`]
         response = data.get('response')
         self.response = UserDeliveryResponse(self, response) if response else None    #: :vartype: :class:`~xmatters.objects.events.UserDeliveryResponse`
         links = data.get('links')
