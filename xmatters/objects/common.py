@@ -93,7 +93,7 @@ class ReferenceByIdAndSelfLink(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(ReferenceByIdAndSelfLink, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
-        links = data.get('links')  #:
+        links = data.get('links')
         self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def __repr__(self):
@@ -126,7 +126,7 @@ class PropertyDefinition(xmatters.connection.ApiBase):
 class RequestReference(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(RequestReference, self).__init__(parent, data)
-        self.request_id = data.get('requestId')    #:
+        self.request_id = data.get('requestId')    #: str
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
