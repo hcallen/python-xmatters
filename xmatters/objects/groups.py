@@ -10,7 +10,7 @@ from xmatters.objects.common import SelfLink, RecipientReference, Recipient, Ref
 from xmatters.utils import Pagination
 
 
-class GroupMembershipShiftReference(xmatters.connection.ApiBridge):
+class GroupMembershipShiftReference(xmatters.connection.ApiBase):
     """ Custom object for shift information embedded in a group membership response """
 
     def __int__(self, parent, data):
@@ -30,7 +30,7 @@ class GroupMembershipShiftReference(xmatters.connection.ApiBridge):
         return self.__repr__()
 
 
-class GroupMembership(xmatters.connection.ApiBridge):
+class GroupMembership(xmatters.connection.ApiBase):
     _endpoints = {'shifts': '/groups/{group_id}/members?embed=shifts'}
 
     def __init__(self, parent, data):
@@ -90,12 +90,12 @@ class Group(Recipient):
         return self.get_supervisors()
 
     def get_observers(self):
-        url = self.get_url(self._endpoints.get('observers'))
+        url = self._get_url(self._endpoints.get('observers'))
         observers = self.con.get(url).get('observers', {}).get('data')
         return [xmatters.objects.roles.Role(role) for role in observers] if observers else []
 
     def get_supervisors(self):
-        url = self.get_url(self._endpoints.get('get_supervisors'))
+        url = self._get_url(self._endpoints.get('get_supervisors'))
         data = self.con.get(url)
         return Pagination(self, data, xmatters.objects.people.Person) if data.get('data') else []
 
@@ -105,37 +105,37 @@ class Group(Recipient):
         return Pagination(self, data, xmatters.objects.oncall.OnCall) if data.get('data') else []
 
     def get_shifts(self, params=None, **kwargs):
-        url = self.get_url(self._endpoints.get('get_shifts'))
+        url = self._get_url(self._endpoints.get('get_shifts'))
         data = self.con.get(url, params=params, **kwargs)
         return Pagination(self, data, xmatters.objects.shifts.Shift) if data.get('data') else []
 
     def get_shift_by_id(self, shift_id, params=None, **kwargs):
-        url = self.get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
+        url = self._get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
         data = self.con.get(url, params=params, **kwargs)
         return xmatters.objects.shifts.Shift(self, data) if data else None
 
     def create_shift(self, data):
-        url = self.get_url(self._endpoints.get('get_shifts'))
+        url = self._get_url(self._endpoints.get('get_shifts'))
         data = self.con.post(url, data=data)
         return xmatters.objects.shifts.Shift(self, data) if data else None
 
     def delete_shift(self, shift_id):
-        url = self.get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
+        url = self._get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
         data = self.con.delete(url)
         return xmatters.objects.shifts.Shift(self, data) if data else None
 
     def get_members(self):
-        url = self.get_url(self._endpoints.get('get_members'))
+        url = self._get_url(self._endpoints.get('get_members'))
         data = self.con.get(url)
         return Pagination(self, data, GroupMembership) if data.get('data') else []
 
     def add_member(self, data):
-        url = self.get_url(self._endpoints.get('add_member'))
+        url = self._get_url(self._endpoints.get('add_member'))
         data = self.con.post(url, data=data)
         return xmatters.factories.RecipientFactory.construct(self, data) if data else None
 
     def remove_member(self, member_id):
-        url = self.get_url(self._endpoints.get('remove_member').format(member_id=member_id))
+        url = self._get_url(self._endpoints.get('remove_member').format(member_id=member_id))
         data = self.con.delete(url)
         return GroupMembership(self, data) if data else None
 

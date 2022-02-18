@@ -1,5 +1,5 @@
 import xmatters.factories
-from xmatters.connection import ApiBridge
+from xmatters.connection import ApiBase
 from xmatters.objects.common import Recipient, SelfLink
 from xmatters.objects.forms import FormReference
 from xmatters.utils import Pagination, TimeAttribute
@@ -113,7 +113,7 @@ class ConferencePointer(object):
         return self.__repr__()
 
 
-class EventReference(ApiBridge):
+class EventReference(ApiBase):
     def __init__(self, parent, data):
         super(EventReference, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
@@ -128,7 +128,7 @@ class EventReference(ApiBridge):
         return self.__repr__()
 
 
-class Notification(ApiBridge):
+class Notification(ApiBase):
     def __init__(self, parent, data):
         super(Notification, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
@@ -150,7 +150,7 @@ class Notification(ApiBridge):
         return self.__repr__()
 
 
-class UserDeliveryData(ApiBridge):
+class UserDeliveryData(ApiBase):
     def __init__(self, parent, data):
         super(UserDeliveryData, self).__init__(parent, data)
         event = data.get('event')
@@ -172,7 +172,7 @@ class UserDeliveryData(ApiBridge):
         return self.__repr__()
 
 
-class Annotation(ApiBridge):
+class Annotation(ApiBase):
     def __init__(self, parent, data):
         super(Annotation, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
@@ -191,7 +191,7 @@ class Annotation(ApiBridge):
         return self.__repr__()
 
 
-class Event(ApiBridge):
+class Event(ApiBase):
     _endpoints = {'messages': '?embed=messages',
                   'get_annotations': '/annotations',
                   'get_annotation_by_id': '/annotations/{ann_id}',
@@ -274,30 +274,30 @@ class Event(ApiBridge):
         return self.get_targeted_recipients()
 
     def get_recipients(self):
-        url = self.get_url(self._endpoints.get('recipients'))
+        url = self._get_url(self._endpoints.get('recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
         return Pagination(self, recipients, Message) if recipients.get('data') else []
 
     def get_response_options(self):
-        url = self.get_url(self._endpoints.get('response_options'))
+        url = self._get_url(self._endpoints.get('response_options'))
         data = self.con.get(url)
         response_options = data.get('responseOptions', {}).get('data')
         return [ResponseOption(r) for r in response_options] if response_options else []
 
     def get_targeted_recipients(self):
-        url = self.get_url(self._endpoints.get('targeted_recipients'))
+        url = self._get_url(self._endpoints.get('targeted_recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
         return Pagination(self, recipients, Message) if recipients.get('data') else []
 
     def get_properties(self):
-        url = self.get_url(self._endpoints.get('properties'))
+        url = self._get_url(self._endpoints.get('properties'))
         data = self.con.get(url)
         return data.get('properties', {})
 
     def get_messages(self):
-        url = self.get_url(self._endpoints.get('messages'))
+        url = self._get_url(self._endpoints.get('messages'))
         data = self.con.get(url)
         messages = data.get('messages')
         return Pagination(self, messages, Message) if messages.get('data') else []
@@ -308,23 +308,23 @@ class Event(ApiBridge):
         return Pagination(self, data, xmatters.factories.AuditFactory) if data.get('data') else []
 
     def get_user_delivery_data(self, params=None, **kwargs):
-        url = self.get_url(self._endpoints.get('get_user_delivery_data'))
+        url = self._get_url(self._endpoints.get('get_user_delivery_data'))
         data = self.con.get(url, params=params, **kwargs)
         return Pagination(self, data, UserDeliveryData) if data.get('data') else []
 
     def get_annotations(self, params=None, **kwargs):
-        url = self.get_url(self._endpoints.get('get_annotations'))
+        url = self._get_url(self._endpoints.get('get_annotations'))
         data = self.con.get(url, params=params, **kwargs)
         annotations = data.get('annotations', {})
         return Pagination(self, annotations, Annotation) if annotations.get('data') else []
 
     def get_annotation_by_id(self, annotation_id):
-        url = self.get_url(self._endpoints.get('get_annotation_by_id').format(ann_id=annotation_id))
+        url = self._get_url(self._endpoints.get('get_annotation_by_id').format(ann_id=annotation_id))
         data = self.con.get(url)
         return Annotation(self, data) if data else None
 
     def add_annotation(self, data):
-        url = self.get_url(self._endpoints.get('get_annotations'))
+        url = self._get_url(self._endpoints.get('get_annotations'))
         data = self.con.post(url, data=data)
         return Annotation(self, data) if data else None
 

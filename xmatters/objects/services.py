@@ -2,7 +2,7 @@ import xmatters.connection
 import xmatters.objects.shifts
 
 
-class Service(xmatters.connection.ApiBridge):
+class Service(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(Service, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str

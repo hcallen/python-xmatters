@@ -44,17 +44,17 @@ class DynamicTeam(Recipient):
         return self.get_supervisors()
 
     def get_members(self):
-        url = self.get_url('/members')
+        url = self._get_url('/members')
         data = self.con.get(url)
         return Pagination(self, data, Person) if data.get('data') else None
 
     def get_observers(self):
-        url = self.get_url('?embed=observers')
+        url = self._get_url('?embed=observers')
         observers = self.con.get(url).get('observers', {}).get('data')
         return [Role(role) for role in observers] if observers else []
 
     def get_supervisors(self):
-        url = self.get_url('?embed=supervisors')
+        url = self._get_url('?embed=supervisors')
         supervisors = self.con.get(url).get('supervisors', {})
         return Pagination(self, supervisors, Person) if supervisors.get('data') else []
 

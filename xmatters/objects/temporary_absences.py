@@ -4,7 +4,7 @@ import xmatters.objects.shifts
 import xmatters.connection
 
 
-class TemporaryAbsence(xmatters.connection.ApiBridge):
+class TemporaryAbsence(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(TemporaryAbsence, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str

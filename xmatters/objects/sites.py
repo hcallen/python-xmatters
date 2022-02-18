@@ -2,7 +2,7 @@ import xmatters.connection
 import xmatters.objects.common
 
 
-class Site(xmatters.connection.ApiBridge):
+class Site(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(Site, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str

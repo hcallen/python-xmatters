@@ -1,11 +1,11 @@
 from xmatters import factories as factory
-from xmatters.connection import ApiBridge
+from xmatters.connection import ApiBase
 from xmatters.objects.oncall import ShiftReference
 from xmatters.objects.people import PersonReference
 from xmatters.objects.shifts import GroupReference
 
 
-class OnCallSummary(ApiBridge):
+class OnCallSummary(ApiBase):
     def __init__(self, parent, data):
         super(OnCallSummary, self).__init__(parent, data)
         group = data.get('group')

@@ -42,7 +42,7 @@ class SenderOverrides(object):
         return self.__repr__()
 
 
-class FormSection(xmatters.connection.ApiBridge):
+class FormSection(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(FormSection, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
@@ -203,7 +203,7 @@ class SenderOverridesSection(FormSection):
         return self.__repr__()
 
 
-class Form(xmatters.connection.ApiBridge):
+class Form(xmatters.connection.ApiBase):
     _endpoints = {'response_options': '?embed=responseOptions',
                   'get_response_options': '/response-options',
                   'get_sections': '{base_url}/forms/{form_id}/sections',
@@ -237,12 +237,12 @@ class Form(xmatters.connection.ApiBridge):
         return self.get_recipients()
 
     def get_recipients(self, params=None, **kwargs):
-        url = self.get_url(self._endpoints.get('recipients'))
+        url = self._get_url(self._endpoints.get('recipients'))
         recipients = self.con.get(url, params=params, **kwargs).get('recipients', {})
         return Pagination(self, recipients, factory.RecipientFactory) if recipients.get('data') else []
 
     def get_response_options(self, params=None, **kwargs):
-        url = self.get_url(self._endpoints.get('get_response_options'))
+        url = self._get_url(self._endpoints.get('get_response_options'))
         options = self.con.get(url, params=params, **kwargs)
         return Pagination(self, options, events.ResponseOption) if options.get(
             'data') else []
@@ -254,17 +254,17 @@ class Form(xmatters.connection.ApiBridge):
             'data') else []
 
     def get_scenarios(self, params=None, **kwargs):
-        url = self.get_url(self._endpoints.get('get_scenarios'))
+        url = self._get_url(self._endpoints.get('get_scenarios'))
         s = self.con.get(url, params=params, **kwargs)
         return Pagination(self, s, xmatters.objects.scenarios.Scenario) if s.get('data') else []
 
     def create_scenario(self, data):
-        url = self.get_url(self._endpoints.get('get_scenarios'))
+        url = self._get_url(self._endpoints.get('get_scenarios'))
         data = self.con.post(url, data=data)
         return xmatters.objects.scenarios.Scenario(self, data) if data else None
 
     def update_scenario(self, data):
-        url = self.get_url(self._endpoints.get('get_scenarios'))
+        url = self._get_url(self._endpoints.get('get_scenarios'))
         data = self.con.post(url, data=data)
         return xmatters.objects.scenarios.Scenario(self, data) if data else None
 

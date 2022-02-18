@@ -2,11 +2,11 @@ import xmatters.utils as util
 import xmatters.factories
 from xmatters.objects.common import SelfLink
 from xmatters.utils import Pagination
-from xmatters.connection import ApiBridge
+from xmatters.connection import ApiBase
 from xmatters.objects.shifts import GroupReference, Shift
 
 
-class Replacer(ApiBridge):
+class Replacer(ApiBase):
     def __init__(self, parent, data):
         super(Replacer, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
@@ -29,7 +29,7 @@ class Replacer(ApiBridge):
         return self.__repr__()
 
 
-class ShiftOccurrenceMember(ApiBridge):
+class ShiftOccurrenceMember(ApiBase):
     def __init__(self, parent, data):
         super(ShiftOccurrenceMember, self).__init__(parent, data)
         member = data.get('member')
@@ -47,7 +47,7 @@ class ShiftOccurrenceMember(ApiBridge):
         return self.__repr__()
 
 
-class ShiftReference(ApiBridge):
+class ShiftReference(ApiBase):
     def __init__(self, parent, data):
         super(ShiftReference, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
@@ -62,7 +62,7 @@ class ShiftReference(ApiBridge):
         return self.__repr__()
 
 
-class TemporaryReplacement(ApiBridge):
+class TemporaryReplacement(ApiBase):
     def __init__(self, parent, data):
         super(TemporaryReplacement, self).__init__(parent, data)
         start = data.get('start')
@@ -73,7 +73,7 @@ class TemporaryReplacement(ApiBridge):
         self.replacement = TemporaryReplacement(self, replacement) if replacement else None    #: :vartype: :class:`~xmatters.objects.oncall.TemporaryReplacement`
 
 
-class OnCall(ApiBridge):
+class OnCall(ApiBase):
     def __init__(self, parent, data):
         super(OnCall, self).__init__(parent)
         # save shift self link for use with 'shift' property to return full Shift object (not just ShiftReference)

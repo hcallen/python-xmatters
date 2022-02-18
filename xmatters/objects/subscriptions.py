@@ -21,7 +21,7 @@ class SubscriptionCriteriaReference(object):
         return self.__repr__()
 
 
-class Subscription(xmatters.connection.ApiBridge):
+class Subscription(xmatters.connection.ApiBase):
     _endpoints = {'get_subscribers': '/subscribers'}
 
     def __init__(self, parent, data):
@@ -47,7 +47,7 @@ class Subscription(xmatters.connection.ApiBridge):
         self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def get_subscribers(self, params=None, **kwargs):
-        url = self.get_url(self._endpoints.get('get_subscribers'))
+        url = self._get_url(self._endpoints.get('get_subscribers'))
         subscribers = self.con.get(url, params=params, **kwargs)
         return Pagination(self, subscribers, Person) if subscribers.get('data') else []
 

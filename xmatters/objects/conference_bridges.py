@@ -2,7 +2,7 @@ from xmatters.objects.common import SelfLink
 import xmatters.connection
 
 
-class ConferenceBridge(xmatters.connection.ApiBridge):
+class ConferenceBridge(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(ConferenceBridge, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str

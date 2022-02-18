@@ -1,7 +1,7 @@
 import xmatters.utils as utils
 from xmatters.objects.common import SelfLink
 from xmatters.objects.people import PersonReference
-from xmatters.connection import ApiBridge
+from xmatters.connection import ApiBase
 from xmatters.objects.services import Service
 
 
@@ -18,7 +18,7 @@ class IncidentProperty(object):
         return self.__repr__()
 
 
-class Incident(ApiBridge):
+class Incident(ApiBase):
     _endpoints = {'add_timeline_note': '/timeline-entries'}
 
     def __init__(self, parent, data):
@@ -50,7 +50,7 @@ class Incident(ApiBridge):
         self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def add_timeline_note(self, data):
-        url = self.get_url(self._endpoints.get('add_timeline_note'))
+        url = self._get_url(self._endpoints.get('add_timeline_note'))
         data = self.con.post(url, data=data)
         return IncidentNote(self, data) if data else None
 
@@ -61,7 +61,7 @@ class Incident(ApiBridge):
         return self.__repr__()
 
 
-class IncidentNote(ApiBridge):
+class IncidentNote(ApiBase):
     def __init__(self, parent, data):
         super(IncidentNote, self).__init__(parent, data)
         self.id = data.get('id')  #: :vartype: str

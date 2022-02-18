@@ -85,7 +85,7 @@ class TokenFileStorage(object):
         return self.__repr__()
 
 
-class Pagination(xmatters.connection.ApiBridge):
+class Pagination(xmatters.connection.ApiBase):
     """
     Iterator to handle returned pagination objects from the xMatters API.
 
@@ -120,7 +120,7 @@ class Pagination(xmatters.connection.ApiBridge):
         self._set_pagination_properties(data)
 
     def _goto_next_page(self):
-        url = self.get_url(self.links.next)
+        url = self._get_url(self.links.next)
         data = self.con.get(url, params=None)
         self._set_pagination_properties(data)
 
@@ -135,7 +135,7 @@ class Pagination(xmatters.connection.ApiBridge):
     def _get_object(self, item_data):
         if issubclass(self.constructor, xmatters.factories.Factory):
             data_object = self.constructor.construct(self, item_data)
-        elif issubclass(self.constructor, xmatters.connection.ApiBridge):
+        elif issubclass(self.constructor, xmatters.connection.ApiBase):
             data_object = self.constructor(self, item_data)
         else:
             data_object = self.constructor(item_data)

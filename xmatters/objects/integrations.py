@@ -3,7 +3,7 @@ from xmatters.utils import Pagination, TimeAttribute
 from xmatters.objects.people import PersonReference
 import xmatters.objects.plan_endpoints
 import xmatters.objects.plans
-from xmatters.connection import ApiBridge
+from xmatters.connection import ApiBase
 
 
 class IntegrationReference(object):
@@ -19,7 +19,7 @@ class IntegrationReference(object):
         return self.__repr__()
 
 
-class IntegrationLog(ApiBridge):
+class IntegrationLog(ApiBase):
     def __init__(self, parent, data):
         super(IntegrationLog, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
@@ -44,7 +44,7 @@ class IntegrationLog(ApiBridge):
         return self.__repr__()
 
 
-class Integration(ApiBridge):
+class Integration(ApiBase):
     _endpoints = {'get_logs': '/logs'}
 
     def __init__(self, parent, data):
@@ -75,8 +75,8 @@ class Integration(ApiBridge):
 
         :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.integrations.IntegrationLog`
         """
-        endpoint = self.get_url(self._endpoints.get('get_logs'))
-        url = self.get_url(endpoint)
+        endpoint = self._get_url(self._endpoints.get('get_logs'))
+        url = self._get_url(endpoint)
         logs = self.con.get(url)
         return Pagination(self, logs, IntegrationLog) if logs.get('data') else []
 

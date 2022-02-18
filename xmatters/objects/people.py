@@ -3,7 +3,7 @@ import xmatters.utils as utils
 from xmatters.objects.common import Recipient, SelfLink, QuotaItem
 from xmatters.utils import Pagination
 from xmatters.objects.roles import Role
-from xmatters.connection import ApiBridge
+from xmatters.connection import ApiBase
 import xmatters.objects.groups
 
 
@@ -58,23 +58,23 @@ class Person(Recipient):
         return self.get_supervisors()
 
     def get_roles(self):
-        url = self.get_url('?embed=roles')
+        url = self._get_url('?embed=roles')
         data = self.con.get(url)
         roles = data.get('roles', {})
         return Pagination(self, roles, Role) if roles.get('data') else []
 
     def get_supervisors(self, params=None, **kwargs):
-        url = self.get_url('/supervisors')
+        url = self._get_url('/supervisors')
         s = self.con.get(url, params=params, **kwargs)
         return Pagination(self, s, Person) if s.get('data') else []
 
     def get_devices(self, params=None, **kwargs):
-        url = self.get_url('/devices')
+        url = self._get_url('/devices')
         devices = self.con.get(url, params=params, **kwargs)
         return Pagination(self, devices, xmatters.factories.DeviceFactory) if devices.get('data') else []
 
     def get_groups(self, params=None, **kwargs):
-        url = self.get_url('/group-memberships')
+        url = self._get_url('/group-memberships')
         groups = self.con.get(url, params=params, **kwargs)
         return Pagination(self, groups, xmatters.objects.groups.GroupMembership) if groups.get('data') else []
 
@@ -85,7 +85,7 @@ class Person(Recipient):
         return self.__repr__()
 
 
-class PersonReference(ApiBridge):
+class PersonReference(ApiBase):
     def __init__(self, parent, data):
         super(PersonReference, self).__init__(parent, data)
         self.id = data.get('id')  #: :vartype: str

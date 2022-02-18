@@ -1,11 +1,11 @@
 import xmatters.utils as util
 from xmatters.objects.common import Recipient
 from xmatters.objects.people import PersonReference
-from xmatters.connection import ApiBridge
+from xmatters.connection import ApiBase
 import xmatters.objects.events as events
 
 
-class Notification(ApiBridge):
+class Notification(ApiBase):
     def __init__(self, parent, data):
         super(Notification, self).__init__(parent, data)
         self.id = data.get('id')    #:
@@ -25,7 +25,7 @@ class Notification(ApiBridge):
         return self.__repr__()
 
 
-class Response(ApiBridge):
+class Response(ApiBase):
     def __init__(self, parent, data):
         super(Response, self).__init__(parent, data)
         self.comment = data.get('comment')    #:
@@ -45,7 +45,7 @@ class Response(ApiBridge):
         return self.__repr__()
 
 
-class AuditBase(ApiBridge):
+class AuditBase(ApiBase):
     def __init__(self, parent, data):
         super(AuditBase, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
@@ -75,7 +75,7 @@ class Audit(AuditBase):
         return self.__repr__()
 
 
-class Annotation(ApiBridge):
+class Annotation(ApiBase):
     def __init__(self, parent, data):
         super(Annotation, self).__init__(parent, data)
         event = data.get('event')

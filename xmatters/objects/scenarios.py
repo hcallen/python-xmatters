@@ -11,7 +11,7 @@ from xmatters.objects.common import SelfLink
 from xmatters.utils import Pagination
 
 
-class ScenarioPermission(xmatters.connection.ApiBridge):
+class ScenarioPermission(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(ScenarioPermission, self).__init__(parent, data)
         self.permissible_type = data.get('permissibleType')  #: :vartype: str
@@ -52,7 +52,7 @@ class ScenarioPermissionRole(ScenarioPermission):
         return self.__repr__()
 
 
-class Scenario(xmatters.connection.ApiBridge):
+class Scenario(xmatters.connection.ApiBase):
     _endpoints = {'properties': '?embed=properties',
                   'plan': '?embed=properties',
                   'form': '?embed=form',
@@ -108,22 +108,22 @@ class Scenario(xmatters.connection.ApiBridge):
         return self.get_properties_translations()
 
     def get_plan(self):
-        url = self.get_url(self._endpoints.get('plan'))
+        url = self._get_url(self._endpoints.get('plan'))
         plan = self.con.get(url).get('plan', {})
         return xmatters.objects.plans.Plan(self, plan) if plan else None
 
     def get_form(self):
-        url = self.get_url(self._endpoints.get('form'))
+        url = self._get_url(self._endpoints.get('form'))
         form = self.con.get(url).get('form', {})
         return xmatters.objects.forms.Form(self, form) if form else None
 
     def get_properties_translations(self):
-        url = self.get_url(self._endpoints.get('properties_translations'))
+        url = self._get_url(self._endpoints.get('properties_translations'))
         data = self.con.get(url)
         return data.get('properties', {})
 
     def get_properties(self):
-        url = self.get_url(self._endpoints.get('properties'))
+        url = self._get_url(self._endpoints.get('properties'))
         data = self.con.get(url)
         return data.get('properties', {})
 

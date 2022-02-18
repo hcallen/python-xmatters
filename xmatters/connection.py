@@ -118,25 +118,25 @@ class Connection(object):
         return self.__repr__()
 
 
-class ApiBridge(object):
-    """ Base for api objects that need to make requests """
+class ApiBase(object):
+    """ Base for api objects """
 
-    def __init__(self, parent, resource=None):
+    def __init__(self, parent, data=None):
         # parent passed without a connection
         if not hasattr(parent, 'con') or not parent.con:
             raise err.AuthorizationError('authentication not provided')
 
         self.con = parent.con
 
-        if isinstance(resource, dict):
-            self_link = resource.get('links', {}).get('self')
+        if isinstance(data, dict):
+            self_link = data.get('links', {}).get('self')
             self.base_resource = '{}{}'.format(self.con.instance_url, self_link) if self_link else None
-        elif isinstance(resource, str):
-            self.base_resource = '{}{}'.format(self.con.api_base_url, resource)
+        elif isinstance(data, str):
+            self.base_resource = '{}{}'.format(self.con.api_base_url, data)
         else:
             self.base_resource = self.con.api_base_url
 
-    def get_url(self, endpoint=None):
+    def _get_url(self, endpoint=None):
         """
         :meta private:
         """

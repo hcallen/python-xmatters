@@ -8,7 +8,7 @@ from xmatters.objects.common import SelfLink
 from xmatters.utils import Pagination
 
 
-class SubscriptionForm(xmatters.connection.ApiBridge):
+class SubscriptionForm(xmatters.connection.ApiBase):
     _endpoints = {'target_device_names': '?embed=deviceNames',
                   'visible_target_device_names': '?embed=deviceNames',
                   'property_definitions': '?embed=propertyDefinitions',
@@ -34,28 +34,28 @@ class SubscriptionForm(xmatters.connection.ApiBridge):
 
     @property
     def target_device_names(self):
-        url = self.get_url(self._endpoints.get('target_device_names'))
+        url = self._get_url(self._endpoints.get('target_device_names'))
         data = self.con.get(url)
         tdns = data.get('targetDeviceNames', {})
         return Pagination(self, tdns, xmatters.factories.DeviceNameFactory) if tdns.get('data') else []
 
     @property
     def visible_target_device_names(self):
-        url = self.get_url(self._endpoints.get('visible_target_device_names'))
+        url = self._get_url(self._endpoints.get('visible_target_device_names'))
         data = self.con.get(url)
         vtdns = data.get('visibleTargetDeviceNames', {})
         return Pagination(self, vtdns, xmatters.factories.DeviceNameFactory) if vtdns.get('data') else []
 
     @property
     def property_definitions(self):
-        url = self.get_url(self._endpoints.get('property_definitions'))
+        url = self._get_url(self._endpoints.get('property_definitions'))
         data = self.con.get(url)
         ps = data.get('propertyDefinitions', {})
         return Pagination(self, ps, xmatters.factories.PropertiesFactory) if ps.get('data') else []
 
     @property
     def roles(self):
-        url = self.get_url(self._endpoints.get('roles'))
+        url = self._get_url(self._endpoints.get('roles'))
         data = self.con.get(url).get('roles')
         roles = data.get('roles')
         return Pagination(self, roles, xmatters.objects.roles.Role) if roles else []

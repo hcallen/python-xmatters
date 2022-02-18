@@ -1,3 +1,4 @@
+
 class Property(object):
     def __init__(self, data):
         self.id = data.get('id')    #: :vartype: str

@@ -19,7 +19,7 @@ class ImportMessage(object):
         return self.__repr__()
 
 
-class Import(xmatters.connection.ApiBridge):
+class Import(xmatters.connection.ApiBase):
     _endpoints = {'get_messages': '/import-messages'}
 
     def __init__(self, parent, data):
@@ -42,7 +42,7 @@ class Import(xmatters.connection.ApiBridge):
         self.links = SelfLink(parent, links)    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def get_messages(self, params=None, **kwargs):
-        url = self.get_url(self._endpoints.get('get_messages'))
+        url = self._get_url(self._endpoints.get('get_messages'))
         messages = self.con.get(url, params=params, **kwargs).get('data', None)
         return [ImportMessage(m) for m in messages] if messages else []
 

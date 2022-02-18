@@ -1,6 +1,6 @@
 import xmatters.objects.common
 import xmatters.objects.plans
-from xmatters.connection import ApiBridge
+from xmatters.connection import ApiBase
 import xmatters.factories
 
 
@@ -42,7 +42,7 @@ class OAuth2Authentication(object):
         return self.__repr__()
 
 
-class Endpoint(ApiBridge):
+class Endpoint(ApiBase):
     def __init__(self, parent, data):
         super(Endpoint, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str

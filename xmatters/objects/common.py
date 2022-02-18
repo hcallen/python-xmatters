@@ -15,7 +15,7 @@ class PaginationLinks(object):
         return self.__repr__()
 
 
-class Recipient(xmatters.connection.ApiBridge):
+class Recipient(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(Recipient, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
@@ -35,7 +35,7 @@ class Recipient(xmatters.connection.ApiBridge):
         return self.__repr__()
 
 
-class RecipientReference(xmatters.connection.ApiBridge):
+class RecipientReference(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(RecipientReference, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
@@ -51,7 +51,7 @@ class RecipientReference(xmatters.connection.ApiBridge):
         return self.__repr__()
 
 
-class SelfLink(xmatters.connection.ApiBridge):
+class SelfLink(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(SelfLink, self).__init__(parent, data)
         self.self = data.get('self')    #: :vartype: str
@@ -63,7 +63,7 @@ class SelfLink(xmatters.connection.ApiBridge):
         return self.__repr__()
 
 
-class RecipientPointer(xmatters.connection.ApiBridge):
+class RecipientPointer(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(RecipientPointer, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
@@ -87,7 +87,7 @@ class ReferenceById(object):
         return self.__repr__()
 
 
-class ReferenceByIdAndSelfLink(xmatters.connection.ApiBridge):
+class ReferenceByIdAndSelfLink(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(ReferenceByIdAndSelfLink, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str

@@ -3,7 +3,7 @@ import xmatters.connection
 import xmatters.objects.common
 
 
-class GroupReference(xmatters.connection.ApiBridge):
+class GroupReference(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(GroupReference, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
@@ -70,7 +70,7 @@ class ShiftRecurrence(object):
         return self.__repr__()
 
 
-class ShiftMember(xmatters.connection.ApiBridge):
+class ShiftMember(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(ShiftMember, self).__init__(parent, data)
         self.position = data.get('position')    #: :vartype: int
@@ -89,7 +89,7 @@ class ShiftMember(xmatters.connection.ApiBridge):
         return self.__repr__()
 
 
-class Shift(xmatters.connection.ApiBridge):
+class Shift(xmatters.connection.ApiBase):
     _endpoints = {'get_members': '/members'}
 
     def __init__(self, parent, data):
@@ -114,12 +114,12 @@ class Shift(xmatters.connection.ApiBridge):
         return self.get_members()
 
     def get_members(self):
-        url = self.get_url(self._endpoints.get('get_members'))
+        url = self._get_url(self._endpoints.get('get_members'))
         members = self.con.get(url)
         return xmatters.utils.Pagination(self, members, ShiftMember) if members.get('data') else []
     
     def add_member(self, data):
-        url = self.get_url(self._endpoints.get('get_members'))
+        url = self._get_url(self._endpoints.get('get_members'))
         data = self.con.post(url, data=data)
         return ShiftMember(self, data) if data else None
 

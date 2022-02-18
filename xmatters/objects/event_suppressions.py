@@ -1,5 +1,5 @@
 from xmatters.objects.common import SelfLink
-from xmatters.connection import ApiBridge
+from xmatters.connection import ApiBase
 import xmatters.objects.events as events
 import xmatters.utils as util
 
@@ -16,7 +16,7 @@ class EventFloodFilter(object):
         return self.__repr__()
 
 
-class SuppressionMatch(ApiBridge):
+class SuppressionMatch(ApiBase):
     def __init__(self, parent, data):
         super(SuppressionMatch, self).__init__(parent, data)
         self.id = data.get('id')  #: :vartype: str
@@ -31,7 +31,7 @@ class SuppressionMatch(ApiBridge):
         return self.__repr__()
 
 
-class EventSuppression(ApiBridge):
+class EventSuppression(ApiBase):
     def __init__(self, parent, data):
         super(EventSuppression, self).__init__(parent, data)
         event = data.get('event')

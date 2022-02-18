@@ -3,7 +3,7 @@ import xmatters.objects.plans
 import xmatters.connection
 
 
-class PlanConstant(xmatters.connection.ApiBridge):
+class PlanConstant(xmatters.connection.ApiBase):
     def __init__(self, parent, data):
         super(PlanConstant, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
