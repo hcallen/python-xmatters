@@ -123,7 +123,7 @@ Example:
 
 .. note::
 
-    Refer to :ref:`api:API Objects` for methods to access object-specific endpoints.
+    Refer to :ref:`api:Objects` for methods to access object-specific endpoints.
 
 
 Example:

@@ -98,6 +98,9 @@ class PersonReference(ApiBase):
 
     @property
     def full_name(self):
+        """
+        :rtype: str
+        """
         return '{} {}'.format(self.first_name, self.last_name)
 
     def __repr__(self):
