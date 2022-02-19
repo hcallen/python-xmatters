@@ -289,7 +289,7 @@ class Event(ApiBase):
         url = self._get_url(self._endpoints.get('recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
-        return Pagination(self, recipients, Message) if recipients.get('data') else []
+        return Pagination(self, recipients, xmatters.factories.RecipientFactory) if recipients.get('data') else []
 
     def get_response_options(self):
         url = self._get_url(self._endpoints.get('response_options'))
@@ -301,7 +301,7 @@ class Event(ApiBase):
         url = self._get_url(self._endpoints.get('targeted_recipients'))
         data = self.con.get(url)
         recipients = data.get('recipients')
-        return Pagination(self, recipients, Message) if recipients.get('data') else []
+        return Pagination(self, recipients, xmatters.factories.RecipientFactory) if recipients.get('data') else []
 
     def get_properties(self):
         url = self._get_url(self._endpoints.get('properties'))
