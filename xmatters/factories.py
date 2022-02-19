@@ -18,30 +18,30 @@ class Factory(ABC):
 
     @property
     @abstractmethod
-    def id_attr(self):
+    def _id_attr(self):
         pass
 
     @property
     @abstractmethod
-    def factory_objects(self):
+    def _factory_objects(self):
         pass
 
     def __new__(cls, parent, data):
-        return cls.construct(parent, data)
+        return cls.get_constructor(data)(parent, data)
 
     @classmethod
-    def construct(cls, parent, data):
+    def get_constructor(cls, data):
         """ Determine which object to construct from 'identifier' attribute in object """
-        identifier = data.get(cls.id_attr)
+        identifier = data.get(cls._id_attr)
         # noinspection PyUnresolvedReferences
-        constructor = cls.factory_objects.get(identifier)
-        return constructor(parent, data) if constructor else None
+        constructor = cls._factory_objects.get(identifier)
+        return constructor
 
 
 class DeviceFactory(Factory):
     """ Construct Device object based on 'deviceType' attribute """
-    id_attr = 'deviceType'
-    factory_objects = {'EMAIL': xmatters.objects.devices.EmailDevice,
+    _id_attr = 'deviceType'
+    _factory_objects = {'EMAIL': xmatters.objects.devices.EmailDevice,
                        'VOICE': xmatters.objects.devices.VoiceDevice,
                        'TEXT_PHONE': xmatters.objects.devices.SMSDevice,
                        'TEXT_PAGER': xmatters.objects.devices.TextPagerDevice,
@@ -60,10 +60,10 @@ class DeviceFactory(Factory):
 
 class RecipientFactory(Factory):
     """ Construct recipient object based on 'recipientType' attribute """
-    id_attr = 'recipientType'
-    factory_objects = {'GROUP': xmatters.objects.groups.Group,
+    _id_attr = 'recipientType'
+    _factory_objects = {'GROUP': xmatters.objects.groups.Group,
                        'PERSON': xmatters.objects.people.Person,
-                       'DEVICE': xmatters.objects.devices.Device,
+                       'DEVICE': DeviceFactory,
                        'DYNAMIC_TEAM': xmatters.objects.dynamic_teams.DynamicTeam}
 
     def __repr__(self):
@@ -75,8 +75,8 @@ class RecipientFactory(Factory):
 
 class AuditFactory(Factory):
     """ Construct audit object based on 'type' attribute """
-    id_attr = 'type'
-    factory_objects = {'EVENT_ANNOTATED': xmatters.objects.audits.AuditAnnotation,
+    _id_attr = 'type'
+    _factory_objects = {'EVENT_ANNOTATED': xmatters.objects.audits.AuditAnnotation,
                        'EVENT_CREATED': xmatters.objects.audits.Audit,
                        'EVENT_SUSPENDED': xmatters.objects.audits.Audit,
                        'EVENT_RESUMED': xmatters.objects.audits.Audit,
@@ -95,8 +95,8 @@ class AuditFactory(Factory):
 
 class SectionFactory(Factory):
     """ Construct section object based on 'type' attribute """
-    id_attr = 'type'
-    factory_objects = {'CONFERENCE_BRIDGE': xmatters.objects.forms.ConferenceBridgeSection,
+    _id_attr = 'type'
+    _factory_objects = {'CONFERENCE_BRIDGE': xmatters.objects.forms.ConferenceBridgeSection,
                        'CUSTOM_SECTION': xmatters.objects.forms.CustomSectionItems,
                        'DEVICE_FILTER': xmatters.objects.forms.DevicesSection,
                        'HANDLING_OPTIONS': xmatters.objects.forms.HandlingSection,
@@ -116,8 +116,8 @@ class SectionFactory(Factory):
 
 class AuthFactory(Factory):
     """ Construct authentication object based on 'authenticationType' attribute """
-    id_attr = 'authenticationType'
-    factory_objects = {'NO_AUTH': None,
+    _id_attr = 'authenticationType'
+    _factory_objects = {'NO_AUTH': None,
                        'BASIC': xmatters.objects.plan_endpoints.BasicAuthentication,
                        'OAUTH2': xmatters.objects.plan_endpoints.OAuth2Authentication,
                        'OAUTH2_FORCE': xmatters.objects.plan_endpoints.OAuth2Authentication,
@@ -134,8 +134,8 @@ class AuthFactory(Factory):
 
 class PropertiesFactory(Factory):
     """ Construct plan property object based on 'propertyType' attribute """
-    id_attr = 'propertyType'
-    factory_objects = {'BOOLEAN': xmatters.objects.plan_properties.Boolean,
+    _id_attr = 'propertyType'
+    _factory_objects = {'BOOLEAN': xmatters.objects.plan_properties.Boolean,
                        'HIERARCHY': xmatters.objects.plan_properties.Hierarchy,
                        'LIST_TEXT_MULTI_SELECT': xmatters.objects.plan_properties.MultLinkSelectList,
                        'LIST_TEXT_SINGLE_SELECT': xmatters.objects.plan_properties.SingleSelectList,
@@ -152,8 +152,8 @@ class PropertiesFactory(Factory):
 
 class ScenarioPermFactory(Factory):
     """ Construct scenario permission object based on 'permissibleType' attribute """
-    id_attr = 'permissibleType'
-    factory_objects = {'PERSON': xmatters.objects.scenarios.ScenarioPermissionPerson,
+    _id_attr = 'permissibleType'
+    _factory_objects = {'PERSON': xmatters.objects.scenarios.ScenarioPermissionPerson,
                        'ROLE': xmatters.objects.scenarios.ScenarioPermissionRole}
 
     def __repr__(self):
@@ -165,8 +165,8 @@ class ScenarioPermFactory(Factory):
 
 class DeviceNameFactory(Factory):
     """ Construct device name object based on 'deviceType' attribute """
-    id_attr = 'deviceType'
-    factory_objects = {
+    _id_attr = 'deviceType'
+    _factory_objects = {
         'ANDROID_PUSH': xmatters.objects.device_names.DeviceName,
         'APPLE_PUSH': xmatters.objects.device_names.DeviceName,
         'EMAIL': xmatters.objects.device_names.DeviceNameEmail,

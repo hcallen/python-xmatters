@@ -5,7 +5,7 @@ import vcr
 
 
 import xmatters.utils
-from xmatters.session import XMSession
+from xmatters import XMSession
 
 def skip_token_calls(request):
     if request.path.endswith('/oauth2/token'):

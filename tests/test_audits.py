@@ -1,5 +1,7 @@
 import os
 
+import pytest
+
 from tests.conftest import my_vcr
 import xmatters.errors
 import xmatters.factories
@@ -16,6 +18,7 @@ class TestGet:
         for audit in audits:
             assert audit.id is not None
 
+    @pytest.mark.skip()
     @my_vcr.use_cassette('{}_test_get_by_id.json'.format(filename))
     def test_get_by_id(self, xm_test):
         events = xm_test.events_endpoint().get_events(limit=50)

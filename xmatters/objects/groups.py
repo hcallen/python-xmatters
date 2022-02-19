@@ -133,7 +133,7 @@ class Group(Recipient):
     def add_member(self, data):
         url = self._get_url(self._endpoints.get('add_member'))
         data = self.con.post(url, data=data)
-        return xmatters.factories.RecipientFactory.construct(self, data) if data else None
+        return xmatters.factories.RecipientFactory(self, data) if data else None
 
     def remove_member(self, member_id):
         url = self._get_url(self._endpoints.get('remove_member').format(member_id=member_id))

@@ -81,7 +81,7 @@ class Scenario(xmatters.connection.ApiBase):
         created = data.get('created')
         self.created = xmatters.objects.utils.TimeAttribute(created) if created else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         perm = data.get('permitted', {}).get('data')
-        self.permitted = [factory.ScenarioPermFactory.construct(self, p) for p in perm] if perm else []  #: :vartype: [:class:`~xmatters.factories.ScenarioPermFactory.compose(self, p)]`
+        self.permitted = [factory.ScenarioPermFactory(self, p) for p in perm] if perm else []  #: :vartype: [:class:`~xmatters.factories.ScenarioPermFactory.compose(self, p)]`
         rs = data.get('recipients')
         self.recipients = Pagination(self, rs, factory.RecipientFactory) if rs.get('data') else []  #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.utils.RecipientFactory`
         links = data.get('links')

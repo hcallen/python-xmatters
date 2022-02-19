@@ -1,5 +1,7 @@
 import os
 
+import pytest
+
 from xmatters import utils
 from .conftest import my_vcr
 from datetime import datetime, timedelta
@@ -32,6 +34,7 @@ class TestEvents:
 
 class TestAccounting:
 
+    @pytest.mark.skip()
     @my_vcr.use_cassette('{}_test_get.json'.format(filename))
     def test_attrs(self, xm_test):
         for event in xm_test.events_endpoint().get_events():

@@ -55,7 +55,7 @@ class Endpoint(ApiBase):
         self.endpoint_type = data.get('endpointType')   #: :vartype: str
         self.authentication_type = data.get('authenticationType')   #: :vartype: str
         auth = data.get('authentication')
-        self.authentication = xmatters.factories.AuthFactory.construct(self, data) if auth else None    #: :vartype: :class:`~xmatters.factories.AuthFactory`
+        self.authentication = xmatters.factories.AuthFactory(self, data) if auth else None    #: :vartype: :class:`~xmatters.factories.AuthFactory`
         links = data.get('links')
         self.links = xmatters.objects.common.SelfLink(self, data) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
         self.trust_self_signed = data.get('trustSelfSigned')    #: :vartype: bool

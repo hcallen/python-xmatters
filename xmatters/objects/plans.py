@@ -241,7 +241,7 @@ class Plan(ApiBase):
         """
         url = self._get_url(self._endpoints.get('get_properties'))
         data = self.con.post(url, data=data)
-        return factory.PropertiesFactory.construct(self, data) if data else None
+        return factory.PropertiesFactory(self, data) if data else None
 
     def update_property(self, data):
         """
@@ -250,7 +250,7 @@ class Plan(ApiBase):
         """
         url = self._get_url(self._endpoints.get('get_properties'))
         data = self.con.post(url, data=data)
-        return factory.PropertiesFactory.construct(self, data) if data else None
+        return factory.PropertiesFactory(self, data) if data else None
 
     def delete_property(self, property_id):
         """
@@ -259,7 +259,7 @@ class Plan(ApiBase):
         """
         url = self._get_url(self._endpoints.get('delete_property').format(prop_id=property_id))
         data = self.con.delete(url)
-        return factory.PropertiesFactory.construct(self, data) if data else None
+        return factory.PropertiesFactory(self, data) if data else None
 
     def get_shared_libraries(self, params=None, **kwargs):
         """

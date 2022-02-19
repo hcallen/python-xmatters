@@ -13,7 +13,7 @@ class OnCallSummary(ApiBase):
         shift = data.get('shift')
         self.shift = ShiftReference(self, shift) if shift else None    #: :vartype: :class:`~xmatters.objects.oncall.ShiftReference`
         recipient = data.get('recipient')
-        self.recipient = factory.RecipientFactory.construct(self, recipient) if recipient else None    #: :vartype: :class:`~xmatters.factories.RecipientFactory.compose`
+        self.recipient = factory.RecipientFactory(self, recipient) if recipient else None    #: :vartype: :class:`~xmatters.factories.RecipientFactory.compose`
         absence = data.get('absence')
         self.absence = PersonReference(self, absence) if absence else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.delay = data.get('delay')    #: :vartype: int

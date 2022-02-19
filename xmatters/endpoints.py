@@ -84,7 +84,7 @@ class DevicesEndpoint(ApiBase):
         """
         url = self._get_url(device_id)
         data = self.con.get(url=url, params=params, **kwargs)
-        return xmatters.factories.DeviceFactory.construct(self, data) if data else None
+        return xmatters.factories.DeviceFactory(self, data) if data else None
 
     def create_device(self, data):
         """
@@ -93,7 +93,7 @@ class DevicesEndpoint(ApiBase):
         """
         url = self._get_url()
         data = self.con.post(url, data=data)
-        return xmatters.factories.DeviceFactory.construct(self, data) if data else None
+        return xmatters.factories.DeviceFactory(self, data) if data else None
 
     def update_device(self, data):
         """
@@ -102,7 +102,7 @@ class DevicesEndpoint(ApiBase):
         """
         url = self._get_url()
         data = self.con.post(url=url, data=data)
-        return xmatters.factories.DeviceFactory.construct(self, data) if data else None
+        return xmatters.factories.DeviceFactory(self, data) if data else None
 
     def delete_device(self, device_id):
         """
@@ -111,7 +111,7 @@ class DevicesEndpoint(ApiBase):
         """
         url = self._get_url(device_id)
         data = self.con.delete(url=url)
-        return xmatters.factories.DeviceFactory.construct(self, data) if data else None
+        return xmatters.factories.DeviceFactory(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -142,7 +142,7 @@ class DeviceNamesEndpoint(ApiBase):
         """
         url = self._get_url()
         data = self.con.post(url, data=data)
-        return xmatters.factories.DeviceNameFactory.construct(self, data) if data else None
+        return xmatters.factories.DeviceNameFactory(self, data) if data else None
 
     def update_device_name(self, data):
         """
@@ -151,7 +151,7 @@ class DeviceNamesEndpoint(ApiBase):
         """
         url = self._get_url()
         data = self.con.post(url, data=data)
-        return xmatters.factories.DeviceNameFactory.construct(self, data) if data else None
+        return xmatters.factories.DeviceNameFactory(self, data) if data else None
 
     def delete_device_name(self, device_name_id):
         """
@@ -160,7 +160,7 @@ class DeviceNamesEndpoint(ApiBase):
         """
         url = self._get_url(device_name_id)
         data = self.con.delete(url)
-        return xmatters.factories.DeviceNameFactory.construct(self, data) if data else None
+        return xmatters.factories.DeviceNameFactory(self, data) if data else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
