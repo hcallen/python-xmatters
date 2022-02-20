@@ -1,4 +1,5 @@
 import xmatters.connection
+import xmatters.objects.common
 import xmatters.objects.utils
 import xmatters.utils
 import xmatters.factories as factory
@@ -8,7 +9,7 @@ from xmatters.objects.utils import Pagination
 from xmatters.objects.people import Person
 
 
-class SubscriptionCriteriaReference(xmatters.connection.ApiBase):
+class SubscriptionCriteriaReference(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(SubscriptionCriteriaReference, self).__init__(parent, data)
         self.name = data.get('name')   #: :vartype: str
@@ -23,7 +24,7 @@ class SubscriptionCriteriaReference(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class Subscription(xmatters.connection.ApiBase):
+class Subscription(xmatters.utils.ApiBase):
     _endpoints = {'get_subscribers': '/subscribers'}
 
     def __init__(self, parent, data):
@@ -35,7 +36,7 @@ class Subscription(xmatters.connection.ApiBase):
         self.form = xmatters.objects.forms.FormReference(self, form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
         owner = data.get('owner')
 
-        self.owner = xmatters.objects.people.PersonReference(self, owner)    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
+        self.owner = xmatters.objects.common.PersonReference(self, owner)    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         created = data.get('created')
         self.created = xmatters.objects.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.notification_delay = data.get('notificationDelay')    #: :vartype: int
@@ -50,7 +51,7 @@ class Subscription(xmatters.connection.ApiBase):
 
     def get_subscribers(self, params=None, **kwargs):
         url = self._get_url(self._endpoints.get('get_subscribers'))
-        subscribers = self.con.get(url, params=params, **kwargs)
+        subscribers = self._con.get(url, params=params, **kwargs)
         return Pagination(self, subscribers, Person) if subscribers.get('data') else []
 
     def __repr__(self):

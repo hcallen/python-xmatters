@@ -4,7 +4,50 @@ import xmatters.connection
 import xmatters.objects.common
 
 
-class GroupReference(xmatters.connection.ApiBase):
+class Shift(xmatters.utils.ApiBase):
+    _endpoints = {'get_members': '/members'}
+
+    def __init__(self, parent, data):
+        super(Shift, self).__init__(parent, data)
+        self.id = data.get('id')  #: :vartype: str
+        group = data.get('group')
+        self.group = GroupReference(self, group) if group else None  #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
+        links = data.get('links')
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+        self.name = data.get('name')  #: :vartype: str
+        start = data.get('start')
+        self.start = xmatters.objects.utils.TimeAttribute(
+            start) if start else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        end = data.get('end')
+        self.end = xmatters.objects.utils.TimeAttribute(
+            end) if end else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        self.timezone = data.get('timezone')  #: :vartype: str
+        recurrence = data.get('recurrence')
+        self.recurrence = ShiftRecurrence(self, recurrence) if recurrence else None  #: :vartype: :class:`~xmatters.objects.shifts.ShiftRecurrence`
+        self.description = data.get('description')  #: :vartype: str
+
+    @property
+    def members(self):
+        """ Alias of :meth:`get_members` """
+        return self.get_members()
+
+    def get_members(self):
+        url = self._get_url(self._endpoints.get('get_members'))
+        members = self._con.get(url)
+        return xmatters.objects.utils.Pagination(self, members, ShiftMember) if members.get('data') else []
+
+    def add_member(self, data):
+        url = self._get_url(self._endpoints.get('get_members'))
+        data = self._con.post(url, data=data)
+        return ShiftMember(self, data) if data else None
+
+    def __repr__(self):
+        return '<Shift {}>'.format(self.name)
+
+    def __str__(self):
+        return self.__repr__()
+
+class GroupReference(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(GroupReference, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
@@ -21,7 +64,7 @@ class GroupReference(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class End(xmatters.connection.ApiBase):
+class End(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(End, self).__init__(parent, data)
         self.end_by = data.get('endBy')   #: :vartype: str
@@ -36,7 +79,7 @@ class End(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class Rotation(xmatters.connection.ApiBase):
+class Rotation(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(Rotation, self).__init__(parent, data)
         self.type = data.get('type')   #: :vartype: str
@@ -53,7 +96,7 @@ class Rotation(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class ShiftRecurrence(xmatters.connection.ApiBase):
+class ShiftRecurrence(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(ShiftRecurrence, self).__init__(parent, data)
         self.frequency = data.get('frequency')    #: :vartype: str
@@ -74,7 +117,7 @@ class ShiftRecurrence(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class ShiftMember(xmatters.connection.ApiBase):
+class ShiftMember(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(ShiftMember, self).__init__(parent, data)
         self.position = data.get('position')    #: :vartype: int
@@ -88,47 +131,6 @@ class ShiftMember(xmatters.connection.ApiBase):
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class Shift(xmatters.connection.ApiBase):
-    _endpoints = {'get_members': '/members'}
-
-    def __init__(self, parent, data):
-        super(Shift, self).__init__(parent, data)
-        self.id = data.get('id')   #: :vartype: str
-        group = data.get('group')
-        self.group = GroupReference(self, group) if group else None    #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
-        links = data.get('links')
-        self.links = xmatters.objects.common.SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
-        self.name = data.get('name')   #: :vartype: str
-        start = data.get('start')
-        self.start = xmatters.objects.utils.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
-        end = data.get('end')
-        self.end = xmatters.objects.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
-        self.timezone = data.get('timezone')    #: :vartype: str
-        recurrence = data.get('recurrence')
-        self.recurrence = ShiftRecurrence(self, recurrence) if recurrence else None    #: :vartype: :class:`~xmatters.objects.shifts.ShiftRecurrence`
-
-    @property
-    def members(self):
-        """ Alias of :meth:`get_members` """
-        return self.get_members()
-
-    def get_members(self):
-        url = self._get_url(self._endpoints.get('get_members'))
-        members = self.con.get(url)
-        return xmatters.objects.utils.Pagination(self, members, ShiftMember) if members.get('data') else []
-    
-    def add_member(self, data):
-        url = self._get_url(self._endpoints.get('get_members'))
-        data = self.con.post(url, data=data)
-        return ShiftMember(self, data) if data else None
-
-    def __repr__(self):
-        return '<Shift {}>'.format(self.name)
 
     def __str__(self):
         return self.__repr__()

@@ -1,6 +1,6 @@
 import xmatters.objects.utils
-from xmatters.objects.common import SelfLink
-from xmatters.connection import ApiBase
+import xmatters.objects.common
+from xmatters.utils import ApiBase
 import xmatters.objects.events as events
 
 
@@ -23,7 +23,7 @@ class SuppressionMatch(ApiBase):
         self.id = data.get('id')  #: :vartype: str
         self.event_id = data.get('eventId')  #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

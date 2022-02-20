@@ -1,9 +1,12 @@
 import json
 import pathlib
 
+from xmatters import errors as err
+
 
 def snake_to_camelcase(s):
-    return s[0].lower() + ''.join(part.title() for part in s.split('_')[1:])
+    parts = s.split('_')
+    return parts[0].lower() + ''.join(part.title() for part in parts[1:])
 
 
 def camel_to_snakecase(s):
@@ -55,3 +58,40 @@ class TokenFileStorage(object):
         return self.__repr__()
 
 
+class ApiBase(object):
+    """ Base for api objects """
+
+    def __init__(self, parent, data=None, endpoint=None):
+        # parent passed without a connection
+        if not hasattr(parent, '_con') or not getattr(parent, '_con'):
+            raise err.AuthorizationError('authentication not provided')
+
+        self._con = getattr(parent, '_con')
+        self._api_data = data
+
+        if data:
+            self_link = data.get('links', {}).get('self')
+            self._base_resource = '{}{}'.format(self._con.instance_url, self_link) if self_link else None
+        elif endpoint:
+            self._base_resource = '{}{}'.format(self._con.api_base_url, endpoint)
+        else:
+            self._base_resource = self._con.api_base_url
+
+    def _get_url(self, endpoint=None):
+        if not endpoint:
+            return self._base_resource
+
+        # don't do anything if endpoint is full path
+        if endpoint and endpoint.startswith(self._con.instance_url):
+            return endpoint
+
+        # if not a query parameter (starts with '?') and missing prepended '/', prepend '/'
+        endpoint = '/' + endpoint if (not endpoint.startswith('/') and not endpoint.startswith('?')) else endpoint
+
+        if endpoint.startswith(self._con.api_path):
+            url_prefix = self._con.instance_url
+        elif self._base_resource:
+            url_prefix = self._base_resource
+        else:
+            url_prefix = self._con.api_base_url
+        return '{}{}'.format(url_prefix, endpoint)

@@ -1,7 +1,8 @@
 import xmatters.connection
+import xmatters.utils
 
 
-class Property(xmatters.connection.ApiBase):
+class Property(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(Property, self).__init__(parent, data)
         self.id = data.get('id')  #: :vartype: str

@@ -1,10 +1,43 @@
 import xmatters.objects.utils
-import xmatters.utils as util
 import xmatters.factories
 from xmatters.objects.common import SelfLink
 from xmatters.objects.utils import Pagination
-from xmatters.connection import ApiBase
+from xmatters.utils import ApiBase
 from xmatters.objects.shifts import GroupReference, Shift
+
+
+class OnCall(ApiBase):
+    def __init__(self, parent, data):
+        super(OnCall, self).__init__(parent, data)
+        # save shift self link for use with 'shift' property to return full Shift object (not just ShiftReference)
+        self._shift_link = data.get('shift', {}).get('links', {}).get('self')
+        group = data.get('group')
+        self.group = GroupReference(parent, group) if group else None    #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
+        start = data.get('start')
+        self.start = xmatters.objects.utils.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        end = data.get('end')
+        self.end = xmatters.objects.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        members = data.get('members', {})
+        self.members = Pagination(self, members, ShiftOccurrenceMember) if members.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.oncall.ShiftOccurrenceMember`
+
+    @property
+    def shift(self):
+        """ Alias for :meth:`get_shift` """
+        return self.get_shift()
+
+    def get_shift(self):
+        if self._shift_link:
+            url = '{}{}'.format(self._con.instance_url, self._shift_link)
+            data = self._con.get(url)
+            return Shift(self, data) if data else None
+        else:
+            return None
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
 
 
 class Replacer(ApiBase):
@@ -42,7 +75,7 @@ class ShiftOccurrenceMember(ApiBase):
         self.replacements = Pagination(self, replacements, TemporaryReplacement) if replacements.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.oncall.TemporaryReplacement`
 
     def __repr__(self):
-        return '<{} {}>'.format(self.__class__.__name__, self.member.target_name)
+        return '<{}>'.format(self.__class__.__name__)
 
     def __str__(self):
         return self.__repr__()
@@ -72,37 +105,3 @@ class TemporaryReplacement(ApiBase):
         self.end = xmatters.objects.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         replacement = data.get('replacement')
         self.replacement = TemporaryReplacement(self, replacement) if replacement else None    #: :vartype: :class:`~xmatters.objects.oncall.TemporaryReplacement`
-
-
-class OnCall(ApiBase):
-    def __init__(self, parent, data):
-        super(OnCall, self).__init__(parent)
-        # save shift self link for use with 'shift' property to return full Shift object (not just ShiftReference)
-        self._shift_link = data.get('shift', {}).get('links', {}).get('self')
-        group = data.get('group')
-        self.group = GroupReference(parent, group) if group else None    #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
-        start = data.get('start')
-        self.start = xmatters.objects.utils.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
-        end = data.get('end')
-        self.end = xmatters.objects.utils.TimeAttribute(end) if end else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
-        members = data.get('members', {})
-        self.members = Pagination(self, members, ShiftOccurrenceMember) if members.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.oncall.ShiftOccurrenceMember`
-
-    @property
-    def shift(self):
-        """ Alias for :meth:`get_shift` """
-        return self.get_shift()
-
-    def get_shift(self):
-        if self._shift_link:
-            url = '{}{}'.format(self.con.instance_url, self._shift_link)
-            data = self.con.get(url)
-            return Shift(self, data) if data else None
-        else:
-            return None
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()

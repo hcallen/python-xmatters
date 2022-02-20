@@ -5,11 +5,11 @@ import xmatters.utils
 import xmatters.connection
 import xmatters.objects.plans
 import xmatters.objects.roles
-from xmatters.objects.common import SelfLink
+import xmatters.objects.common
 from xmatters.objects.utils import Pagination
 
 
-class SubscriptionForm(xmatters.connection.ApiBase):
+class SubscriptionForm(xmatters.utils.ApiBase):
     _endpoints = {'target_device_names': '?embed=deviceNames',
                   'visible_target_device_names': '?embed=deviceNames',
                   'property_definitions': '?embed=propertyDefinitions',
@@ -31,33 +31,33 @@ class SubscriptionForm(xmatters.connection.ApiBase):
         self.subscribe_others = data.get('subscribeOthers')    #: :vartype: bool
         self.notification_delay = data.get('notificationDelay')   #: :vartype: int
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     @property
     def target_device_names(self):
         url = self._get_url(self._endpoints.get('target_device_names'))
-        data = self.con.get(url)
+        data = self._con.get(url)
         tdns = data.get('targetDeviceNames', {})
         return Pagination(self, tdns, xmatters.factories.DeviceNameFactory) if tdns.get('data') else []
 
     @property
     def visible_target_device_names(self):
         url = self._get_url(self._endpoints.get('visible_target_device_names'))
-        data = self.con.get(url)
+        data = self._con.get(url)
         vtdns = data.get('visibleTargetDeviceNames', {})
         return Pagination(self, vtdns, xmatters.factories.DeviceNameFactory) if vtdns.get('data') else []
 
     @property
     def property_definitions(self):
         url = self._get_url(self._endpoints.get('property_definitions'))
-        data = self.con.get(url)
+        data = self._con.get(url)
         ps = data.get('propertyDefinitions', {})
-        return Pagination(self, ps, xmatters.factories.PropertiesFactory) if ps.get('data') else []
+        return Pagination(self, ps, xmatters.factories.PropertiesFactoryBase) if ps.get('data') else []
 
     @property
     def roles(self):
         url = self._get_url(self._endpoints.get('roles'))
-        data = self.con.get(url).get('roles')
+        data = self._con.get(url).get('roles')
         roles = data.get('roles')
         return Pagination(self, roles, xmatters.objects.roles.Role) if roles else []
 
@@ -68,7 +68,7 @@ class SubscriptionForm(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class SubscriptionFormReference(xmatters.connection.ApiBase):
+class SubscriptionFormReference(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(SubscriptionFormReference, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str

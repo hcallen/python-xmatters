@@ -1,10 +1,10 @@
-from xmatters.objects.common import ReferenceById, SelfLink
-from xmatters.objects.utils import TimeAttribute, Pagination
-from xmatters.objects.people import PersonReference
+
+import xmatters.objects.utils
+import xmatters.objects.people
 import xmatters.objects.plan_endpoints
 import xmatters.objects.plans
-from xmatters.connection import ApiBase
-
+from xmatters.utils import ApiBase
+import xmatters.objects.common
 
 class IntegrationReference(ApiBase):
     def __init__(self, parent, data):
@@ -27,7 +27,7 @@ class IntegrationLog(ApiBase):
         integration = data.get('integration')
         self.integration = IntegrationReference(self, integration) if integration else None    #: :vartype: :class:`~xmatters.objects.integrations.IntegrationReference`
         completed = data.get('completed')
-        self.completed = TimeAttribute(completed) if completed else None #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        self.completed = xmatters.objects.utils.TimeAttribute(completed) if completed else None #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.request_method = data.get('requestMethod')    #: :vartype: str
         self.request_headers = data.get('requestHeaders', {})    #: :vartype: dict
         self.request_parameters = data.get('requestParameters', {})     #: :vartype: dict
@@ -36,7 +36,7 @@ class IntegrationLog(ApiBase):
         self.request_id = data.get('requestId')     #: :vartype: str
         self.status = data.get('status')    #: :vartype: str
         by = data.get('by')
-        self.by = PersonReference(self, by) if by else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
+        self.by = xmatters.objects.common.PersonReference(self, by) if by else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -52,9 +52,9 @@ class Integration(ApiBase):
         super(Integration, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
         plan = data.get('plan')
-        self.plan = ReferenceById(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
+        self.plan = xmatters.objects.common.ReferenceById(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
         form = data.get('form')
-        self.form = ReferenceById(self, form) if form else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
+        self.form = xmatters.objects.common.ReferenceById(self, form) if form else None    #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
         self.name = data.get('name')    #: :vartype: str
         self.integration_type = data.get('integrationType')     #: :vartype: str
         self.operation = data.get('operation')    #: :vartype: str
@@ -69,7 +69,7 @@ class Integration(ApiBase):
         self.origin_type = data.get('originType')   #: :vartype: str
         self.is_run_by_service_owner = data.get('isRunByServiceOwner')   #: :vartype: str
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
     
     def get_logs(self):
         """
@@ -78,8 +78,8 @@ class Integration(ApiBase):
         """
         endpoint = self._get_url(self._endpoints.get('get_logs'))
         url = self._get_url(endpoint)
-        logs = self.con.get(url)
-        return Pagination(self, logs, IntegrationLog) if logs.get('data') else []
+        logs = self._con.get(url)
+        return xmatters.objects.utils.Pagination(self, logs, IntegrationLog) if logs.get('data') else []
 
     @property
     def logs(self):

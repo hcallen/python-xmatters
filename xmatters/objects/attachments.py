@@ -1,7 +1,7 @@
-import xmatters.connection
+import xmatters.utils
 
 
-class Attachments(xmatters.connection.ApiBase):
+class Attachments(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(Attachments, self).__init__(parent, data)
         self.name = data.get('name')  #: :vartype: str
@@ -9,7 +9,7 @@ class Attachments(xmatters.connection.ApiBase):
         self.size = data.get('size')  #: :vartype: str
 
 
-class AttachmentsReference(xmatters.connection.ApiBase):
+class AttachmentsReference(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(AttachmentsReference, self).__init__(parent, data)
         self.path = data.get('path')  #: :vartype: str

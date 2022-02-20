@@ -1,14 +1,87 @@
 import xmatters.connection
-import xmatters.factories as factory
-import xmatters.objects.events as events
-import xmatters.objects.plans as plans
+import xmatters.factories
+import xmatters.objects.events
+import xmatters.objects.plans
 import xmatters.objects.scenarios
+import xmatters.utils
 from xmatters.objects.device_names import TargetDeviceNameSelector
-from xmatters.objects.common import Recipient, PropertyDefinition, SelfLink
+import xmatters.objects.common
 from xmatters.objects.utils import Pagination
 
 
-class FormReference(xmatters.connection.ApiBase):
+class Form(xmatters.utils.ApiBase):
+    _endpoints = {'response_options': '?embed=responseOptions',
+                  'get_response_options': '/response-options',
+                  'get_sections': '{base_url}/forms/{form_id}/sections',
+                  'recipients': '?embed=recipients',
+                  'get_scenarios': '/scenarios'}
+
+    def __init__(self, parent, data):
+        super(Form, self).__init__(parent, data)
+        self.id = data.get('id')     #: :vartype: str
+        self.form_id = data.get('formId')    #: :vartype: str
+        self.name = data.get('name')   #: :vartype: str
+        self.description = data.get('description')   #: :vartype: str
+        self.mobile_enabled = data.get('mobileEnabled')   #: :vartype: str
+        self.ui_enabled = data.get('uiEnabled')    #: :vartype: bool
+        self.api_enabled = data.get('apiEnabled')     #: :vartype: bool
+        sender_overrides = data.get('senderOverrides')
+        self.sender_overrides = SenderOverrides(self, sender_overrides) if sender_overrides else None    #: :vartype: :class:`~xmatters.objects.forms.SenderOverrides`
+        plan = data.get('plan')
+        self.plan = xmatters.objects.plans.PlanReference(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
+        links = data.get('links')
+        self.links = xmatters.objects.common.SelfLink(self, data) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+        self.trigger_type = data.get('triggerType')  #: :vartype: str
+
+    @property
+    def response_options(self):
+        """ Alias of :meth:`get_response_options` """
+        return self.get_response_options()
+
+    @property
+    def recipients(self):
+        """ Alias of :meth:`get_recipients` """
+        return self.get_recipients()
+
+    def get_recipients(self, params=None, **kwargs):
+        url = self._get_url(self._endpoints.get('recipients'))
+        recipients = self._con.get(url, params=params, **kwargs).get('recipients', {})
+        return Pagination(self, recipients, xmatters.factories.RecipientFactory) if recipients.get('data') else []
+
+    def get_response_options(self, params=None, **kwargs):
+        url = self._get_url(self._endpoints.get('get_response_options'))
+        options = self._con.get(url, params=params, **kwargs)
+        return Pagination(self, options, xmatters.objects.events.ResponseOption) if options.get(
+            'data') else []
+
+    def get_sections(self, params=None, **kwargs):
+        url = self._endpoints.get('get_sections').format(base_url=self._con.api_base_url, form_id=self.id)
+        s = self._con.get(url, params=params, **kwargs)
+        return Pagination(self, s, xmatters.factories.SectionFactory) if s.get('data') else []
+
+    def get_scenarios(self, params=None, **kwargs):
+        url = self._get_url(self._endpoints.get('get_scenarios'))
+        s = self._con.get(url, params=params, **kwargs)
+        return Pagination(self, s, xmatters.objects.scenarios.Scenario) if s.get('data') else []
+
+    def create_scenario(self, data):
+        url = self._get_url(self._endpoints.get('get_scenarios'))
+        data = self._con.post(url, data=data)
+        return xmatters.objects.scenarios.Scenario(self, data) if data else None
+
+    def update_scenario(self, data):
+        url = self._get_url(self._endpoints.get('get_scenarios'))
+        data = self._con.post(url, data=data)
+        return xmatters.objects.scenarios.Scenario(self, data) if data else None
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class FormReference(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(FormReference, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str
@@ -21,7 +94,7 @@ class FormReference(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class SectionValue(xmatters.connection.ApiBase):
+class SectionValue(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(SectionValue, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
@@ -29,22 +102,7 @@ class SectionValue(xmatters.connection.ApiBase):
         self.visible = data.get('visible')   #: :vartype: bool
 
 
-class SenderOverrides(xmatters.connection.ApiBase):
-    def __init__(self, parent, data):
-        super(SenderOverrides, self).__init__(parent, data)
-        caller_id = data.get('callerId')
-        self.caller_id = SectionValue(self, caller_id) if caller_id else None    #: :vartype: :class:`~xmatters.objects.forms.SectionValue`
-        display_name = data.get('displayName')
-        self.display_name = SectionValue(self, display_name) if display_name else None    #: :vartype: :class:`~xmatters.objects.forms.SectionValue`
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class FormSection(xmatters.connection.ApiBase):
+class FormSection(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(FormSection, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
@@ -56,6 +114,15 @@ class FormSection(xmatters.connection.ApiBase):
         self.collapsed = data.get('collapsed')   #: :vartype: bool
         self.order_num = data.get('orderNum')    #: :vartype: int
 
+
+class SenderOverrides(FormSection):
+    def __init__(self, parent, data):
+        super(SenderOverrides, self).__init__(parent, data)
+        caller_id = data.get('callerId')
+        self.caller_id = SectionValue(self, caller_id) if caller_id else None  #: :vartype: :class:`~xmatters.objects.forms.SectionValue`
+        display_name = data.get('displayName')
+        self.display_name = SectionValue(self, display_name) if display_name else None  #: :vartype: :class:`~xmatters.objects.forms.SectionValue`
+
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.type)
 
@@ -63,7 +130,7 @@ class FormSection(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class IncidentSectionItem(xmatters.connection.ApiBase):
+class IncidentSectionItem(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(IncidentSectionItem, self).__init__(parent, data)
         self.value = data.get('value')   #: :vartype: str
@@ -121,7 +188,7 @@ class CustomSectionItems(FormSection):
         return self.__repr__()
 
 
-class CustomSection(xmatters.connection.ApiBase):
+class CustomSection(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(CustomSection, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
@@ -133,7 +200,7 @@ class CustomSection(xmatters.connection.ApiBase):
         self.visible = data.get('visible')    #: :vartype: bool
         self.include_in_callback = data.get('includeInCallback')   #: :vartype: bool
         property_definition = data.get('propertyDefinition')
-        self.property_definition = PropertyDefinition(self, property_definition) if property_definition else None    #: :vartype: :class:`~xmatters.objects.common.PropertyDefinition`
+        self.property_definition = xmatters.objects.common.PropertyDefinition(self, property_definition) if property_definition else None    #: :vartype: :class:`~xmatters.objects.common.PropertyDefinition`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -147,6 +214,7 @@ class DevicesSection(FormSection):
         super(DevicesSection, self).__init__(parent, data)
         tdns = data.get('targetDeviceNames', {})
         self.target_device_names = Pagination(self, tdns, TargetDeviceNameSelector) if tdns.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.device_names.TargetDeviceNameSelector`
+        self.target_device_names_id = data.get('targetDeviceNamesId')
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -173,7 +241,7 @@ class HandlingSection(FormSection):
         require_phone_password = data.get('requirePhonePassword')
         self.require_phone_password = SectionValue(self, require_phone_password) if require_phone_password else None    #: :vartype: :class:`~xmatters.objects.forms.SectionValue`
         voicemail_options = data.get('voicemailOptions')
-        self.voicemail_options = events.VoicemailOptions(self, data) if voicemail_options else None    #: :vartype: :class:`~xmatters.objects.events.VoicemailOptions`
+        self.voicemail_options = xmatters.objects.events.VoicemailOptions(self, data) if voicemail_options else None    #: :vartype: :class:`~xmatters.objects.events.VoicemailOptions`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -186,7 +254,7 @@ class RecipientsSection(FormSection):
     def __init__(self, parent, data):
         super(RecipientsSection, self).__init__(parent, data)
         recipients = data.get('recipients', {})
-        self.recipients = Pagination(self, recipients, Recipient) if recipients.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.common.Recipient`
+        self.recipients = Pagination(self, recipients, xmatters.objects.common.Recipient) if recipients.get('data') else []    #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.common.Recipient`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -198,7 +266,10 @@ class RecipientsSection(FormSection):
 class SenderOverridesSection(FormSection):
     def __init__(self, parent, data):
         super(SenderOverridesSection, self).__init__(parent, data)
-        self.sender_overrides = SenderOverrides(self, data) if data else None    #: :vartype: :class:`~xmatters.objects.forms.SenderOverrides`
+        caller_id = data.get('callerId')    #: :vartype: :class:`~xmatters.objects.forms.SenderOverrides`
+        self.caller_id = SectionValue(self, caller_id) if caller_id else None
+        display_name = data.get('displayName')
+        self.display_name = SectionValue(self, display_name) if display_name else None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -207,73 +278,3 @@ class SenderOverridesSection(FormSection):
         return self.__repr__()
 
 
-class Form(xmatters.connection.ApiBase):
-    _endpoints = {'response_options': '?embed=responseOptions',
-                  'get_response_options': '/response-options',
-                  'get_sections': '{base_url}/forms/{form_id}/sections',
-                  'recipients': '?embed=recipients',
-                  'get_scenarios': '/scenarios'}
-
-    def __init__(self, parent, data):
-        super(Form, self).__init__(parent, data)
-        self.id = data.get('id')     #: :vartype: str
-        self.form_id = data.get('formId')    #: :vartype: str
-        self.name = data.get('name')   #: :vartype: str
-        self.description = data.get('description')   #: :vartype: str
-        self.mobile_enabled = data.get('mobileEnabled')   #: :vartype: str
-        self.ui_enabled = data.get('uiEnabled')    #: :vartype: bool
-        self.api_enabled = data.get('apiEnabled')     #: :vartype: bool
-        sender_overrides = data.get('senderOverrides')
-        self.sender_overrides = SenderOverrides(self, sender_overrides) if sender_overrides else None    #: :vartype: :class:`~xmatters.objects.forms.SenderOverrides`
-        plan = data.get('plan')
-        self.plan = plans.PlanReference(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
-        links = data.get('links')
-        self.links = SelfLink(self, data) if links else None    #: :vartype: :class:`~xmatters.objects.common.SelfLink`
-
-    @property
-    def response_options(self):
-        """ Alias of :meth:`get_response_options` """
-        return self.get_response_options()
-
-    @property
-    def recipients(self):
-        """ Alias of :meth:`get_recipients` """
-        return self.get_recipients()
-
-    def get_recipients(self, params=None, **kwargs):
-        url = self._get_url(self._endpoints.get('recipients'))
-        recipients = self.con.get(url, params=params, **kwargs).get('recipients', {})
-        return Pagination(self, recipients, factory.RecipientFactory) if recipients.get('data') else []
-
-    def get_response_options(self, params=None, **kwargs):
-        url = self._get_url(self._endpoints.get('get_response_options'))
-        options = self.con.get(url, params=params, **kwargs)
-        return Pagination(self, options, events.ResponseOption) if options.get(
-            'data') else []
-
-    def get_sections(self, params=None, **kwargs):
-        url = self._endpoints.get('get_sections').format(base_url=self.con.api_base_url, form_id=self.id)
-        s = self.con.get(url, params=params, **kwargs)
-        return Pagination(self, s, factory.SectionFactory) if s.get(
-            'data') else []
-
-    def get_scenarios(self, params=None, **kwargs):
-        url = self._get_url(self._endpoints.get('get_scenarios'))
-        s = self.con.get(url, params=params, **kwargs)
-        return Pagination(self, s, xmatters.objects.scenarios.Scenario) if s.get('data') else []
-
-    def create_scenario(self, data):
-        url = self._get_url(self._endpoints.get('get_scenarios'))
-        data = self.con.post(url, data=data)
-        return xmatters.objects.scenarios.Scenario(self, data) if data else None
-
-    def update_scenario(self, data):
-        url = self._get_url(self._endpoints.get('get_scenarios'))
-        data = self.con.post(url, data=data)
-        return xmatters.objects.scenarios.Scenario(self, data) if data else None
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()

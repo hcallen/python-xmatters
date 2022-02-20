@@ -49,7 +49,7 @@ class XMSession(object):
         else:
             instance_url = 'https://{}'.format(p_url.netloc) if p_url.netloc else 'https://{}'.format(p_url.path)
         self._api_base_url = '{}/api/xm/1'.format(instance_url)
-        self.con = None
+        self._con = None
         self._kwargs = kwargs
 
     def set_authentication(self, username=None, password=None, client_id=None, **kwargs):
@@ -79,9 +79,9 @@ class XMSession(object):
         kwargs.update(self._kwargs)
 
         if client_id:
-            self.con = xmatters.auth.OAuth2Auth(self._api_base_url, client_id, username, password, **kwargs)
+            self._con = xmatters.auth.OAuth2Auth(self._api_base_url, client_id, username, password, **kwargs)
         elif None not in (username, password):
-            self.con = xmatters.auth.BasicAuth(self._api_base_url, username, password, **kwargs)
+            self._con = xmatters.auth.BasicAuth(self._api_base_url, username, password, **kwargs)
         else:
             raise xmatters.errors.AuthorizationError('unable to determine authentication method')
 

@@ -1,7 +1,8 @@
 import xmatters.connection
+import xmatters.utils
 
 
-class TargetDeviceNameSelector(xmatters.connection.ApiBase):
+class TargetDeviceNameSelector(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(TargetDeviceNameSelector, self).__init__(parent, data)
         self.name = data.get('name')  #: :vartype: str
@@ -15,7 +16,7 @@ class TargetDeviceNameSelector(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class DeviceName(xmatters.connection.ApiBase):
+class DeviceName(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(DeviceName, self).__init__(parent, data)
         self.id = data.get('id')  #: :vartype: str

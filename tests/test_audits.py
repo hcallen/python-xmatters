@@ -11,7 +11,7 @@ filename = os.path.basename(__file__).replace('.py', '')
 
 
 class TestGet:
-    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
+    @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_get_audits(self, xm_test):
         audits = xm_test.audits_endpoint().get_audits()
         assert len(audits) > 0
@@ -19,7 +19,7 @@ class TestGet:
             assert audit.id is not None
 
     @pytest.mark.skip()
-    @my_vcr.use_cassette('{}_test_get_by_id.json'.format(filename))
+    @my_vcr.use_cassette('{}_get_by_id.json'.format(filename))
     def test_get_by_id(self, xm_test):
         events = xm_test.events_endpoint().get_events(limit=50)
         assert len(events) > 0
@@ -31,7 +31,7 @@ class TestGet:
 
 
 class TestParams:
-    @my_vcr.use_cassette('{}_test_type.json'.format(filename))
+    @my_vcr.use_cassette('{}_params_type.json'.format(filename))
     def test_audit_type(self, xm_test):
         events = xm_test.events_endpoint().get_events(limit=50)
         assert len(events) > 0
@@ -41,7 +41,7 @@ class TestParams:
             for audit_object in audits:
                 assert audit_object.type == 'EVENT_CREATED'
 
-    @my_vcr.use_cassette('{}_test_sort_order.json'.format(filename))
+    @my_vcr.use_cassette('{}_params_sort_order.json'.format(filename))
     def test_sort_order(self, xm_test):
         events = xm_test.events_endpoint().get_events(limit=50)
         assert len(events) > 0
@@ -53,16 +53,16 @@ class TestParams:
 
 
 class TestAccounting:
-    @my_vcr.use_cassette('{}_test_accounting_types.json'.format(filename))
+    @my_vcr.use_cassette('{}_accounting_types.json'.format(filename))
     def test_types(self, xm_test):
         events = xm_test.events_endpoint().get_events()
         assert len(events) > 0
         for event in events:
             audits = list(xm_test.audits_endpoint().get_audits(event_id=event.id))
             for audit in audits:
-                assert audit.type in xmatters.factories.AuditFactory.factory_objects.keys()
+                assert audit.type in xmatters.factories.AuditFactory._factory_objects.keys()
 
-    @my_vcr.use_cassette('{}_test_accounting_attrs.json'.format(filename))
+    @my_vcr.use_cassette('{}_accounting_attrs.json'.format(filename))
     def test_attrs(self, xm_test):
         audits = list(xm_test.audits_endpoint().get_audits())
         for audit in audits:

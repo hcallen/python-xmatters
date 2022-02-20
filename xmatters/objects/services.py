@@ -1,8 +1,9 @@
 import xmatters.connection
 import xmatters.objects.shifts
+import xmatters.utils
 
 
-class Service(xmatters.connection.ApiBase):
+class Service(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(Service, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str

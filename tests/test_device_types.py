@@ -10,7 +10,7 @@ filename = os.path.basename(__file__).replace('.py', '')
 
 class TestGet:
 
-    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
+    @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_get(self, xm_test):
         dts = xm_test.device_types_endpoint().get_device_types()
         assert isinstance(dts, xmatters.objects.device_types.DeviceTypes)
@@ -18,12 +18,12 @@ class TestGet:
 
 class TestAccounting:
 
-    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
+    @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_types(self, xm_test):
         devices = list(xm_test.devices_endpoint().get_devices())
         assert len(devices) > 0
         for device in devices:
-            assert device.device_type in xmatters.factories.DeviceFactory.factory_objects.keys()
+            assert device.device_type in xmatters.factories.DeviceFactory._factory_objects.keys()
 
     @my_vcr.use_cassette('{}_test_get.json'.format(filename))
     def test_attrs(self, xm_test):

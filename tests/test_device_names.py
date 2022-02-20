@@ -51,7 +51,7 @@ class TestCreateUpdateDelete:
 
 class TestGet:
 
-    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
+    @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_get(self, xm_test):
         dns = xm_test.device_names_endpoint().get_device_names()
         assert iter(dns)
@@ -61,7 +61,7 @@ class TestGet:
 
 class TestAccounting:
 
-    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
+    @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_attrs(self, xm_test):
         dns = xm_test.device_names_endpoint().get_device_names()
         for dn in dns:

@@ -1,9 +1,10 @@
 import xmatters.objects.common
 import xmatters.objects.plans
 import xmatters.connection
+import xmatters.utils
 
 
-class PlanConstant(xmatters.connection.ApiBase):
+class PlanConstant(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(PlanConstant, self).__init__(parent, data)
         self.id = data.get('id')    #: :vartype: str

@@ -1,10 +1,10 @@
 import xmatters.connection
+import xmatters.utils
 
-from xmatters.objects.common import Recipient, ReferenceById
-from xmatters.objects.people import PersonReference
+from xmatters.objects.common import Recipient, ReferenceById, PersonReference
 
 
-class Provider(xmatters.connection.ApiBase):
+class Provider(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(Provider, self).__init__(parent, data)
         self.id = data.get('id')  #: str
@@ -49,7 +49,7 @@ class Device(Recipient):
         :rtype: list[:class:`~xmatters.objects.devices.DeviceTimeframe`]
         """
         url = self._get_url('?embed=timeframes')
-        data = self.con.get(url).get('timeframes', {}).get('data', [])
+        data = self._con.get(url).get('timeframes', {}).get('data', [])
         return [DeviceTimeframe(self, timeframe) for timeframe in data]
 
     def __repr__(self):
@@ -176,7 +176,7 @@ class GenericDevice(Device):
         return self.__repr__()
 
 
-class DeviceTimeframe(xmatters.connection.ApiBase):
+class DeviceTimeframe(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(DeviceTimeframe, self).__init__(parent, data)
         self.days = data.get('days')  #: :vartype: str

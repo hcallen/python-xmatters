@@ -1,6 +1,6 @@
 import xmatters.objects.common
 import xmatters.objects.plans
-from xmatters.connection import ApiBase
+from xmatters.utils import ApiBase
 import xmatters.factories
 
 

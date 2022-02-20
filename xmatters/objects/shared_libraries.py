@@ -1,8 +1,9 @@
 import xmatters.objects.plans
 import xmatters.connection
+import xmatters.utils
 
 
-class SharedLibrary(xmatters.connection.ApiBase):
+class SharedLibrary(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(SharedLibrary, self).__init__(parent, data)
         self.id = data.get('id')  #: :vartype: str

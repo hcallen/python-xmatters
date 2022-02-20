@@ -1,7 +1,6 @@
 from dateutil import parser, tz
 
-import xmatters.connection
-import xmatters.objects.common
+import xmatters.utils
 
 
 class TimeAttribute(str):
@@ -36,7 +35,7 @@ class TimeAttribute(str):
         return '<{} {}>'.format(self.__class__.__name__, self)
 
 
-class Pagination(xmatters.connection.ApiBase):
+class Pagination(xmatters.utils.ApiBase):
     """
     Iterator to handle returned pagination objects from the xMatters API.
 
@@ -71,7 +70,7 @@ class Pagination(xmatters.connection.ApiBase):
 
     def _goto_next_page(self):
         url = self._get_url(self.links.next)
-        data = self.con.get(url, params=None)
+        data = self._con.get(url, params=None)
         self._set_pagination_properties(data)
 
     def _set_pagination_properties(self, data):
@@ -109,7 +108,7 @@ class Pagination(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class PaginationLinks(xmatters.connection.ApiBase):
+class PaginationLinks(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(PaginationLinks, self).__init__(parent, data)
         self.next = data.get('next')    #: :vartype: str

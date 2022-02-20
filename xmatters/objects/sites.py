@@ -1,8 +1,9 @@
 import xmatters.connection
 import xmatters.objects.common
+import xmatters.utils
 
 
-class SiteReference(xmatters.connection.ApiBase):
+class SiteReference(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(SiteReference, self).__init__(parent, data)
 
@@ -18,7 +19,7 @@ class SiteReference(xmatters.connection.ApiBase):
         return self.__repr__()
 
 
-class Site(xmatters.connection.ApiBase):
+class Site(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(Site, self).__init__(parent, data)
         self.id = data.get('id')  #: :vartype: str

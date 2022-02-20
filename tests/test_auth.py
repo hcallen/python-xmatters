@@ -15,7 +15,7 @@ class TestAuth:
         with open(token_filepath, 'r') as f:
             token = json.load(f)
         xm = XMSession(base_url).set_authentication(client_id=client_id, token=token)
-        assert isinstance(xm.con.token, dict)
+        assert isinstance(xm._con.token, dict)
         assert iter(list(xm.groups_endpoint().get_groups()))
 
     @my_vcr.use_cassette('test_auth.json')
@@ -24,7 +24,7 @@ class TestAuth:
         client_id = settings.get('test_client_id')
         refresh_token = settings.get('test_refresh_token')
         xm = XMSession(base_url).set_authentication(client_id=client_id, refresh_token=refresh_token)
-        assert isinstance(xm.con.token, dict)
+        assert isinstance(xm._con.token, dict)
         assert iter(list(xm.groups_endpoint().get_groups()))
 
     @my_vcr.use_cassette('test_auth.json')
@@ -34,7 +34,7 @@ class TestAuth:
         username = settings.get('test_username')
         password = settings.get('test_password')
         xm = XMSession(base_url).set_authentication(client_id=client_id, username=username, password=password)
-        assert isinstance(xm.con.token, dict)
+        assert isinstance(xm._con.token, dict)
         assert iter(list(xm.groups_endpoint().get_groups()))
 
     @my_vcr.use_cassette('test_auth.json')
@@ -44,7 +44,7 @@ class TestAuth:
         token_filepath = settings.get('test_token_filepath')
         ts = TokenFileStorage(token_filepath)
         xm = XMSession(base_url).set_authentication(client_id=client_id, token_storage=ts)
-        assert isinstance(xm.con.token, dict)
+        assert isinstance(xm._con.token, dict)
         assert iter(list(xm.groups_endpoint().get_groups()))
 
     @my_vcr.use_cassette('test_auth.json')

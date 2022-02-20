@@ -1,7 +1,9 @@
 import xmatters.connection
 import xmatters.objects.common
+import xmatters.utils
 
-class DeviceTypes(xmatters.connection.ApiBase):
+
+class DeviceTypes(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(DeviceTypes, self).__init__(parent, data)
         self.count = data.get('count')  #: :vartype: int

@@ -11,48 +11,6 @@ from xmatters.objects.common import SelfLink, RecipientReference, Recipient, Ref
 from xmatters.objects.utils import Pagination
 
 
-class GroupMembershipShiftReference(xmatters.connection.ApiBase):
-    """ Custom object for shift information embedded in a group membership response """
-
-    def __int__(self, parent, data):
-        super(GroupMembershipShiftReference, self).__init__(parent, data)
-        self.id = data.get('id')  #: :vartype: str
-        group = data.get('group')
-        self.group = xmatters.objects.shifts.GroupReference(self,
-                                                            group) if group else None  #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
-        self.name = data.get('name')  #: :vartype: str
-        links = data.get('links')
-        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class GroupMembership(xmatters.connection.ApiBase):
-    _endpoints = {'shifts': '/groups/{group_id}/members?embed=shifts'}
-
-    def __init__(self, parent, data):
-        super(GroupMembership, self).__init__(parent, data)
-        group = data.get('group')
-        self.group = xmatters.objects.shifts.GroupReference(self,
-                                                            group) if group else None  #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
-        member = data.get('member')
-        self.member = RecipientReference(self,
-                                         member) if member else None  #: :vartype: :class:`~xmatters.objects.common.RecipientReference`
-        shifts = data.get('shifts', {})
-        self.shifts = Pagination(self, shifts, GroupMembershipShiftReference) if shifts.get(
-            'data') else []  #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.groups.GroupMembershipShiftReference`
-
-    def __repr__(self):
-        return '<{}>'.format(self.__class__.__name__)
-
-    def __str__(self):
-        return self.__repr__()
-
-
 class Group(Recipient):
     _endpoints = {'get_supervisors': '/supervisors',
                   'get_oncall': '{base_url}/on-call?groups={group_id}',
@@ -92,52 +50,52 @@ class Group(Recipient):
 
     def get_observers(self):
         url = self._get_url(self._endpoints.get('observers'))
-        observers = self.con.get(url).get('observers', {}).get('data')
+        observers = self._con.get(url).get('observers', {}).get('data')
         return [xmatters.objects.roles.Role(self, role) for role in observers] if observers else []
 
     def get_supervisors(self):
         url = self._get_url(self._endpoints.get('get_supervisors'))
-        data = self.con.get(url)
+        data = self._con.get(url)
         return Pagination(self, data, xmatters.objects.people.Person) if data.get('data') else []
 
     def get_oncall(self, params=None, **kwargs):
-        url = self._endpoints.get('get_oncall').format(base_url=self.con.api_base_url, group_id=self.id)
-        data = self.con.get(url, params=params, **kwargs)
+        url = self._endpoints.get('get_oncall').format(base_url=self._con.api_base_url, group_id=self.id)
+        data = self._con.get(url, params=params, **kwargs)
         return Pagination(self, data, xmatters.objects.oncall.OnCall) if data.get('data') else []
 
     def get_shifts(self, params=None, **kwargs):
         url = self._get_url(self._endpoints.get('get_shifts'))
-        data = self.con.get(url, params=params, **kwargs)
+        data = self._con.get(url, params=params, **kwargs)
         return Pagination(self, data, xmatters.objects.shifts.Shift) if data.get('data') else []
 
     def get_shift_by_id(self, shift_id, params=None, **kwargs):
         url = self._get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
-        data = self.con.get(url, params=params, **kwargs)
+        data = self._con.get(url, params=params, **kwargs)
         return xmatters.objects.shifts.Shift(self, data) if data else None
 
     def create_shift(self, data):
         url = self._get_url(self._endpoints.get('get_shifts'))
-        data = self.con.post(url, data=data)
+        data = self._con.post(url, data=data)
         return xmatters.objects.shifts.Shift(self, data) if data else None
 
     def delete_shift(self, shift_id):
         url = self._get_url(self._endpoints.get('get_shift_by_id').format(shift_id=shift_id))
-        data = self.con.delete(url)
+        data = self._con.delete(url)
         return xmatters.objects.shifts.Shift(self, data) if data else None
 
     def get_members(self):
         url = self._get_url(self._endpoints.get('get_members'))
-        data = self.con.get(url)
+        data = self._con.get(url)
         return Pagination(self, data, GroupMembership) if data.get('data') else []
 
     def add_member(self, data):
         url = self._get_url(self._endpoints.get('add_member'))
-        data = self.con.post(url, data=data)
+        data = self._con.post(url, data=data)
         return xmatters.factories.RecipientFactory(self, data) if data else None
 
     def remove_member(self, member_id):
         url = self._get_url(self._endpoints.get('remove_member').format(member_id=member_id))
-        data = self.con.delete(url)
+        data = self._con.delete(url)
         return GroupMembership(self, data) if data else None
 
     def __repr__(self):
@@ -147,7 +105,49 @@ class Group(Recipient):
         return self.__repr__()
 
 
-class GroupQuota(xmatters.connection.ApiBase):
+class GroupMembershipShiftReference(xmatters.utils.ApiBase):
+    """ Custom object for shift information embedded in a group membership response """
+
+    def __int__(self, parent, data):
+        super(GroupMembershipShiftReference, self).__init__(parent, data)
+        self.id = data.get('id')  #: :vartype: str
+        group = data.get('group')
+        self.group = xmatters.objects.shifts.GroupReference(self,
+                                                            group) if group else None  #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
+        self.name = data.get('name')  #: :vartype: str
+        links = data.get('links')
+        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class GroupMembership(xmatters.utils.ApiBase):
+    _endpoints = {'shifts': '/groups/{group_id}/members?embed=shifts'}
+
+    def __init__(self, parent, data):
+        super(GroupMembership, self).__init__(parent, data)
+        group = data.get('group')
+        self.group = xmatters.objects.shifts.GroupReference(self,
+                                                            group) if group else None  #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
+        member = data.get('member')
+        self.member = RecipientReference(self,
+                                         member) if member else None  #: :vartype: :class:`~xmatters.objects.common.RecipientReference`
+        shifts = data.get('shifts', {})
+        self.shifts = Pagination(self, shifts, GroupMembershipShiftReference) if shifts.get(
+            'data') else []  #: :vartype: :class:`~xmatters.objects.utils.Pagination` of :class:`~xmatters.objects.groups.GroupMembershipShiftReference`
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class GroupQuota(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(GroupQuota, self).__init__(parent, data)
         self.group_quota_enabled = data.get('groupQuotaEnabled')  #: :vartype: bool

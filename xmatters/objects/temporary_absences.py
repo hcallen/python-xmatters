@@ -1,3 +1,4 @@
+import xmatters.objects.common
 import xmatters.objects.utils
 import xmatters.utils
 import xmatters.objects.people
@@ -5,13 +6,13 @@ import xmatters.objects.shifts
 import xmatters.connection
 
 
-class TemporaryAbsence(xmatters.connection.ApiBase):
+class TemporaryAbsence(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(TemporaryAbsence, self).__init__(parent, data)
         self.id = data.get('id')   #: :vartype: str
         self.absence_type = data.get('absenceType')   #: :vartype: str
         member = data.get('member')
-        self.member = xmatters.objects.people.PersonReference(self, member) if member else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
+        self.member = xmatters.objects.common.PersonReference(self, member) if member else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         start = data.get('start')
         self.start = xmatters.objects.utils.TimeAttribute(start) if start else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         end = data.get('end')
@@ -19,7 +20,7 @@ class TemporaryAbsence(xmatters.connection.ApiBase):
         group = data.get('group')
         self.group = xmatters.objects.shifts.GroupReference(self, group) if group else None    #: :vartype: :class:`~xmatters.objects.shifts.GroupReference`
         replacement = data.get('replacement')
-        self.replacement = xmatters.objects.people.PersonReference(self, replacement) if replacement else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
+        self.replacement = xmatters.objects.common.PersonReference(self, replacement) if replacement else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.member.target_name)

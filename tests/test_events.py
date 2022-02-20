@@ -1,19 +1,18 @@
 import os
 
-import pytest
-
 from xmatters import utils
 from .conftest import my_vcr
 from datetime import datetime, timedelta
 from dateutil import tz, parser
 from xmatters.errors import NotFoundError
 
+
 filename = os.path.basename(__file__).replace('.py', '')
 
 
-class TestEvents:
+class TestGet:
 
-    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
+    @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_get_events(self, xm_test):
         events = xm_test.events_endpoint().get_events()
         assert iter(events)
@@ -34,8 +33,8 @@ class TestEvents:
 
 class TestAccounting:
 
-    @pytest.mark.skip()
-    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
+    # @pytest.mark.skip()
+    @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_attrs(self, xm_test):
         for event in xm_test.events_endpoint().get_events():
             for k in event._api_data.keys():

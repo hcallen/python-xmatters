@@ -8,7 +8,7 @@ filename = os.path.basename(__file__).replace('.py', '')
 
 class TestGet:
 
-    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
+    @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_get(self, xm_test):
         dts = xm_test.dynamic_teams_endpoint().get_dynamic_teams()
         assert iter(dts)
@@ -19,7 +19,7 @@ class TestGet:
 
 class TestAccounting:
 
-    @my_vcr.use_cassette('{}_test_get.json'.format(filename))
+    @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_attrs(self, xm_test):
         for team in xm_test.dynamic_teams_endpoint().get_dynamic_teams():
             for k in team._api_data.keys():

@@ -1,8 +1,6 @@
 import xmatters.objects.utils
-import xmatters.utils as utils
-from xmatters.objects.common import SelfLink
-from xmatters.objects.people import PersonReference
-from xmatters.connection import ApiBase
+from xmatters.objects.common import SelfLink, ReferenceById, PersonReference
+from xmatters.utils import ApiBase
 from xmatters.objects.services import Service
 
 
@@ -50,10 +48,20 @@ class Incident(ApiBase):
         self.acknowledged_at = xmatters.objects.utils.TimeAttribute(acknowledged_at) if acknowledged_at else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         links = data.get('links')
         self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+        owner = data.get('owner')
+        self.owner = PersonReference(self, owner) if owner else None  #: :vartype: :class:`~xmatters.objects.people.PersonReference`
+        owner_resolver = data.get('ownerResolver')
+        self.owner_resolver = ReferenceById(self, owner_resolver) if owner_resolver else None  #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
+        resolved_at = data.get('resolvedAt')
+        self.resolved_at = xmatters.objects.utils.TimeAttribute(resolved_at) if resolved_at else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        impact_start_at = data.get('impactStartAt')
+        self.impact_start_at = xmatters.objects.utils.TimeAttribute(impact_start_at) if impact_start_at else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        mitigated_at = data.get('mitigatedAt')
+        self.mitigated_at = xmatters.objects.utils.TimeAttribute(mitigated_at) if mitigated_at else None  #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
 
     def add_timeline_note(self, data):
         url = self._get_url(self._endpoints.get('add_timeline_note'))
-        data = self.con.post(url, data=data)
+        data = self._con.post(url, data=data)
         return IncidentNote(self, data) if data else None
 
     def __repr__(self):
