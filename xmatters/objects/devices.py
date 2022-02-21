@@ -1,7 +1,5 @@
-import xmatters.connection
+import xmatters.objects.common
 import xmatters.utils
-
-from xmatters.objects.common import Recipient, ReferenceById, PersonReference
 
 
 class Provider(xmatters.utils.ApiBase):
@@ -16,7 +14,7 @@ class Provider(xmatters.utils.ApiBase):
         return self.__repr__()
 
 
-class Device(Recipient):
+class Device(xmatters.objects.common.Recipient):
 
     def __init__(self, parent, data):
         super(Device, self).__init__(parent, data)
@@ -26,11 +24,11 @@ class Device(Recipient):
         self.device_type = data.get('deviceType')  #: :vartype: str
         self.name = data.get('name')  #: :vartype: str
         owner = data.get('owner')
-        self.owner = PersonReference(self,
+        self.owner = xmatters.objects.common.PersonReference(self,
                                      owner) if owner else None  #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.priority_threshold = data.get('priorityThreshold')  #: :vartype: str
         provider = data.get('provider')
-        self.provider = ReferenceById(self,
+        self.provider = xmatters.objects.common.ReferenceById(self,
                                       provider) if provider else None  #: :vartype: :class:`~xmatters.objects.common.ReferenceById`
         self.sequence = data.get('sequence')  #: :vartype: int
         self.test_status = data.get('testStatus')  #: :vartype: str

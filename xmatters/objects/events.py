@@ -2,8 +2,8 @@ import xmatters.factories
 import xmatters.objects.common
 import xmatters.objects.event_suppressions
 import xmatters.objects.forms
-from xmatters.objects.plans import PlanReference
-from xmatters.objects.utils import TimeAttribute, Pagination
+import xmatters.objects.plans
+import xmatters.objects.utils
 from xmatters.utils import ApiBase
 
 
@@ -24,7 +24,7 @@ class Event(ApiBase):
         super(Event, self).__init__(parent, data)
         self.bypass_phone_intro = data.get('bypassPhoneIntro')   #: :vartype: bool
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        self.created = xmatters.objects.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         conference = data.get('conference')
         self.conference = Conference(self, conference) if conference else None    #: :vartype: :class:`~xmatters.objects.events.Conference`
         self.escalation_override = data.get('escalationOverride')   #: :vartype: bool
@@ -33,7 +33,7 @@ class Event(ApiBase):
         self.expiration_in_minutes = data.get('expirationInMinutes')   #: :vartype: int
         self.flood_control = data.get('floodControl')   #: :vartype: bool
         plan = data.get('plan')
-        self.plan = PlanReference(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
+        self.plan = xmatters.objects.plans.PlanReference(self, plan) if plan else None    #: :vartype: :class:`~xmatters.objects.plans.PlanReference`
         form = data.get('form')
         self.form = xmatters.objects.forms.FormReference(self, form) if form else None    #: :vartype: :class:`~xmatters.objects.forms.FormReference`
         self.id = data.get('id')   #: :vartype: str
@@ -48,7 +48,7 @@ class Event(ApiBase):
         self.submitter = xmatters.objects.common.PersonReference(self, submitter) if submitter else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.status = data.get('status')   #: :vartype: str
         terminated = data.get('terminated')
-        self.terminated = TimeAttribute(terminated) if terminated else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        self.terminated = xmatters.objects.utils.TimeAttribute(terminated) if terminated else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         voicemail_options = data.get('voicemailOptions')
         self.voicemail_options = VoicemailOptions(self, voicemail_options) if voicemail_options else None    #: :vartype: :class:`~xmatters.objects.events.VoicemailOptions`
         links = data.get('links')
@@ -99,7 +99,7 @@ class Event(ApiBase):
         url = self._get_url(self._endpoints.get('recipients'))
         data = self._con.get(url)
         recipients = data.get('recipients')
-        return Pagination(self, recipients, xmatters.factories.EventRecipientFactory) if recipients.get('data') else []
+        return xmatters.objects.utils.Pagination(self, recipients, xmatters.factories.EventRecipientFactory) if recipients.get('data') else []
 
     def get_response_options(self):
         url = self._get_url(self._endpoints.get('response_options'))
@@ -111,7 +111,7 @@ class Event(ApiBase):
         url = self._get_url(self._endpoints.get('targeted_recipients'))
         data = self._con.get(url)
         recipients = data.get('recipients')
-        return Pagination(self, recipients, xmatters.factories.EventRecipientFactory) if recipients.get('data') else []
+        return xmatters.objects.utils.Pagination(self, recipients, xmatters.factories.EventRecipientFactory) if recipients.get('data') else []
 
     def get_properties(self):
         url = self._get_url(self._endpoints.get('properties'))
@@ -122,23 +122,23 @@ class Event(ApiBase):
         url = self._get_url(self._endpoints.get('messages'))
         data = self._con.get(url)
         messages = data.get('messages')
-        return Pagination(self, messages, Message) if messages.get('data') else []
+        return xmatters.objects.utils.Pagination(self, messages, Message) if messages.get('data') else []
 
     def get_audits(self, params=None, **kwargs):
         url = self._endpoints.get('get_audits').format(base_url=self._con.api_base_url)
         data = self._con.get(url, params=params, **kwargs)
-        return Pagination(self, data, xmatters.factories.AuditFactory) if data.get('data') else []
+        return xmatters.objects.utils.Pagination(self, data, xmatters.factories.AuditFactory) if data.get('data') else []
 
     def get_user_delivery_data(self, params=None, **kwargs):
         url = self._get_url(self._endpoints.get('get_user_delivery_data'))
         data = self._con.get(url, params=params, **kwargs)
-        return Pagination(self, data, UserDeliveryData) if data.get('data') else []
+        return xmatters.objects.utils.Pagination(self, data, UserDeliveryData) if data.get('data') else []
 
     def get_annotations(self, params=None, **kwargs):
         url = self._get_url(self._endpoints.get('get_annotations'))
         data = self._con.get(url, params=params, **kwargs)
         annotations = data.get('annotations', {})
-        return Pagination(self, annotations, Annotation) if annotations.get('data') else []
+        return xmatters.objects.utils.Pagination(self, annotations, Annotation) if annotations.get('data') else []
 
     def get_annotation_by_id(self, annotation_id):
         url = self._get_url(self._endpoints.get('get_annotation_by_id').format(ann_id=annotation_id))
@@ -161,7 +161,7 @@ class Event(ApiBase):
     def get_suppressions(self, params=None, **kwargs):
         url = self._endpoints.get('get_suppressions').format(base_url=self._con.api_base_url)
         suppressions = self._con.get(url, params=params, **kwargs)
-        return Pagination(self, suppressions, xmatters.objects.event_suppressions.EventSuppression) if suppressions.get('data') else []
+        return xmatters.objects.utils.Pagination(self, suppressions, xmatters.objects.event_suppressions.EventSuppression) if suppressions.get('data') else []
 
     def __repr__(self):
         return '<{} Created: {} Type: {}>'.format(self.__class__.__name__, self.created, self.event_type)
@@ -194,7 +194,7 @@ class UserDeliveryResponse(ApiBase):
         self.text = data.get('text')    #: :vartype: str
         self.notification = data.get('notification')  #: :vartype: str
         received = data.get('received')
-        self.received = TimeAttribute(received) if received else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        self.received = xmatters.objects.utils.TimeAttribute(received) if received else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         option = data.get('option')
         self.option = ResponseOption(self, option) if option else None
 
@@ -311,11 +311,11 @@ class Notification(ApiBase):
         recipient = data.get('recipient')
         self.recipient = xmatters.factories.EventRecipientFactory(self, recipient) if recipient else None    #: :vartype: :class:`~xmatters.factories.EventRecipientFactory`
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        self.created = xmatters.objects.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         delivered = data.get('delivered')
-        self.delivered = TimeAttribute(delivered) if delivered else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        self.delivered = xmatters.objects.utils.TimeAttribute(delivered) if delivered else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         responded = data.get('responded')
-        self.responded = TimeAttribute(responded) if responded else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        self.responded = xmatters.objects.utils.TimeAttribute(responded) if responded else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         self.delivery_status = data.get('deliveryStatus')    #: :vartype: str
         responses = data.get('responses')
         self.responses = [UserDeliveryResponse(self, r) for r in responses] if responses.get('data') else []    #: :vartype: [:class:`~xmatters.objects.events.UserDeliveryResponse`]
@@ -336,7 +336,7 @@ class UserDeliveryData(ApiBase):
         self.person = xmatters.objects.common.PersonReference(self, person) if person else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.delivery_status = data.get('deliveryStatus')   #: :vartype: str
         notifications = data.get('notifications', {})
-        self.notifications = Pagination(self, notifications, Notification) if notifications else []    #: :vartype: [:class:`~xmatters.objects.utils.Pagination`]
+        self.notifications = xmatters.objects.utils.Pagination(self, notifications, Notification) if notifications else []    #: :vartype: [:class:`~xmatters.objects.utils.Pagination`]
         response = data.get('response')
         self.response = UserDeliveryResponse(self, response) if response else None    #: :vartype: :class:`~xmatters.objects.events.UserDeliveryResponse`
         links = data.get('links')
@@ -359,7 +359,7 @@ class Annotation(ApiBase):
         self.author = xmatters.objects.common.PersonReference(self, author)    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.comment = data.get('comment')   #: :vartype: str
         created = data.get('created')
-        self.created = TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
+        self.created = xmatters.objects.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)

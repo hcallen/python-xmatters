@@ -1,4 +1,4 @@
-import xmatters.connection
+
 import xmatters.utils
 
 

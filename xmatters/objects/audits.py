@@ -1,7 +1,7 @@
+import xmatters.objects.events
 import xmatters.objects.utils
 from xmatters.objects.common import Recipient, PersonReference
 from xmatters.utils import ApiBase
-import xmatters.objects.events as events
 
 
 class Notification(ApiBase):
@@ -15,7 +15,7 @@ class Notification(ApiBase):
         created = data.get('created')
         self.created = xmatters.objects.utils.TimeAttribute(created) if created else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
         event = data.get('event')
-        self.event = events.EventReference(parent, event) if event else None    #: :vartype: :class:`~xmatters.objects.events.EventReference`
+        self.event = xmatters.objects.events.EventReference(parent, event) if event else None    #: :vartype: :class:`~xmatters.objects.events.EventReference`
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -31,7 +31,7 @@ class Response(ApiBase):
         notification = data.get('notification')
         self.notification = Notification(self, notification) if notification else None    #: :vartype: :class:`~xmatters.objects.events.Notification`
         options = data.get('options', {}).get('data')
-        self.options = [events.ResponseOption(self, r) for r in options] if options else None    #: :vartype: [:class:`~xmatters.objects.events.ResponseOption`]
+        self.options = [xmatters.objects.events.ResponseOption(self, r) for r in options] if options else None    #: :vartype: [:class:`~xmatters.objects.events.ResponseOption`]
         self.source = data.get('source')    #: :vartype: str
         received = data.get('received')
         self.received = xmatters.objects.utils.TimeAttribute(received) if received else None    #: :vartype: :class:`~xmatters.objects.utils.TimeAttribute`
@@ -66,7 +66,7 @@ class Audit(AuditBase):
         super(Audit, self).__init__(parent, data)
 
         event = data.get('event')
-        self.event = events.EventReference(parent, event) if event else None    #: :vartype: :class:`~xmatters.objects.events.EventReference`
+        self.event = xmatters.objects.events.EventReference(parent, event) if event else None    #: :vartype: :class:`~xmatters.objects.events.EventReference`
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.type)
@@ -79,7 +79,7 @@ class Annotation(ApiBase):
     def __init__(self, parent, data):
         super(Annotation, self).__init__(parent, data)
         event = data.get('event')
-        self.event = events.EventReference(parent, event) if event else None    #: :vartype: :class:`~xmatters.objects.events.EventReference`
+        self.event = xmatters.objects.events.EventReference(parent, event) if event else None    #: :vartype: :class:`~xmatters.objects.events.EventReference`
         author = data.get('author')
         self.author = PersonReference(parent, author) if author else None    #: :vartype: :class:`~xmatters.objects.people.PersonReference`
         self.comment = data.get('comment')    #: :vartype: str

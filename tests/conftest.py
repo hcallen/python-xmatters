@@ -3,22 +3,15 @@ import json
 import pytest
 import vcr
 
-
 import xmatters.utils
 import xmatters.session
+
 
 def skip_token_calls(request):
     if request.path.endswith('/oauth2/token'):
         return None
     else:
         return request
-
-
-# def skip_timeouts(request):
-#     if request.get('status', {}).get('code') == 504:
-#         return None
-#     else:
-#         return request
 
 
 my_vcr = vcr.VCR(
@@ -56,7 +49,7 @@ def xm_sb(settings):
     client_id = settings.get('sb_client_id')
     token_filepath = settings.get('sb_token_filepath')
     token_storage = xmatters.utils.TokenFileStorage(token_filepath)
-    return xmatters.session.XMSession(base_url).set_authentication(client_id=client_id,token_storage=token_storage)
+    return xmatters.session.XMSession(base_url).set_authentication(client_id=client_id, token_storage=token_storage)
 
 
 @pytest.fixture(scope='session')
@@ -65,4 +58,4 @@ def xm_prod(settings):
     client_id = settings.get('prod_client_id')
     token_filepath = settings.get('prod_token_filepath')
     token_storage = xmatters.utils.TokenFileStorage(token_filepath)
-    return xmatters.session.XMSession(base_url).set_authentication(client_id=client_id,token_storage=token_storage)
+    return xmatters.session.XMSession(base_url).set_authentication(client_id=client_id, token_storage=token_storage)

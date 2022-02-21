@@ -1,8 +1,6 @@
-import xmatters.connection
+import xmatters.objects.common
+import xmatters.objects.people
 import xmatters.utils
-
-from xmatters.objects.common import Recipient, SelfLink
-from xmatters.objects.people import Person
 from xmatters.objects.roles import Role
 from xmatters.objects.utils import Pagination
 
@@ -25,7 +23,7 @@ class DynamicTeamsReference(xmatters.utils.ApiBase):
         self.recipient_type = data.get('recipientType')  #: :vartype: str
 
 
-class DynamicTeam(Recipient):
+class DynamicTeam(xmatters.objects.common.Recipient):
 
     def __init__(self, parent, data):
         super(DynamicTeam, self).__init__(parent, data)
@@ -34,10 +32,9 @@ class DynamicTeam(Recipient):
         self.use_emergency_device = data.get('useEmergencyDevice')  #: :vartype: bool
         self.description = data.get('description')  #: :vartype: str
         criteria = data.get('criteria')
-        self.criteria = DynamicTeamsCriterion(self,
-            criteria) if criteria else None  #: :vartype: :class:`~xmatters.objects.dynamic_teams.DynamicTeamsCriterion`
+        self.criteria = DynamicTeamsCriterion(self, criteria) if criteria else None  #: :vartype: :class:`~xmatters.objects.dynamic_teams.DynamicTeamsCriterion`
         links = data.get('links')
-        self.links = SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
+        self.links = xmatters.objects.common.SelfLink(self, links) if links else None  #: :vartype: :class:`~xmatters.objects.common.SelfLink`
 
     @property
     def observers(self):
@@ -51,7 +48,7 @@ class DynamicTeam(Recipient):
     def get_members(self):
         url = self._get_url('/members')
         data = self._con.get(url)
-        return Pagination(self, data, Person) if data.get('data') else None
+        return Pagination(self, data, xmatters.objects.people.Person) if data.get('data') else None
 
     def get_observers(self):
         url = self._get_url('?embed=observers')
@@ -61,7 +58,7 @@ class DynamicTeam(Recipient):
     def get_supervisors(self):
         url = self._get_url('?embed=supervisors')
         supervisors = self._con.get(url).get('supervisors', {})
-        return Pagination(self, supervisors, Person) if supervisors.get('data') else []
+        return Pagination(self, supervisors, xmatters.objects.people.Person) if supervisors.get('data') else []
 
     def __repr__(self):
         return '<{} {}>'.format(self.__class__.__name__, self.target_name)

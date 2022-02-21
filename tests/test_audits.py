@@ -2,10 +2,10 @@ import os
 
 import pytest
 
-from tests.conftest import my_vcr
 import xmatters.errors
 import xmatters.factories
-from xmatters import utils
+from tests.conftest import my_vcr
+from tests.helpers import assert_attrs_for_data, all_types_in_factory
 
 filename = os.path.basename(__file__).replace('.py', '')
 
@@ -55,17 +55,8 @@ class TestParams:
 class TestAccounting:
     @my_vcr.use_cassette('{}_accounting_types.json'.format(filename))
     def test_types(self, xm_test):
-        events = xm_test.events_endpoint().get_events()
-        assert len(events) > 0
-        for event in events:
-            audits = list(xm_test.audits_endpoint().get_audits(event_id=event.id))
-            for audit in audits:
-                assert audit.type in xmatters.factories.AuditFactory._factory_objects.keys()
+        all_types_in_factory(xm_test.audits_endpoint().get_audits(), xmatters.factories.AuditFactory)
 
     @my_vcr.use_cassette('{}_accounting_attrs.json'.format(filename))
     def test_attrs(self, xm_test):
-        audits = list(xm_test.audits_endpoint().get_audits())
-        for audit in audits:
-            for k in audit._api_data.keys():
-                snake_k = utils.camel_to_snakecase(k)
-                assert hasattr(audit, snake_k)
+        assert_attrs_for_data(xm_test.audits_endpoint().get_audits())

@@ -4,11 +4,12 @@ import pytest
 
 import xmatters.errors
 import xmatters.factories
-from tests.conftest import my_vcr
 import xmatters.objects.devices
-from xmatters import utils
+from tests.conftest import my_vcr
+from tests.helpers import assert_attrs_for_data
 
 filename = os.path.basename(__file__).replace('.py', '')
+
 
 class TestGet:
     @my_vcr.use_cassette('{}_get.json'.format(filename))
@@ -31,15 +32,13 @@ class TestGet:
             assert device.id is not None
             assert isinstance(device_by_id, xmatters.objects.devices.Device)
 
+
 class TestAccounting:
 
     @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_attrs(self, xm_test):
-        devices = xm_test.devices_endpoint().get_devices()
-        for device in devices:
-            for k in device._api_data.keys():
-                snake_k = utils.camel_to_snakecase(k)
-                assert hasattr(device, snake_k)
+        assert_attrs_for_data(xm_test.devices_endpoint().get_devices())
+
 
 class TestParams:
     @my_vcr.use_cassette('{}_params_status.json'.format(filename))

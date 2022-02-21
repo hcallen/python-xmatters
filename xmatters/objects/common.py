@@ -2,7 +2,6 @@ import xmatters.connection
 import xmatters.objects
 import xmatters.utils
 import xmatters.objects.events
-from xmatters.utils import ApiBase
 
 
 class Recipient(xmatters.utils.ApiBase):
@@ -154,7 +153,7 @@ class QuotaItem(xmatters.utils.ApiBase):
         return self.__repr__()
 
 
-class PersonReference(ApiBase):
+class PersonReference(xmatters.utils.ApiBase):
     def __init__(self, parent, data):
         super(PersonReference, self).__init__(parent, data)
         self.id = data.get('id')  #: :vartype: str

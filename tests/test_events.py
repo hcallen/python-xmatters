@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from dateutil import tz, parser
 from xmatters.errors import NotFoundError
 
-
+from tests.helpers import assert_attrs_for_data
 filename = os.path.basename(__file__).replace('.py', '')
 
 
@@ -36,39 +36,16 @@ class TestAccounting:
     # @pytest.mark.skip()
     @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_attrs(self, xm_test):
+        events = xm_test.events_endpoint().get_events()
+        assert_attrs_for_data(events)
         for event in xm_test.events_endpoint().get_events():
-            for k in event._api_data.keys():
-                snake_k = utils.camel_to_snakecase(k)
-                assert hasattr(event, snake_k)
-            for a in event.get_audits():
-                for k in a._api_data.keys():
-                    snake_k = utils.camel_to_snakecase(k)
-                    assert hasattr(a, snake_k)
-            for u in event.get_user_delivery_data(at=datetime.utcnow().isoformat()):
-                for k in u._api_data.keys():
-                    snake_k = utils.camel_to_snakecase(k)
-                    assert hasattr(u, snake_k)
-            for a in event.get_annotations():
-                for k in a._api_data.keys():
-                    snake_k = utils.camel_to_snakecase(k)
-                    assert hasattr(a, snake_k)
-            for a in event.get_messages():
-                for k in a._api_data.keys():
-                    snake_k = utils.camel_to_snakecase(k)
-                    assert hasattr(a, snake_k)
-            for a in event.get_recipients():
-                for k in a._api_data.keys():
-                    snake_k = utils.camel_to_snakecase(k)
-                    assert hasattr(a, snake_k)
-            for a in event.get_targeted_recipients():
-                for k in a._api_data.keys():
-                    snake_k = utils.camel_to_snakecase(k)
-                    assert hasattr(a, snake_k)
-            for a in event.get_response_options():
-                for k in a._api_data.keys():
-                    snake_k = utils.camel_to_snakecase(k)
-                    assert hasattr(a, snake_k)
-
+            assert_attrs_for_data(event.get_audits())
+            assert_attrs_for_data(event.get_user_delivery_data(at=datetime.utcnow().isoformat()))
+            assert_attrs_for_data(event.get_annotations())
+            assert_attrs_for_data(event.get_messages())
+            assert_attrs_for_data(event.get_recipients())
+            assert_attrs_for_data(event.get_targeted_recipients())
+            assert_attrs_for_data(event.get_response_options())
 
 class TestParams:
 

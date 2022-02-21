@@ -8,13 +8,13 @@ import xmatters.objects.plan_endpoints
 import xmatters.objects.plan_properties
 import xmatters.objects.forms
 import xmatters.objects.devices
-import xmatters.objects.events
-
+import xmatters.objects.common
 
 class FactoryBase(object):
 
     _id_attr = None
     _factory_objects = None
+    _default_object = None
 
     def __new__(cls, parent, data):
         """
@@ -26,14 +26,15 @@ class FactoryBase(object):
         :return: class instance
         :rtype: subclass of ::class::`~xmatters.connection.ApiBase`
         """
-        return cls.get_constructor(data)(parent, data)
+        constructor = cls.get_constructor(data)
+        return constructor(parent, data) if constructor else None
 
     @classmethod
     def get_constructor(cls, data):
         """ Determine which object to construct from 'identifier' attribute in object """
         identifier = data.get(cls._id_attr)
-        constructor = cls._factory_objects.get(identifier)
-        constructor = constructor.get_constructor(data) if issubclass(constructor, FactoryBase) else constructor
+        constructor = cls._factory_objects.get(identifier, cls._default_object)
+        constructor = constructor.get_constructor(data) if constructor and issubclass(constructor, FactoryBase) else constructor
         return constructor
 
 
@@ -50,6 +51,8 @@ class DeviceFactory(FactoryBase):
                         'VOICE_IVR': xmatters.objects.devices.PublicAddressDevice,
                         'GENERIC': xmatters.objects.devices.GenericDevice}
 
+    _default_object = xmatters.objects.devices.Device
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
@@ -64,6 +67,8 @@ class RecipientFactory(FactoryBase):
                         'PERSON': xmatters.objects.people.Person,
                         'DEVICE': xmatters.objects.devices.Device,
                         'DYNAMIC_TEAM': xmatters.objects.dynamic_teams.DynamicTeam}
+
+    _default_object = xmatters.objects.common.Recipient
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -84,6 +89,8 @@ class AuditFactory(FactoryBase):
                         'RESPONSE_RECEIVED': xmatters.objects.audits.AuditResponse,
                         'NOTIFICATION_DELIVERED': xmatters.objects.audits.AuditNotification,
                         'NOTIFICATION_FAILED': xmatters.objects.audits.AuditNotification}
+
+    _default_object = xmatters.objects.audits.Audit
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -106,6 +113,8 @@ class SectionFactory(FactoryBase):
                         'INCIDENT': xmatters.objects.forms.IncidentSection,
                         'DOCUMENT_UPLOAD': xmatters.objects.forms.FormSection}
 
+    _default_object = xmatters.objects.forms.FormSection
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
@@ -123,6 +132,8 @@ class AuthFactory(FactoryBase):
                         'OAUTH_SLACK': xmatters.objects.plan_endpoints.OAuth2Authentication,
                         'XMATTERS': xmatters.objects.plan_endpoints.ServiceAuthentication,
                         'SERVICENOW': xmatters.objects.plan_endpoints.ServiceAuthentication}
+
+    _default_object = None
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -142,6 +153,8 @@ class PropertiesFactoryBase(FactoryBase):
                         'PASSWORD': xmatters.objects.plan_properties.Password,
                         'TEXT': xmatters.objects.plan_properties.Text}
 
+    _default_object = xmatters.objects.plan_properties.Property
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
@@ -154,6 +167,8 @@ class ScenarioPermFactory(FactoryBase):
     _id_attr = 'permissibleType'
     _factory_objects = {'PERSON': xmatters.objects.scenarios.ScenarioPermissionPerson,
                         'ROLE': xmatters.objects.scenarios.ScenarioPermissionRole}
+
+    _default_object = xmatters.objects.scenarios.ScenarioPermission
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
@@ -176,6 +191,8 @@ class DeviceNameFactory(FactoryBase):
         'VOICE': xmatters.objects.device_names.DeviceName,
         'VOICE_IVR': xmatters.objects.device_names.DeviceName}
 
+    _default_object = xmatters.objects.device_names.DeviceName
+
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
@@ -191,3 +208,5 @@ class EventRecipientFactory(FactoryBase):
                         'PERSON': xmatters.objects.people.Person,
                         'DEVICE': DeviceFactory,
                         'DYNAMIC_TEAM': xmatters.objects.dynamic_teams.DynamicTeam}
+
+    _default_object = xmatters.objects.common.Recipient

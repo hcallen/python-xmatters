@@ -1,8 +1,8 @@
 import os
 
-from tests.conftest import my_vcr
 import xmatters.errors as err
-from xmatters import utils
+from tests.conftest import my_vcr
+from tests.helpers import assert_attrs_for_data
 
 filename = os.path.basename(__file__).replace('.py', '')
 
@@ -40,27 +40,13 @@ class TestAccounting:
     @my_vcr.use_cassette('{}_get.json'.format(filename))
     def test_attrs(self, xm_test):
         forms = xm_test.forms_endpoint().get_forms()
+        assert_attrs_for_data(forms)
         for form in forms:
-            for k in form._api_data.keys():
-                snake_k = utils.camel_to_snakecase(k)
-                assert hasattr(form, snake_k)
             try:
-                for i in form.get_recipients():
-                    for k in i._api_data.keys():
-                        snake_k = utils.camel_to_snakecase(k)
-                        assert hasattr(i, snake_k)
-                for i in form.get_response_options():
-                    for k in i._api_data.keys():
-                        snake_k = utils.camel_to_snakecase(k)
-                        assert hasattr(i, snake_k)
-                for i in form.get_sections():
-                    for k in i._api_data.keys():
-                        snake_k = utils.camel_to_snakecase(k)
-                        assert hasattr(i, snake_k)
-                for i in form.get_scenarios():
-                    for k in i._api_data.keys():
-                        snake_k = utils.camel_to_snakecase(k)
-                        assert hasattr(i, snake_k)
+                assert_attrs_for_data(form.get_recipients())
+                assert_attrs_for_data(form.get_response_options())
+                assert_attrs_for_data(form.get_sections())
+                assert_attrs_for_data(form.get_scenarios())
             except err.ForbiddenError:
                 # skip forms that account doesn't have access to
                 pass
