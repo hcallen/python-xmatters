@@ -47,6 +47,8 @@ XMSession
 
     .. automethod:: scenarios_endpoint
 
+    .. automethod:: scheduled_messages_endpoint
+
     .. automethod:: services_endpoint
 
     .. automethod:: sites_endpoint
