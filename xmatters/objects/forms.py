@@ -54,6 +54,12 @@ class Form(xmatters.utils.ApiBase):
         return Pagination(self, options, xmatters.objects.events.ResponseOption) if options.get(
             'data') else []
 
+    def create_response_options(self, data):
+        url = self._get_url(self._endpoints.get('get_response_options'))
+        options = self._con.post(url, data=data)
+        return Pagination(self, options, xmatters.objects.events.ResponseOption) if options.get(
+            'data') else []
+
     def get_sections(self, params=None, **kwargs):
         url = self._endpoints.get('get_sections').format(base_url=self._con.api_base_url, form_id=self.id)
         s = self._con.get(url, params=params, **kwargs)

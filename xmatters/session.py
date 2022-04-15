@@ -36,6 +36,7 @@ class XMSession(object):
                   'plans': xmatters.endpoints.PlansEndpoint,
                   'roles': xmatters.endpoints.RolesEndpoint,
                   'scenarios': xmatters.endpoints.ScenariosEndpoint,
+                  'scheduled_messages': xmatters.endpoints.ScheduledMessagesEndpoint,
                   'services': xmatters.endpoints.ServicesEndpoint,
                   'sites': xmatters.endpoints.SitesEndpoint,
                   'subscriptions': xmatters.endpoints.SubscriptionsEndpoint,
@@ -288,6 +289,15 @@ class XMSession(object):
     def services_endpoint(self):
         """
         Get the '/services' top-level endpoint.
+
+        :return: Endpoint
+        :rtype: :class:`ServicesEndpoint`
+        """
+        return xmatters.endpoints.ServicesEndpoint(self)
+
+    def scheduled_messages_endpoint(self):
+        """
+        Get the '/scheduled-messages' top-level endpoint.
 
         :return: Endpoint
         :rtype: :class:`ServicesEndpoint`

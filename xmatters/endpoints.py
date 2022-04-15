@@ -22,6 +22,7 @@ from xmatters.objects.subscription_forms import SubscriptionForm
 from xmatters.objects.subscriptions import Subscription
 from xmatters.objects.temporary_absences import TemporaryAbsence
 from xmatters.objects.attachments import Attachments
+from xmatters.objects.scheduled_messages import ScheduledMessage
 
 
 class AttachmentsEndpoint(ApiBase):
@@ -737,6 +738,26 @@ class ScenariosEndpoint(ApiBase):
         url = self._get_url(scenario_id)
         data = self._con.get(url, params=params, **kwargs)
         return Scenario(self, data) if data else None
+
+    def __repr__(self):
+        return '<{}>'.format(self.__class__.__name__)
+
+    def __str__(self):
+        return self.__repr__()
+
+
+class ScheduledMessagesEndpoint(ApiBase):
+    def __init__(self, parent):
+        super(ScheduledMessagesEndpoint, self).__init__(parent, endpoint='/scheduled-messages')
+
+    def get_scheduled_messages(self, params=None, **kwargs):
+        """
+
+        :rtype: :class:`~xmatters.utils.Pagination` of :class:`~xmatters.objects.scheduled_messages.ScheduledMessage`
+        """
+        url = self._get_url()
+        data = self._con.get(url, params=params, **kwargs)
+        return Pagination(self, data, ScheduledMessage) if data.get('data') else []
 
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
