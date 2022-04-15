@@ -415,6 +415,15 @@ Scenarios
    :inherited-members:
    :show-inheritance:
 
+Scheduled Messages
+^^^^^^^^^^^^^^^^^^^^^^
+
+.. automodule:: xmatters.objects.scheduled_messages
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
+
 Services
 ^^^^^^^^^^^^^^^^^^^^^^
 

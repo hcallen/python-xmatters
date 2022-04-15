@@ -302,7 +302,7 @@ class XMSession(object):
         :return: Endpoint
         :rtype: :class:`ServicesEndpoint`
         """
-        return xmatters.endpoints.ServicesEndpoint(self)
+        return xmatters.endpoints.ScheduledMessagesEndpoint(self)
 
     def sites_endpoint(self):
         """
